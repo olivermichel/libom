@@ -37,7 +37,7 @@ TOOLS_HEADERS = tools.h logger.h time.h
 all: $(TEST_TOOLS_BIN_NAME) $(TEST_NET_BIN_NAME) $(DYNLIB_NAME)
 
 .PHONY: $(DYNLIB_NAME)
-$(LIB_NAME): $(LIB_DIR) $(NET_BUILD_DIR) $(TOOLS_BUILD_DIR) \
+$(DYNLIB_NAME): $(LIB_DIR) $(NET_BUILD_DIR) $(TOOLS_BUILD_DIR) \
 	$(addprefix $(TOOLS_BUILD_DIR)/, $(TOOLS_OBJS)) \
 	$(addprefix $(NET_BUILD_DIR)/, $(NET_OBJS))
 	$(CXX) -shared -fPIC -o $(LIB_DIR)/$(DYNLIB_NAME) \
