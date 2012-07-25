@@ -30,8 +30,8 @@ TOOLS_SRC_DIR = $(SRC_DIR)/tools
 NET_OBJS = net.o io_interface.o socket.o datagram_socket.o tunnel_device.o
 NET_HEADERS = net.h io_interface.h socket.h datagram_socket.h tunnel_device.h
 
-TOOLS_OBJS = tools.o logger.o time.o
-TOOLS_HEADERS = tools.h logger.h time.h
+TOOLS_OBJS = tools.o logger.o time.o random.o
+TOOLS_HEADERS = tools.h logger.h time.h random.h
 
 .PHONY: all
 all: $(TEST_TOOLS_BIN_NAME) $(TEST_NET_BIN_NAME) $(DYNLIB_NAME)
