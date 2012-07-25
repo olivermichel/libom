@@ -10,3 +10,10 @@
 *.lai
 *.la
 *.a
+
+# Build and bin directories
+bin/*
+build/*
+
+# OSX specific
+.DS_Store
