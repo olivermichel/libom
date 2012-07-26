@@ -5,6 +5,7 @@
 //
 
 #include <map>
+#include <stdexcept>
 
 #include <netinet/in.h>
 #include <sys/select.h>
@@ -25,7 +26,7 @@ namespace om {
       Agent(const Agent& copy_from);
       Agent& operator=(const Agent& copy_from);
 
-      void add_interface(IOInterface* iface);
+      void add_interface(IOInterface* iface) throw(std::logic_error);
       virtual void run();
       virtual ~Agent();
 
@@ -33,11 +34,11 @@ namespace om {
       fd_set _fds;
       fd_set _read_fds;
       int _fd_max;
-      std::map<int, IOInterface>* interfaces();
+      std::map<int, IOInterface*>* interfaces();
       virtual void receive_from_device(IOInterface* iface) = 0;
 
     private:
-      std::map<int, IOInterface>* _interfaces;
+      std::map<int, IOInterface*>* _interfaces;
     };
   }
 }
