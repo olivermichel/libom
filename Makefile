@@ -5,9 +5,9 @@ CXX = g++
 VPATH = src:src/net:src/tools:build:bin
 
 ifeq ($(DEBUG), 1)
-	CXXFLAGS = -Wall -fPIC -ggdb 
+	CXXFLAGS = -I ./$(SRC_DIR) -Wall -fPIC -ggdb 
 else
-	CXXFLAGS = -Wall -fPIC
+	CXXFLAGS = -I ./$(SRC_DIR) -Wall -fPIC
 endif
 
 BIN_DIR = bin
@@ -46,15 +46,22 @@ $(DYNLIB_NAME): $(LIB_DIR) $(NET_BUILD_DIR) $(TOOLS_BUILD_DIR) \
 
 .PHONY: $(TEST_NET_BIN_NAME)
 $(TEST_NET_BIN_NAME): $(BIN_DIR) $(NET_BUILD_DIR) $(BUILD_DIR)/test_net_main.o \
-	$(addprefix $(NET_BUILD_DIR)/, $(NET_OBJS))
+	$(addprefix $(NET_BUILD_DIR)/, $(NET_OBJS)) \
+	$(addprefix $(TOOLS_BUILD_DIR)/, $(TOOLS_OBJS))
+
 	$(CXX) $(CXXFLAGS) -o $(BIN_DIR)/$(TEST_NET_BIN_NAME) \
-	$(addprefix $(NET_BUILD_DIR)/, $(NET_OBJS)) $(BUILD_DIR)/test_net_main.o
+	$(addprefix $(NET_BUILD_DIR)/, $(NET_OBJS)) \
+	$(addprefix $(TOOLS_BUILD_DIR)/, $(TOOLS_OBJS)) \
+	$(BUILD_DIR)/test_net_main.o
 
 .PHONY: $(TEST_TOOLS_BIN_NAME)
 $(TEST_TOOLS_BIN_NAME): $(BIN_DIR) $(TOOLS_BUILD_DIR) $(BUILD_DIR)/test_tools_main.o \
-	$(addprefix $(TOOLS_BUILD_DIR)/, $(TOOLS_OBJS))
+	$(addprefix $(TOOLS_BUILD_DIR)/, $(TOOLS_OBJS)) $(addprefix $(NET_BUILD_DIR)/, $(NET_OBJS))
+	
 	$(CXX) $(CXXFLAGS) -o $(BIN_DIR)/$(TEST_TOOLS_BIN_NAME) \
-	$(addprefix $(TOOLS_BUILD_DIR)/, $(TOOLS_OBJS)) $(BUILD_DIR)/test_tools_main.o
+	$(addprefix $(TOOLS_BUILD_DIR)/, $(TOOLS_OBJS)) \
+	$(addprefix $(NET_BUILD_DIR)/, $(NET_OBJS)) \
+	$(BUILD_DIR)/test_tools_main.o
 
 $(BUILD_DIR)/test_net_main.o: test_net_main.cc $(addprefix $(NET_SRC_DIR)/, $(NET_HEADERS))
 	$(CXX) $(CXXFLAGS) -c -o $(BUILD_DIR)/test_net_main.o $(SRC_DIR)/test_net_main.cc

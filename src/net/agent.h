@@ -4,14 +4,18 @@
 //  (c) 2012 Oliver Michel
 //
 
+#include <ctime>
 #include <map>
 #include <stdexcept>
 
 #include <netinet/in.h>
 #include <sys/select.h>
 
-#include "net.h"
-#include "io_interface.h"
+#include <net/io_interface.h>
+#include <net/net.h>
+#include <tools/random.h>
+#include <tools/time.h>
+#include <tools/tools.h>
 
 #ifndef OM_NET_AGENT_H
 #define OM_NET_AGENT_H
@@ -21,14 +25,15 @@ namespace om {
 
     class Agent {
 
-    enum timeout_mode_t { 
-      timeout_mode_none         = 0, 
-      timeout_mode_manual       = 1, 
-      timeout_mode_uniform      = 2, 
-      timeout_mode_exponential  = 3
-    };
-
     public:
+
+      enum timeout_mode_t { 
+        timeout_mode_none         = 0, 
+        timeout_mode_manual       = 1, 
+        timeout_mode_uniform      = 2, 
+        timeout_mode_exponential  = 3
+      };
+
       Agent();
       Agent(const Agent& copy_from);
       Agent& operator=(const Agent& copy_from);
@@ -47,24 +52,35 @@ namespace om {
       void set_exponential_lambda(double l);
       double exponential_lambda();
 
-      virtual void run();
+      void run() throw(std::runtime_error);
+      
       virtual ~Agent();
 
     protected:
+      
       fd_set _fds;
       fd_set _read_fds;
       int _fd_max;
 
+      // callbacks
       virtual void device_ready(IOInterface* iface) = 0;
-      virtual void timeout_triggered();
+      virtual void timeout_trigger(double timeout);
+      virtual void agent_start();
 
     private:
+      
       std::map<int, IOInterface*>* _interfaces;
       timeout_mode_t _timeout_mode;
       double _manual_timeout;
       double _uniform_lower;
       double _uniform_upper;
       double _exponential_lambda;
+      timeval _current_timeout;
+
+      void clean_iface_fds();
+      void check_read_interfaces();
+      timeval next_timeout_timeval()
+        throw(std::invalid_argument, std::logic_error);
     };
   }
 }
