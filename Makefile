@@ -27,8 +27,8 @@ NET_SRC_DIR = $(SRC_DIR)/net
 TOOLS_BUILD_DIR = $(BUILD_DIR)/tools
 TOOLS_SRC_DIR = $(SRC_DIR)/tools
 
-NET_OBJS = net.o io_interface.o socket.o datagram_socket.o tunnel_device.o
-NET_HEADERS = net.h io_interface.h socket.h datagram_socket.h tunnel_device.h
+NET_OBJS = net.o io_interface.o socket.o datagram_socket.o tunnel_device.o agent.o
+NET_HEADERS = net.h io_interface.h socket.h datagram_socket.h tunnel_device.h agent.h
 
 TOOLS_OBJS = tools.o logger.o time.o random.o
 TOOLS_HEADERS = tools.h logger.h time.h random.h
@@ -44,14 +44,14 @@ $(DYNLIB_NAME): $(LIB_DIR) $(NET_BUILD_DIR) $(TOOLS_BUILD_DIR) \
 	$(addprefix $(TOOLS_BUILD_DIR)/, $(TOOLS_OBJS)) \
 	$(addprefix $(NET_BUILD_DIR)/, $(NET_OBJS))
 
-.PHONY: $(TEST_TOOLS_BIN_NAME)
-$(TEST_TOOLS_BIN_NAME): $(BIN_DIR) $(NET_BUILD_DIR) $(BUILD_DIR)/test_net_main.o \
+.PHONY: $(TEST_NET_BIN_NAME)
+$(TEST_NET_BIN_NAME): $(BIN_DIR) $(NET_BUILD_DIR) $(BUILD_DIR)/test_net_main.o \
 	$(addprefix $(NET_BUILD_DIR)/, $(NET_OBJS))
 	$(CXX) $(CXXFLAGS) -o $(BIN_DIR)/$(TEST_NET_BIN_NAME) \
 	$(addprefix $(NET_BUILD_DIR)/, $(NET_OBJS)) $(BUILD_DIR)/test_net_main.o
 
-.PHONY: $(TEST_NET_BIN_NAME)
-$(TEST_NET_BIN_NAME): $(BIN_DIR) $(TOOLS_BUILD_DIR) $(BUILD_DIR)/test_tools_main.o \
+.PHONY: $(TEST_TOOLS_BIN_NAME)
+$(TEST_TOOLS_BIN_NAME): $(BIN_DIR) $(TOOLS_BUILD_DIR) $(BUILD_DIR)/test_tools_main.o \
 	$(addprefix $(TOOLS_BUILD_DIR)/, $(TOOLS_OBJS))
 	$(CXX) $(CXXFLAGS) -o $(BIN_DIR)/$(TEST_TOOLS_BIN_NAME) \
 	$(addprefix $(TOOLS_BUILD_DIR)/, $(TOOLS_OBJS)) $(BUILD_DIR)/test_tools_main.o

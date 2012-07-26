@@ -6,10 +6,11 @@
 
 #include "io_interface.h"
 
-om::net::IOInterface::IOInterface() : _fd(0) {}
+om::net::IOInterface::IOInterface() 
+  : _fd(0) {}
 
 om::net::IOInterface::IOInterface(const om::net::IOInterface &copy_from) 
-  : _fd(copy_from._fd) { }
+  : _fd(copy_from._fd) {}
 
 int om::net::IOInterface::fd() {
 
@@ -33,5 +34,3 @@ void om::net::IOInterface::remove_from_fd_set(fd_set *fds)
   
   FD_CLR(_fd, fds);
 }
-
-om::net::IOInterface::~IOInterface() { }

@@ -27,8 +27,8 @@ namespace om {
       void add_to_fd_set(fd_set *fds) throw(std::logic_error);
       void remove_from_fd_set(fd_set *fds) throw(std::logic_error);
 
-      virtual void close() = 0;
-      virtual ~IOInterface() = 0;
+      virtual void close() {}
+      virtual ~IOInterface() {}
     
     protected:
       int _fd;
