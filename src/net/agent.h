@@ -63,9 +63,9 @@ namespace om {
       int _fd_max;
 
       // callbacks
-      virtual void device_ready(IOInterface* iface) = 0;
-      virtual void timeout_trigger(double timeout);
-      virtual void agent_start();
+      virtual void device_ready(timeval* timestamp, IOInterface* iface) = 0;
+      virtual void timeout_trigger(timeval* timestamp, timeval* timeout_tv) {}
+      virtual void agent_start(timeval* timestamp) {}
 
     private:
       
@@ -78,7 +78,7 @@ namespace om {
       timeval _current_timeout;
 
       void clean_iface_fds();
-      void check_read_interfaces();
+      void check_read_interfaces(timeval* timestamp);
       timeval next_timeout_timeval()
         throw(std::invalid_argument, std::logic_error);
     };

@@ -16,8 +16,8 @@
 #include <netinet/in.h>
 #include <arpa/inet.h>
 
-#include "net.h"
-#include "socket.h"
+#include <net/net.h>
+#include <net/socket.h>
 
 namespace om {
   namespace net {
@@ -25,10 +25,10 @@ namespace om {
     class DatagramSocket : public om::net::Socket {
 
     public:
-      DatagramSocket();
-      DatagramSocket(const om::net::ip_pair addr_pair)
+
+      explicit DatagramSocket(const om::net::ip_pair addr_pair)
         throw(std::runtime_error, std::invalid_argument);
-      DatagramSocket(const om::net::ip_endpoint addr) 
+      explicit DatagramSocket(const om::net::ip_endpoint addr) 
         throw(std::runtime_error, std::invalid_argument);
       DatagramSocket(const om::net::DatagramSocket &copy_from);
 

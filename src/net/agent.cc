@@ -106,13 +106,13 @@ void om::net::Agent::clean_iface_fds() {
       FD_CLR(fd, &_fds);
 }
 
-void om::net::Agent::check_read_interfaces() {
+void om::net::Agent::check_read_interfaces(timeval* timestamp) {
 
   // iterate over sockets and read data if available
   for(std::map<int,om::net::IOInterface*>::iterator i = _interfaces->begin();
     i != _interfaces->end(); ++i) {
     if(FD_ISSET(i->first, &_read_fds))
-      this->device_ready((*_interfaces)[i->first]);
+      this->device_ready(timestamp, (*_interfaces)[i->first]);
   }  
 }
 
@@ -155,11 +155,12 @@ void om::net::Agent::run()
   throw(std::runtime_error) {
 
   timeval* timeout_ptr = 0;
-  double timeout_copy = 0;
+  timeval timestamp = {0,0}, timeout_copy = {0,0};
   int n_read_sockets = -1;
 
   this->clean_iface_fds();
-  this->agent_start();
+  gettimeofday(&timestamp, 0);
+  this->agent_start(&timestamp);
 
   while(1) { // main application loop
 
@@ -167,28 +168,23 @@ void om::net::Agent::run()
 
     if(_timeout_mode != om::net::Agent::timeout_mode_none) {
       _current_timeout = this->next_timeout_timeval();
-      timeout_copy = om::tools::time::sec_from_timeval(_current_timeout);
-      timeout_ptr = &_current_timeout;
+      timeout_copy = _current_timeout, timeout_ptr = &_current_timeout;
     }
 
     // call select, pass null-pointers for write and error fds
     n_read_sockets = select(_fd_max+1, &_read_fds, 0, 0, timeout_ptr);
 
+    gettimeofday(&timestamp, 0);
+
     if(n_read_sockets == 0) { // timeout triggered
-      this->timeout_trigger(timeout_copy);
+      this->timeout_trigger(&timestamp, &timeout_copy);
     } else if(n_read_sockets > 0) { // n sockets ready for reading
-      this->check_read_interfaces();
+      this->check_read_interfaces(&timestamp);
     } else if(n_read_sockets == -1) { // error occured
       throw std::runtime_error("select(): " + std::string(strerror(errno)));
     }
   }
 }
-
-// callbacks
-
-void om::net::Agent::timeout_trigger(double timeout) {}
-
-void om::net::Agent::agent_start() {}
 
 om::net::Agent::~Agent() {
 

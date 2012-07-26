@@ -6,14 +6,14 @@
 
 #include "socket.h"
 
-om::net::Socket::Socket() : om::net::IOInterface() {}
-
-om::net::Socket::Socket(om::net::ip_pair ip_pair) 
-  : om::net::IOInterface(), _addr(ip_pair.src), 
+om::net::Socket::Socket(const om::net::IOInterface::iface_type type, 
+  const om::net::ip_pair ip_pair)
+  : om::net::IOInterface(type), _addr(ip_pair.src), 
     _default_remote_addr(ip_pair.dst) {}
 
-om::net::Socket::Socket(const om::net::ip_endpoint addr)
-  : om::net::IOInterface(), _addr(addr) {}
+om::net::Socket::Socket(const om::net::IOInterface::iface_type type, 
+  const om::net::ip_endpoint addr)
+  : om::net::IOInterface(type), _addr(addr) {}
 
 om::net::Socket::Socket(const om::net::Socket &copy_from)
   : om::net::IOInterface(copy_from), _addr(copy_from._addr),

@@ -6,15 +6,15 @@
 
 #include "tunnel_device.h"
 
-om::net::TunnelDevice::TunnelDevice()  : _flags(IFF_TUN | IFF_NO_PI) {
-
-    om::net::IOInterface::_fd = 0;
-}
+om::net::TunnelDevice::TunnelDevice()
+  : om::net::IOInterface(om::net::IOInterface::iface_type_tun),
+    _flags(IFF_TUN | IFF_NO_PI) {}
 
 om::net::TunnelDevice::TunnelDevice(std::string name) 
-  throw(std::runtime_error) : _name(name) {
-
-  om::net::TunnelDevice::TunnelDevice();
+  throw(std::runtime_error) 
+  : om::net::IOInterface(om::net::IOInterface::iface_type_tun), _name(name),
+    _flags(IFF_TUN | IFF_NO_PI) {
+  
   this->open();
 }
 

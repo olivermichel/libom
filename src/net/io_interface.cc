@@ -6,11 +6,11 @@
 
 #include "io_interface.h"
 
-om::net::IOInterface::IOInterface() 
-  : _fd(0) {}
+om::net::IOInterface::IOInterface(om::net::IOInterface::iface_type type) 
+  : _fd(0), _iface_type(type) {}
 
 om::net::IOInterface::IOInterface(const om::net::IOInterface &copy_from) 
-  : _fd(copy_from._fd) {}
+  : _fd(copy_from._fd), _iface_type(copy_from._iface_type) {}
 
 int om::net::IOInterface::fd() {
 
@@ -33,4 +33,9 @@ void om::net::IOInterface::remove_from_fd_set(fd_set *fds)
     throw std::logic_error("remove_from_fd_set: Interface is not opened");
   
   FD_CLR(_fd, fds);
+}
+
+om::net::IOInterface::iface_type om::net::IOInterface::type() {
+
+  return _iface_type;
 }

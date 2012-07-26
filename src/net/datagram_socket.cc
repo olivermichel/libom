@@ -4,21 +4,18 @@
 //  (c) 2012 Oliver Michel
 //
 
-#include "datagram_socket.h"
-
-om::net::DatagramSocket::DatagramSocket() 
-  : om::net::Socket() {}
+#include <net/datagram_socket.h>
 
 om::net::DatagramSocket::DatagramSocket(const om::net::ip_pair addr_pair)
   throw(std::runtime_error, std::invalid_argument)
-  : om::net::Socket(addr_pair) {
+  : om::net::Socket(om::net::IOInterface::iface_type_sock_dgram, addr_pair) {
 
   this->open(addr_pair.src);
 }
 
 om::net::DatagramSocket::DatagramSocket(const om::net::ip_endpoint addr) 
   throw(std::runtime_error, std::invalid_argument)
-  : om::net::Socket(addr) {
+  : om::net::Socket(om::net::IOInterface::iface_type_sock_dgram, addr) {
 
   this->open(addr);
 }

@@ -9,8 +9,8 @@
 
 #include <string>
 
-#include "net.h"
-#include "io_interface.h"
+#include <net/net.h>
+#include <net/io_interface.h>
 
 namespace om {
   namespace net {
@@ -18,8 +18,9 @@ namespace om {
     class TunnelDevice : public om::net::IOInterface {
 
     public:
-      TunnelDevice();
-      TunnelDevice(std::string name) throw(std::runtime_error);
+      
+      explicit TunnelDevice();
+      explicit TunnelDevice(std::string name) throw(std::runtime_error);
 
       short int flags();
       void set_flags(short int flags);
@@ -33,6 +34,7 @@ namespace om {
       ~TunnelDevice();
 
     private:
+      
       std::string _name;
       short int _flags;
     };

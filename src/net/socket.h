@@ -12,8 +12,8 @@
 
 #include <sys/select.h>
 
-#include "net.h"
-#include "io_interface.h"
+#include <net/net.h>
+#include <net/io_interface.h>
 
 namespace om {
   namespace net {
@@ -21,9 +21,11 @@ namespace om {
     class Socket : public om::net::IOInterface {
 
     public:
-      Socket();
-      Socket(om::net::ip_pair ip_pair);
-      Socket(const om::net::ip_endpoint addr);
+
+      explicit Socket(const om::net::IOInterface::iface_type type, 
+        const om::net::ip_pair ip_pair);
+      explicit Socket(const om::net::IOInterface::iface_type type, 
+        const om::net::ip_endpoint addr);
       Socket(const om::net::Socket &copy_from);
 
       om::net::ip_endpoint addr();
