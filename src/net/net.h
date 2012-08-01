@@ -15,9 +15,11 @@
 #include <sys/ioctl.h>
 #include <errno.h>
 #include <netinet/in.h>
+#include <netinet/ip.h>
 #include <arpa/inet.h>
 #include <string>
 #include <iostream>
+#include <cstdlib>
 
 namespace om {
   namespace net {
@@ -65,6 +67,9 @@ namespace om {
     void setup_addr_struct(sockaddr_in *s, ip_endpoint endpoint);
 
     void ip_endpoint_from_addr_struct(sockaddr_in *s, om::net::ip_endpoint *e);
+
+    void setup_ip_header(struct iphdr* header, char* src, char* dst, int proto, 
+      size_t msg_len);
   }
 }
 

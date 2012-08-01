@@ -83,3 +83,19 @@ void om::net::setup_addr_struct(sockaddr_in *s, int family,
   om::net::setup_addr_struct(s, 
     om::net::ip_endpoint(om::net::tp_proto_undefined, addr, port));
 }
+
+void om::net::setup_ip_header(struct iphdr* header, char* src, char* dst, 
+  int proto, size_t msg_len) {
+
+  header->ihl = sizeof(struct iphdr)/4;
+  header->version = 4;
+  header->tos = 0;
+  header->tot_len = sizeof(struct iphdr) + msg_len;
+  header->id = htons(rand());
+  header->frag_off = 0;
+  header->ttl = 255;
+  header->protocol = proto;
+  header->check = 0;
+  header->saddr = inet_addr(src);
+  header->daddr = inet_addr(dst);
+}
