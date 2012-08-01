@@ -27,8 +27,8 @@ NET_SRC_DIR = $(SRC_DIR)/net
 TOOLS_BUILD_DIR = $(BUILD_DIR)/tools
 TOOLS_SRC_DIR = $(SRC_DIR)/tools
 
-NET_OBJS = net.o io_interface.o socket.o datagram_socket.o tunnel_device.o agent.o
-NET_HEADERS = net.h io_interface.h socket.h datagram_socket.h tunnel_device.h agent.h
+NET_OBJS = net.o io_interface.o socket.o datagram_socket.o tunnel_device.o agent.o raw_socket.o
+NET_HEADERS = net.h io_interface.h socket.h datagram_socket.h tunnel_device.h agent.h raw_socket.h
 
 TOOLS_OBJS = tools.o logger.o time.o random.o
 TOOLS_HEADERS = tools.h logger.h time.h random.h
