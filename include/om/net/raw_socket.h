@@ -30,11 +30,15 @@ namespace om {
 
     public:
 
-      explicit RawSocket()
+      explicit RawSocket(const int family = AF_INET, 
+        const int protocol = IPPROTO_RAW)
         throw(std::runtime_error);
+      
       explicit RawSocket(const std::string default_remote_addr, 
-        const int default_remote_protocol)
+        const int default_remote_protocol, const int family = AF_INET, 
+        const int protocol = IPPROTO_RAW)
         throw(std::runtime_error, std::invalid_argument);
+
       RawSocket(const om::net::RawSocket &copy_from);
 
       int send_raw(const char* tx_data, const size_t data_len);
@@ -50,7 +54,11 @@ namespace om {
 
       std::string _default_remote_addr;
       int _default_remote_protocol;
-      int open() throw(std::runtime_error);
+
+      int _family;
+      int _protocol;
+
+      int open(const int family, const int protocol) throw(std::runtime_error);
     };
   }
 }
