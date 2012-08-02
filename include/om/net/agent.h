@@ -38,7 +38,9 @@ namespace om {
       Agent(const Agent& copy_from);
       Agent& operator=(const Agent& copy_from);
 
-      void add_interface(IOInterface* iface) throw(std::logic_error);
+      // overrideable to add custom logic
+      virtual void add_interface(IOInterface* iface) throw(std::logic_error);
+      
       std::map<int, IOInterface*>* interfaces() const;
       
       void set_timeout_mode(timeout_mode_t t);
