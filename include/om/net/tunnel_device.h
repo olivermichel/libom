@@ -9,8 +9,8 @@
 
 #include <string>
 
-#include <net/net.h>
-#include <net/io_interface.h>
+#include <om/net/net.h>
+#include <om/net/io_interface.h>
 
 namespace om {
   namespace net {

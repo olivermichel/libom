@@ -11,11 +11,11 @@
 #include <netinet/in.h>
 #include <sys/select.h>
 
-#include <net/io_interface.h>
-#include <net/net.h>
-#include <tools/random.h>
-#include <tools/time.h>
-#include <tools/tools.h>
+#include <om/net/io_interface.h>
+#include <om/net/net.h>
+#include <om/tools/random.h>
+#include <om/tools/time.h>
+#include <om/tools/tools.h>
 
 #ifndef OM_NET_AGENT_H
 #define OM_NET_AGENT_H

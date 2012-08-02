@@ -16,8 +16,8 @@
 #include <netinet/in.h>
 #include <arpa/inet.h>
 
-#include <net/net.h>
-#include <net/socket.h>
+#include <om/net/net.h>
+#include <om/net/socket.h>
 
 namespace om {
   namespace net {

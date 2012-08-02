@@ -4,7 +4,7 @@
 //  (c) 2012 Oliver Michel
 //
 
-#include "io_interface.h"
+#include <om/net/io_interface.h>
 
 om::net::IOInterface::IOInterface(om::net::IOInterface::iface_type type) 
   : _fd(0), _iface_type(type) {}

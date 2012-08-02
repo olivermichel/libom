@@ -4,7 +4,7 @@
 //  (c) 2012 Oliver Michel
 //
 
-#include "raw_socket.h"
+#include <om/net/raw_socket.h>
       
 om::net::RawSocket::RawSocket()
   throw(std::runtime_error)

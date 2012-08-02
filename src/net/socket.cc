@@ -4,7 +4,7 @@
 //  (c) 2012 Oliver Michel
 //
 
-#include "socket.h"
+#include <om/net/socket.h>
 
 om::net::Socket::Socket(const om::net::IOInterface::iface_type type, 
   const om::net::ip_pair ip_pair)

@@ -4,7 +4,7 @@
 //  (c) 2012 Oliver Michel
 //
 
-#include "net.h"
+#include <om/net/net.h>
 
 om::net::ip_endpoint::ip_endpoint(transport_prototocol tp_proto, 
   std::string nw_addr, int tp_addr) 

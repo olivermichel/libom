@@ -4,7 +4,7 @@
 //  (c) 2012 Oliver Michel
 //
 
-#include <net/datagram_socket.h>
+#include <om/net/datagram_socket.h>
 
 om::net::DatagramSocket::DatagramSocket(const om::net::ip_pair addr_pair)
   throw(std::runtime_error, std::invalid_argument)

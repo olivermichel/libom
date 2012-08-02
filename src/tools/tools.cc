@@ -4,7 +4,7 @@
 //  (c) 2012 Oliver Michel
 //
 
-#include "tools.h"
+#include <om/tools/tools.h>
 
 namespace om {
   namespace tools {

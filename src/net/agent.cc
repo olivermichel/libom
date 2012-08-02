@@ -4,7 +4,7 @@
 //  (c) 2012 Oliver Michel
 //
 
-#include <net/agent.h>
+#include <om/net/agent.h>
 
 om::net::Agent::Agent() 
   : _interfaces(new std::map<int, om::net::IOInterface*>), 
