@@ -33,12 +33,13 @@ TOOLS_INC_DIR = $(INC_DIR)/tools
 
 # lib target names
 
-DYNLIB_NAME = om_lib.so
-STATLIB_NAME = om_lib.a
+DYNLIB_NAME = libom.so
+STATLIB_NAME = libom.a
 
 # library sources
 
-NET_FILES = net io_interface socket datagram_socket tunnel_device agent raw_socket
+NET_FILES = net io_interface socket datagram_socket tunnel_device agent \
+	raw_socket socket_bindable
 TOOLS_FILES = tools logger time random
 
 NET_OBJS = $(addsuffix .o, $(NET_FILES))
