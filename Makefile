@@ -62,7 +62,7 @@ clean:
 libs: $(DYNLIB_NAME) $(STATLIB_NAME)
 
 .PHONY: $(DYNLIB_NAME)
-$(DYNLIB_NAME): $(LIB_DIR) $(BUILD_DIRS) \
+$(DYNLIB_NAME): $(LIB_DIR) build-dirs \
 		$(addprefix $(TOOLS_BUILD_DIR)/, $(TOOLS_OBJS)) \
 		$(addprefix $(NET_BUILD_DIR)/, $(NET_OBJS))
 	
@@ -71,7 +71,7 @@ $(DYNLIB_NAME): $(LIB_DIR) $(BUILD_DIRS) \
 		$(addprefix $(NET_BUILD_DIR)/, $(NET_OBJS))
 
 .PHONY: $(STATLIB_NAME)
-$(STATLIB_NAME): $(LIB_DIR) $(BUILD_DIRS) \
+$(STATLIB_NAME): $(LIB_DIR) build-dirs \
 		$(addprefix $(TOOLS_BUILD_DIR)/, $(TOOLS_OBJS)) \
 		$(addprefix $(NET_BUILD_DIR)/, $(NET_OBJS))
 
@@ -92,7 +92,8 @@ $(TOOLS_BUILD_DIR)/%.o: $(TOOLS_SRC_DIR)/%.cc
 $(LIB_DIR):
 		mkdir -p $(LIB_DIR)
 
-$(BUILD_DIRS):
+.PHONY: build-dirs
+build-dirs:
 		mkdir -p $(BUILD_DIR)
 		mkdir -p $(NET_BUILD_DIR)
 		mkdir -p $(TOOLS_BUILD_DIR)
