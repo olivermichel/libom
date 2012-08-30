@@ -5,17 +5,22 @@
 #
 
 INC_DIR=../include
-LIB_DIR=../lib
+LIB_STATIC_DIR=../lib/static
+BIN_DIR=bin
 
-CXXFLAGS=-I$(INC_DIR) -L$(LIB_DIR) -Wall
+CXXFLAGS=-I$(INC_DIR) -L$(LIB_STATIC_DIR) -Wall
 CXXPOSTFIX=-lom
 
 .PHONY: all
-all: bin/ex_tun_device
+all: $(BIN_DIR)/example_tunnel_device
 
-bin/ex_tun_device:
-	$(CXX) $(CXXFLAGS) -o bin/ex_tun_device ex_tun_device.cc $(CXXPOSTFIX)
+bin/example_tunnel_device: $(BIN_DIR) example_tunnel_device.cc
+		$(CXX) $(CXXFLAGS) -o $(BIN_DIR)/example_tunnel_device \
+			example_tunnel_device.cc $(CXXPOSTFIX)
+
+$(BIN_DIR):
+	mkdir -p bin
 
 .PHONY: clean
 clean:
-	rm -rf bin/*
+	rm -rf $(BIN_DIR)/*
