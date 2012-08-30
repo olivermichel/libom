@@ -31,6 +31,8 @@ TOOLS_BUILD_DIR = $(BUILD_DIR)/tools
 TOOLS_SRC_DIR = $(SRC_DIR)/tools
 TOOLS_INC_DIR = $(INC_DIR)/tools
 
+DYNLIB_DIR = $(LIB_DIR)/dynamic
+STATLIB_DIR = $(LIB_DIR)/static
 # lib target names
 
 DYNLIB_NAME = libom.so
@@ -54,7 +56,7 @@ all: libs
 clean:
 		rm -f $(NET_BUILD_DIR)/*.o
 		rm -f $(TOOLS_BUILD_DIR)/*.o 
-		rm -f $(LIB_DIR)/$(DYNLIB_NAME) $(LIB_DIR)/$(STATLIB_NAME)
+		rm -f $(DYNLIB_DIR)/$(DYNLIB_NAME) $(STATLIB_DIR)/$(STATLIB_NAME)
 
 # libraries
 
@@ -62,22 +64,22 @@ clean:
 libs: $(DYNLIB_NAME) $(STATLIB_NAME)
 
 .PHONY: $(DYNLIB_NAME)
-$(DYNLIB_NAME): $(LIB_DIR) build-dirs \
+$(DYNLIB_NAME): $(LIB_DIR) $(DYNLIB_DIR) build-dirs \
 		$(addprefix $(TOOLS_BUILD_DIR)/, $(TOOLS_OBJS)) \
 		$(addprefix $(NET_BUILD_DIR)/, $(NET_OBJS))
 	
-	$(CXX) -shared -o $(LIB_DIR)/$(DYNLIB_NAME) \
+	$(CXX) -shared -o $(DYNLIB_DIR)/$(DYNLIB_NAME) \
 		$(addprefix $(TOOLS_BUILD_DIR)/, $(TOOLS_OBJS)) \
 		$(addprefix $(NET_BUILD_DIR)/, $(NET_OBJS))
 
 .PHONY: $(STATLIB_NAME)
-$(STATLIB_NAME): $(LIB_DIR) build-dirs \
+$(STATLIB_NAME): $(LIB_DIR) $(STATLIB_DIR) build-dirs \
 		$(addprefix $(TOOLS_BUILD_DIR)/, $(TOOLS_OBJS)) \
 		$(addprefix $(NET_BUILD_DIR)/, $(NET_OBJS))
 
-	ar ru $(LIB_DIR)/$(STATLIB_NAME) $(addprefix $(NET_BUILD_DIR)/, $(NET_OBJS)) \
+	ar ru $(STATLIB_DIR)/$(STATLIB_NAME) $(addprefix $(NET_BUILD_DIR)/, $(NET_OBJS)) \
 		$(addprefix $(TOOLS_BUILD_DIR)/, $(TOOLS_OBJS))
-	ranlib $(LIB_DIR)/$(STATLIB_NAME)
+	ranlib $(STATLIB_DIR)/$(STATLIB_NAME)
 
 # general compile rule
 
@@ -91,6 +93,12 @@ $(TOOLS_BUILD_DIR)/%.o: $(TOOLS_SRC_DIR)/%.cc
 
 $(LIB_DIR):
 		mkdir -p $(LIB_DIR)
+
+$(DYNLIB_DIR):
+		mkdir -p $(DYNLIB_DIR)
+
+$(STATLIB_DIR):
+		mkdir -p $(STATLIB_DIR)
 
 .PHONY: build-dirs
 build-dirs:
