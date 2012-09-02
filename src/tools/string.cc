@@ -14,7 +14,7 @@ void om::tools::string::split(const std::string& s, char c,
   std::string::size_type j = s.find(c);
 
   while(j != std::string::npos) {
-    v.push_back(s.substr(i,j-1));
+    v.push_back(s.substr(i, j-i));
     i = ++j;
     j = s.find(c, j);
 
