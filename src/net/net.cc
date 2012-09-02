@@ -6,12 +6,126 @@
 
 #include <om/net/net.h>
 
-om::net::ip_endpoint::ip_endpoint(transport_prototocol tp_proto, 
+om::net::nw_addr::nw_addr() {
+
+  _addr[0] = 0, _addr[1] = 0, _addr[2] = 0, _addr[3] = 0;
+}
+
+om::net::nw_addr::nw_addr(const std::string& addr) 
+  throw(std::invalid_argument) {
+
+  this->read_string(addr);
+}
+
+om::net::nw_addr::nw_addr(const char* addr) 
+  throw(std::invalid_argument) {
+
+  this->read_string(std::string(addr));
+}
+
+om::net::nw_addr::nw_addr(const om::net::nw_addr& copy_from) {
+
+  std::memcpy(&_addr, copy_from._addr, 4);
+}
+
+om::net::nw_addr& om::net::nw_addr::operator=(om::net::nw_addr& copy_from) {
+
+  std::memcpy(&_addr, copy_from._addr, 4);
+  return *this;
+}
+
+om::net::nw_addr& om::net::nw_addr::operator=(std::string addr) {
+
+  _addr[0] = 0, _addr[1] = 0, _addr[2] = 0, _addr[3] = 0;
+  return *this;
+}
+
+void om::net::nw_addr::read_string(std::string s) {
+
+  std::vector<std::string> v;
+  om::tools::string::split(s, '.', v);
+
+  if(v.size() != 4)
+    throw std::invalid_argument("nw_addr(): invalid IPv4 address");
+
+  for(size_t i = 0; i < 4; ++i) {
+    unsigned int b = atoi(v[i].c_str());
+    if(b >= 0 && b <= 255)
+      _addr[i] = b & 0xff;
+    else
+      throw std::invalid_argument("nw_addr(): invalid IPv4 address");
+  }
+}
+
+bool om::net::nw_addr::is_empty() {
+
+  return _addr[0] == 0 && _addr[1] == 0 && _addr[2] == 0 && _addr[3] == 0;
+}
+
+std::string om::net::nw_addr::to_string() {
+
+  std::stringstream s;
+  s << (unsigned int) _addr[0] << '.' << (unsigned int) _addr[1] << '.';
+  s << (unsigned int) _addr[2] << '.' << (unsigned int) _addr[3];
+  return s.str();
+}
+
+char* om::net::nw_addr::to_cstring() {
+
+  return (char*)(to_string().c_str());
+}
+
+om::net::nw_pair::nw_pair()
+  : src(), dst() {}
+
+om::net::nw_pair::nw_pair(om::net::nw_addr src, om::net::nw_addr dst)
+  : src(src), dst(dst) {}
+
+om::net::nw_pair::nw_pair(const om::net::nw_pair& copy_from) 
+  : src(copy_from.src), dst(copy_from.dst) {}
+
+om::net::nw_pair& om::net::nw_pair::operator=(om::net::nw_pair& copy_from) {
+
+  src = copy_from.src, dst = copy_from.dst;
+  return *this;
+}
+
+om::net::tp_addr::tp_addr()
+  : addr(), proto(om::net::tp_proto_undefined), port(0) {}
+
+om::net::tp_addr::tp_addr(om::net::nw_addr addr, om::net::tp_proto proto, 
+  int port) 
+  : addr(addr), proto(proto), port(port) {}
+
+om::net::tp_addr::tp_addr(const om::net::tp_addr& copy_from) 
+  : addr(copy_from.addr), proto(copy_from.proto), port(copy_from.port) {}
+
+om::net::tp_addr& om::net::tp_addr::operator=(om::net::tp_addr&) {
+
+  return *this;
+}
+
+om::net::tp_pair::tp_pair()
+  : src(), dst() {}
+
+om::net::tp_pair::tp_pair(om::net::tp_addr src, om::net::tp_addr dst) 
+  : src(src), dst(dst) {}
+
+om::net::tp_pair::tp_pair(const om::net::tp_pair& copy_from) 
+  : src(copy_from.src), dst(copy_from.dst) {}
+
+om::net::tp_pair& om::net::tp_pair::operator=(om::net::tp_pair& copy_from) {
+
+  src = copy_from.src, dst = copy_from.dst;
+  return *this;
+}
+
+om::net::ip_endpoint::ip_endpoint(tp_proto proto, 
   std::string nw_addr, int tp_addr) 
-  : tp_proto(tp_proto), nw_addr(nw_addr), tp_addr(tp_addr) {}
+  : proto(proto), nw_addr(nw_addr), tp_addr(tp_addr) {}
 
 om::net::ip_endpoint::ip_endpoint(const ip_endpoint& copy_from)
-  : tp_proto(copy_from.tp_proto), nw_addr(copy_from.nw_addr),
+  : proto(copy_from.proto), nw_addr(copy_from.nw_addr),
     tp_addr(copy_from.tp_addr) {}
 
 om::net::ip_pair::ip_pair(ip_endpoint src, ip_endpoint dst) 
@@ -50,6 +164,38 @@ unsigned long om::net::unpack_i32(unsigned char *buf) {
   return (buf[0] << 24) | (buf[1] << 16) | (buf[2] << 8) | (buf[3]);
 }
 
+void om::net::sockaddr_from_tp_addr(om::net::tp_addr* ta, sockaddr_in* sa) {
+
+  if(ta->addr.is_empty())
+    sa->sin_addr.s_addr = INADDR_ANY;
+  else
+    inet_pton(AF_INET, ta->addr.to_cstring(), &sa->sin_addr);
+
+  sa->sin_family = AF_INET;
+  sa->sin_port = htons(ta->port);
+  memset(&(sa->sin_zero), '\0', 8);
+}
+
+void om::net::sockaddr_from_tp_addr(om::net::tp_addr ta, sockaddr_in* sa) {
+
+  if(ta.addr.is_empty())
+    sa->sin_addr.s_addr = INADDR_ANY;
+  else
+    inet_pton(AF_INET, ta.addr.to_cstring(), &sa->sin_addr);
+
+  sa->sin_family = AF_INET;
+  sa->sin_port = htons(ta.port);
+  memset(&(sa->sin_zero), '\0', 8);
+}
+
+void om::net::tp_addr_from_sockaddr(sockaddr_in* sa, om::net::tp_addr* ta) {
+
+  ta->addr = std::string(inet_ntoa(sa->sin_addr));
+  ta->proto = om::net::tp_proto_undefined;
+  ta->port = ntohs(sa->sin_port);
+}
+
+// DEPRECATED
 void om::net::setup_addr_struct(sockaddr_in *s, om::net::ip_endpoint endpoint) {
 
   if(endpoint.nw_addr == "0.0.0.0") 
@@ -69,14 +215,16 @@ void om::net::setup_addr_struct(sockaddr_in *s, om::net::ip_endpoint endpoint) {
   memset(&(s->sin_zero), '\0', 8);
 }
 
+// DEPRECATED
 void om::net::ip_endpoint_from_addr_struct(sockaddr_in *s, 
   om::net::ip_endpoint *e) {
 
   e->nw_addr = std::string(inet_ntoa(s->sin_addr));
   e->tp_addr = ntohs(s->sin_port);
-  e->tp_proto = om::net::tp_proto_undefined;
+  e->proto = om::net::tp_proto_undefined;
 }
 
+// DEPRECATED
 void om::net::setup_addr_struct(sockaddr_in *s, int family, 
   std::string addr, int port) {
 

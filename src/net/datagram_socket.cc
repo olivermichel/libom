@@ -29,7 +29,7 @@ int om::net::DatagramSocket::open(const om::net::ip_endpoint addr)
   if(_fd != 0) 
     throw std::logic_error("Socket already opened");
   
-  if(addr.tp_proto != om::net::tp_proto_udp)
+  if(addr.proto != om::net::tp_proto_udp)
     throw std::invalid_argument("ip_endpoint must be an UDP endpoint");
 
   int fd, yes = 1;
