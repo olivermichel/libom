@@ -41,6 +41,8 @@ namespace om {
       bool is_empty() const;
       std::string to_string() const;
       char* to_cstring() const;
+      unsigned char* bytes() const;
+
     private:
       void read_string(std::string s);
       unsigned char _addr[4];
@@ -65,14 +67,15 @@ namespace om {
 
     struct tp_addr {
       tp_addr();
-      tp_addr(nw_addr addr, tp_proto proto, int port);
+      tp_addr(nw_addr addr, uint8_t proto, uint16_t port);
       tp_addr(const tp_addr& copy_from);
       tp_addr& operator=(tp_addr&);
       bool operator==(const tp_addr& other) const;
       bool operator<(const tp_addr& other) const;
+      void copy_bytes(unsigned char* dst) const;
       nw_addr addr;
-      tp_proto proto;
-      int port;
+      uint8_t proto;
+      uint16_t port;
     };
 
     struct tp_pair {
@@ -82,6 +85,7 @@ namespace om {
       tp_pair& operator=(tp_pair&);
       bool operator==(const tp_pair& other) const;
       bool operator<(const tp_pair& other) const;
+      void copy_bytes(unsigned char* dst) const;
       tp_addr src;
       tp_addr dst;
     };

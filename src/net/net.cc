@@ -87,6 +87,11 @@ char* om::net::nw_addr::to_cstring() const {
   return (char*)(to_string().c_str());
 }
 
+unsigned char* om::net::nw_addr::bytes() const {
+
+  return (unsigned char*)_addr;
+}
+
 om::net::nw_pair::nw_pair()
   : src(), dst() {}
 
@@ -115,8 +120,7 @@ bool om::net::nw_pair::operator<(const om::net::nw_pair& other) const {
 om::net::tp_addr::tp_addr()
   : addr(), proto(om::net::tp_proto_undefined), port(0) {}
 
-om::net::tp_addr::tp_addr(om::net::nw_addr addr, om::net::tp_proto proto, 
-  int port) 
+om::net::tp_addr::tp_addr(om::net::nw_addr addr, uint8_t proto, uint16_t port) 
   : addr(addr), proto(proto), port(port) {}
 
 om::net::tp_addr::tp_addr(const om::net::tp_addr& copy_from) 
@@ -135,6 +139,13 @@ bool om::net::tp_addr::operator==(const om::net::tp_addr& other) const {
 bool om::net::tp_addr::operator<(const om::net::tp_addr& other) const {
 
   return addr < other.addr || proto < other.proto || port < other.port;
+}
+
+void om::net::tp_addr::copy_bytes(unsigned char* dst) const {
+
+  std::memcpy(dst, addr.bytes(), 4);
+  dst[4] = proto;
+  dst[5] = port >> 8, dst[6] = port;
 }
 
 om::net::tp_pair::tp_pair()
@@ -160,6 +171,15 @@ bool om::net::tp_pair::operator==(const om::net::tp_pair& other) const {
 bool om::net::tp_pair::operator<(const om::net::tp_pair& other) const {
 
   return src < other.src || dst < other.dst;
+}
+
+void om::net::tp_pair::copy_bytes(unsigned char* dst) const {
+
+  unsigned char buf1[7] = {0}, buf2[7] = {0};
+  this->src.copy_bytes(buf1);
+  this->src.copy_bytes(buf2);
+  std::memcpy(dst, buf1, 7);
+  std::memcpy(dst, buf2, 7);
 }
 
 om::net::ip_endpoint::ip_endpoint(tp_proto proto, 

@@ -20,8 +20,8 @@ int main(int argc, char const *argv[]) {
   om::net::nw_addr addr2 = "121.19.4.22";
 
   // a full L4 socket specification is given by the 3-tuple ip, protocol, port
-  om::net::tp_addr e1 = om::net::tp_addr(addr1, om::net::tp_proto_tcp, 80);
-  om::net::tp_addr e2 = om::net::tp_addr(addr2, om::net::tp_proto_tcp, 80);
+  om::net::tp_addr e1 = om::net::tp_addr(addr1, 0x6, 80);
+  om::net::tp_addr e2 = om::net::tp_addr(addr2, 0x6, 80);
 
   // pairs can be built on both the network and transport layer
   om::net::nw_pair p1(addr1, addr2);
@@ -68,6 +68,14 @@ int main(int argc, char const *argv[]) {
     std::cout << " flowtable contains p3" << std::endl;
   else
     std::cout << " flowtables does not contain p3" << std::endl;
+
+  unsigned char buf[14] = {0}, buf1[7] = {0}, buf2[7] = {0};
+
+  e1.copy_bytes(buf1);
+  e2.copy_bytes(buf2);
+
+  std::memcpy(buf, buf1, 7);
+  std::memcpy(buf+7, buf2, 7);
 
   return 0;
 }
