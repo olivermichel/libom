@@ -40,6 +40,18 @@ om::net::nw_addr& om::net::nw_addr::operator=(std::string addr) {
   return *this;
 }
 
+bool om::net::nw_addr::operator==(const om::net::nw_addr& other) const {
+
+  return  _addr[0] == other._addr[0] && _addr[1] == other._addr[1] &&
+          _addr[2] == other._addr[2] &&_addr[3] == other._addr[3];
+}
+
+bool om::net::nw_addr::operator<(const om::net::nw_addr& other) const {
+
+  return  _addr[0] < other._addr[0] || _addr[1] < other._addr[1] ||
+          _addr[2] < other._addr[2] || _addr[3] < other._addr[3];
+}
+
 void om::net::nw_addr::read_string(std::string s) {
 
   std::vector<std::string> v;
@@ -57,12 +69,12 @@ void om::net::nw_addr::read_string(std::string s) {
   }
 }
 
-bool om::net::nw_addr::is_empty() {
+bool om::net::nw_addr::is_empty() const {
 
   return _addr[0] == 0 && _addr[1] == 0 && _addr[2] == 0 && _addr[3] == 0;
 }
 
-std::string om::net::nw_addr::to_string() {
+std::string om::net::nw_addr::to_string() const {
 
   std::stringstream s;
   s << (unsigned int) _addr[0] << '.' << (unsigned int) _addr[1] << '.';
@@ -70,7 +82,7 @@ std::string om::net::nw_addr::to_string() {
   return s.str();
 }
 
-char* om::net::nw_addr::to_cstring() {
+char* om::net::nw_addr::to_cstring() const {
 
   return (char*)(to_string().c_str());
 }
@@ -90,6 +102,16 @@ om::net::nw_pair& om::net::nw_pair::operator=(om::net::nw_pair& copy_from) {
   return *this;
 }
 
+bool om::net::nw_pair::operator==(const om::net::nw_pair& other) const {
+
+  return src == other.src && dst == other.dst;
+}
+
+bool om::net::nw_pair::operator<(const om::net::nw_pair& other) const {
+
+  return src < other.src || dst < other.dst;
+}
+
 om::net::tp_addr::tp_addr()
   : addr(), proto(om::net::tp_proto_undefined), port(0) {}
 
@@ -105,6 +127,16 @@ om::net::tp_addr& om::net::tp_addr::operator=(om::net::tp_addr&) {
   return *this;
 }
 
+bool om::net::tp_addr::operator==(const om::net::tp_addr& other) const {
+
+  return addr == other.addr && proto == other.proto && port == other.port;
+}
+
+bool om::net::tp_addr::operator<(const om::net::tp_addr& other) const {
+
+  return addr < other.addr || proto < other.proto || port < other.port;
+}
+
 om::net::tp_pair::tp_pair()
   : src(), dst() {}
 
@@ -118,6 +150,16 @@ om::net::tp_pair& om::net::tp_pair::operator=(om::net::tp_pair& copy_from) {
 
   src = copy_from.src, dst = copy_from.dst;
   return *this;
+}
+
+bool om::net::tp_pair::operator==(const om::net::tp_pair& other) const {
+
+  return src == other.src && dst == other.dst;
+}
+
+bool om::net::tp_pair::operator<(const om::net::tp_pair& other) const {
+
+  return src < other.src || dst < other.dst;
 }
 
 om::net::ip_endpoint::ip_endpoint(tp_proto proto, 

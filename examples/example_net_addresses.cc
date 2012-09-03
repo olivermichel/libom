@@ -6,7 +6,7 @@
 
 #include <iostream>
 #include <string>
-#include <vector>
+#include <set>
 
 #include <netinet/in.h>
 
@@ -52,6 +52,22 @@ int main(int argc, char const *argv[]) {
 
   om::net::tp_addr e3;
   om::net::tp_addr_from_sockaddr(&i, &e3);
+
+  std::set<om::net::tp_pair> flowtable;
+
+  flowtable.insert(p3);
+
+  om::net::tp_pair p4(
+    om::net::tp_addr("192.168.1.1", om::net::tp_proto_udp, 8283),
+    om::net::tp_addr("192.168.1.2", om::net::tp_proto_udp, 8283)
+  );  
+
+  flowtable.insert(p4);
+
+  if(flowtable.find(p3) != flowtable.end())
+    std::cout << " flowtable contains p3" << std::endl;
+  else
+    std::cout << " flowtables does not contain p3" << std::endl;
 
   return 0;
 }

@@ -36,9 +36,11 @@ namespace om {
       nw_addr(const nw_addr& copy_from);
       nw_addr& operator=(nw_addr&);
       nw_addr& operator=(std::string addr);
-      bool is_empty();
-      std::string to_string();
-      char* to_cstring();
+      bool operator==(const nw_addr& other) const;
+      bool operator<(const nw_addr& other) const;
+      bool is_empty() const;
+      std::string to_string() const;
+      char* to_cstring() const;
     private:
       void read_string(std::string s);
       unsigned char _addr[4];
@@ -49,6 +51,8 @@ namespace om {
       explicit nw_pair(nw_addr src, nw_addr dst);
       explicit nw_pair(const nw_pair& copy_from);
       nw_pair& operator=(nw_pair&);
+      bool operator==(const nw_pair& other) const;
+      bool operator<(const nw_pair& other) const;
       nw_addr src;
       nw_addr dst;
     };
@@ -64,6 +68,8 @@ namespace om {
       tp_addr(nw_addr addr, tp_proto proto, int port);
       tp_addr(const tp_addr& copy_from);
       tp_addr& operator=(tp_addr&);
+      bool operator==(const tp_addr& other) const;
+      bool operator<(const tp_addr& other) const;
       nw_addr addr;
       tp_proto proto;
       int port;
@@ -74,6 +80,8 @@ namespace om {
       explicit tp_pair(tp_addr src, tp_addr dst);
       explicit tp_pair(const tp_pair& copy_from);
       tp_pair& operator=(tp_pair&);
+      bool operator==(const tp_pair& other) const;
+      bool operator<(const tp_pair& other) const;
       tp_addr src;
       tp_addr dst;
     };
