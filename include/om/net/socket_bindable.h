@@ -7,14 +7,16 @@
 #ifndef OM_NET_SOCKET_BINDABLE_H
 #define OM_NET_SOCKET_BINDABLE_H
 
-#include <stdexcept>
 #include <iostream>
+#include <stdexcept>
 #include <string>
 
 #include <cstdio>
+#include <errno.h>
+#include <net/if.h>
 
-#include <om/net/net.h>
 #include <om/net/io_interface.h>
+#include <om/net/net.h>
 
 namespace om {
   namespace net {

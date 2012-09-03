@@ -7,10 +7,10 @@
 #ifndef OM_TOOLS_STRING_H
 #define OM_TOOLS_STRING_H
 
-#include <string>
-#include <vector>
 #include <functional>
 #include <iostream>
+#include <string>
+#include <vector>
 
 namespace om {
   namespace tools {

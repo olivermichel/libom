@@ -7,21 +7,16 @@
 #ifndef OM_NET_NET_H
 #define OM_NET_NET_H
 
-#include <fcntl.h>
-#include <linux/if_tun.h>
-#include <net/if.h>
-#include <stdexcept>
-#include <string.h>
-#include <sys/ioctl.h>
-#include <errno.h>
-#include <netinet/in.h>
-#include <netinet/ip.h>
-#include <arpa/inet.h>
-#include <string>
-#include <iostream>
 #include <cstdlib>
 #include <cstring>
+#include <iostream>
 #include <sstream>
+#include <stdexcept>
+#include <string>
+
+#include <arpa/inet.h>
+#include <netinet/in.h>
+#include <netinet/ip.h>
 
 #include <om/tools/string.h>
 
@@ -29,16 +24,21 @@ namespace om {
   namespace net {
 
     class nw_addr {
+
     public:
       nw_addr();
       nw_addr(const char* addr) throw(std::invalid_argument);
       nw_addr(const std::string& addr) throw(std::invalid_argument);
       nw_addr(const nw_addr& copy_from);
+
       nw_addr& operator=(nw_addr&);
       nw_addr& operator=(std::string addr);
+
       bool operator==(const nw_addr& other) const;
       bool operator<(const nw_addr& other) const;
+
       bool is_empty() const;
+
       std::string to_string() const;
       char* to_cstring() const;
       unsigned char* bytes() const;
@@ -49,47 +49,63 @@ namespace om {
     };
 
     struct nw_pair {
+
       explicit nw_pair();
       explicit nw_pair(nw_addr src, nw_addr dst);
       explicit nw_pair(const nw_pair& copy_from);
+
       nw_pair& operator=(nw_pair&);
+
       bool operator==(const nw_pair& other) const;
       bool operator<(const nw_pair& other) const;
+
       nw_addr src;
       nw_addr dst;
     };
 
     enum tp_proto {
+
       tp_proto_tcp        = 0x6,
       tp_proto_udp        = 0x11,
       tp_proto_undefined  = 0xff
     };
 
     struct tp_addr {
+
       tp_addr();
       tp_addr(nw_addr addr, uint8_t proto, uint16_t port);
       tp_addr(const tp_addr& copy_from);
+
       tp_addr& operator=(tp_addr&);
+
       bool operator==(const tp_addr& other) const;
       bool operator<(const tp_addr& other) const;
+
       void copy_bytes(unsigned char* dst) const;
+
       nw_addr addr;
       uint8_t proto;
       uint16_t port;
     };
 
     struct tp_pair {
+
       explicit tp_pair();
       explicit tp_pair(tp_addr src, tp_addr dst);
       explicit tp_pair(const tp_pair& copy_from);
+
       tp_pair& operator=(tp_pair&);
+
       bool operator==(const tp_pair& other) const;
       bool operator<(const tp_pair& other) const;
+
       void copy_bytes(unsigned char* dst) const;
+
       tp_addr src;
       tp_addr dst;
     };
 
+    // DEPRECATED
     struct ip_endpoint {
       
       explicit ip_endpoint() {}
@@ -102,7 +118,9 @@ namespace om {
       int tp_addr;
     };
 
+    // DEPRECATED
     struct ip_pair {
+
       explicit ip_pair() {}
       ip_pair(ip_endpoint src, ip_endpoint dst);
       ip_pair(const ip_pair& copy_from);
