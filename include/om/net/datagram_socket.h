@@ -31,6 +31,7 @@ namespace om {
       explicit DatagramSocket(const om::net::ip_endpoint addr) 
         throw(std::runtime_error, std::invalid_argument);
       DatagramSocket(const om::net::DatagramSocket &copy_from);
+      DatagramSocket& operator=(DatagramSocket& copy_from);
 
       int open(const om::net::ip_endpoint addr)
         throw(std::runtime_error, std::logic_error, std::invalid_argument);

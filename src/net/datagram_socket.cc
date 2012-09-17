@@ -23,6 +23,14 @@ om::net::DatagramSocket::DatagramSocket(const om::net::ip_endpoint addr)
 om::net::DatagramSocket::DatagramSocket(const om::net::DatagramSocket &copy_from)
   : om::net::Socket(copy_from) {}
 
+
+om::net::DatagramSocket& 
+  om::net::DatagramSocket::operator=(om::net::DatagramSocket& copy_from) {
+
+  om::net::Socket::operator=(copy_from);
+  return *this;
+}
+
 int om::net::DatagramSocket::open(const om::net::ip_endpoint addr) 
   throw(std::runtime_error, std::logic_error, std::invalid_argument) {
 
