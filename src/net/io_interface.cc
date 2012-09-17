@@ -12,6 +12,15 @@ om::net::IOInterface::IOInterface(om::net::IOInterface::iface_type type)
 om::net::IOInterface::IOInterface(const om::net::IOInterface &copy_from) 
   : _fd(copy_from._fd), _iface_type(copy_from._iface_type) {}
 
+om::net::IOInterface& 
+  om::net::IOInterface::operator=(const om::net::IOInterface& copy_from) {
+
+  _fd = copy_from._fd;
+  _iface_type = copy_from._iface_type;
+
+  return *this;
+}
+
 int om::net::IOInterface::fd() {
 
   return _fd;

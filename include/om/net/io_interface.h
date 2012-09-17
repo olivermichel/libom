@@ -29,7 +29,8 @@ namespace om {
       };
 
       explicit IOInterface(iface_type type);
-      IOInterface(const IOInterface &copy_from);
+      IOInterface(const IOInterface& copy_from);
+      IOInterface& operator=(const IOInterface& copy_from);
 
       int fd();
 
