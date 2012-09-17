@@ -19,6 +19,15 @@ om::net::Socket::Socket(const om::net::Socket &copy_from)
   : om::net::IOInterface(copy_from), _addr(copy_from._addr),
     _default_remote_addr(copy_from._default_remote_addr) {} 
 
+om::net::Socket& om::net::Socket::operator=(om::net::Socket& copy_from) {
+
+  om::net::IOInterface::operator=(copy_from);
+  _addr = copy_from._addr;
+  _default_remote_addr = copy_from._default_remote_addr;
+
+  return *this;
+}
+
 om::net::ip_endpoint om::net::Socket::addr() {
 
   return _addr;

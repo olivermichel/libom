@@ -28,6 +28,8 @@ namespace om {
         const om::net::ip_endpoint addr);
       Socket(const om::net::Socket &copy_from);
 
+      Socket& operator=(Socket& copy_from);
+
       om::net::ip_endpoint addr();
       om::net::ip_endpoint default_remote_addr();
 
