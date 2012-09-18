@@ -230,7 +230,7 @@ unsigned long om::net::unpack_i32(unsigned char *buf) {
   return (buf[0] << 24) | (buf[1] << 16) | (buf[2] << 8) | (buf[3]);
 }
 
-void om::net::sockaddr_from_tp_addr(om::net::tp_addr* ta, sockaddr_in* sa) {
+void om::net::sockaddr_from_tp_addr(const om::net::tp_addr* ta, sockaddr_in* sa) {
 
   if(ta->addr.is_empty())
     sa->sin_addr.s_addr = INADDR_ANY;
@@ -242,7 +242,7 @@ void om::net::sockaddr_from_tp_addr(om::net::tp_addr* ta, sockaddr_in* sa) {
   memset(&(sa->sin_zero), '\0', 8);
 }
 
-void om::net::sockaddr_from_tp_addr(om::net::tp_addr ta, sockaddr_in* sa) {
+void om::net::sockaddr_from_tp_addr(const om::net::tp_addr ta, sockaddr_in* sa) {
 
   if(ta.addr.is_empty())
     sa->sin_addr.s_addr = INADDR_ANY;
@@ -254,7 +254,30 @@ void om::net::sockaddr_from_tp_addr(om::net::tp_addr ta, sockaddr_in* sa) {
   memset(&(sa->sin_zero), '\0', 8);
 }
 
-void om::net::tp_addr_from_sockaddr(sockaddr_in* sa, om::net::tp_addr* ta) {
+
+void om::net::sockaddr_from_nw_addr(const om::net::nw_addr* na, sockaddr_in* sa) {
+
+  if(na->is_empty())
+    sa->sin_addr.s_addr = INADDR_ANY;
+  else
+    inet_pton(AF_INET, na->to_cstring(), &sa->sin_addr);
+
+  sa->sin_family = AF_INET;
+  memset(&(sa->sin_zero), '\0', 8);
+}
+
+void om::net::sockaddr_from_nw_addr(const om::net::nw_addr na, sockaddr_in* sa) {
+
+  if(na.is_empty())
+    sa->sin_addr.s_addr = INADDR_ANY;
+  else
+    inet_pton(AF_INET, na.to_cstring(), &sa->sin_addr);
+
+  sa->sin_family = AF_INET;
+  memset(&(sa->sin_zero), '\0', 8);
+}
+
+void om::net::tp_addr_from_sockaddr(const sockaddr_in* sa, om::net::tp_addr* ta) {
 
   ta->addr = std::string(inet_ntoa(sa->sin_addr));
   ta->proto = om::net::tp_proto_undefined;

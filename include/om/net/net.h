@@ -141,11 +141,15 @@ namespace om {
 
     unsigned long unpack_i32(unsigned char *buf);
 
-    void sockaddr_from_tp_addr(tp_addr* ta, sockaddr_in* sa);
+    void sockaddr_from_tp_addr(const tp_addr* ta, sockaddr_in* sa);
 
-    void sockaddr_from_tp_addr(tp_addr ta, sockaddr_in* sa);
+    void sockaddr_from_tp_addr(const tp_addr ta, sockaddr_in* sa);
 
-    void tp_addr_from_sockaddr(sockaddr_in* sa, tp_addr* ta);
+    void sockaddr_from_nw_addr(const nw_addr* na, sockaddr_in* sa);
+
+    void sockaddr_from_nw_addr(const nw_addr na, sockaddr_in* sa);
+
+    void tp_addr_from_sockaddr(const sockaddr_in* sa, tp_addr* ta);
 
     // DEPRECATED
     void setup_addr_struct(sockaddr_in *s, int family, std::string addr, 
