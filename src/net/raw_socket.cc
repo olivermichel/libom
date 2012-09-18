@@ -8,43 +8,32 @@
       
 om::net::RawSocket::RawSocket(const int family, const int protocol)
   throw(std::runtime_error)
-  : IOInterface(IOInterface::iface_type_sock_raw), _default_remote_addr(""),
-    _default_remote_protocol(-1), _family(family), _protocol(protocol) {
+  : IOInterface(IOInterface::iface_type_sock_raw), _family(family), 
+    _protocol(protocol) {
 
   _fd = this->open(family, protocol);
 }
 
-om::net::RawSocket::RawSocket(const std::string default_remote_addr, 
-  const int default_remote_protocol, const int family, const int protocol)
-  throw(std::runtime_error, std::invalid_argument)
-  : IOInterface(IOInterface::iface_type_sock_raw), 
-    _default_remote_addr(default_remote_addr), 
-    _default_remote_protocol(default_remote_protocol), 
-    _family(family), _protocol(protocol) {
-
-  _fd = this->open(family, protocol);
-}
-
-om::net::RawSocket::RawSocket(const om::net::RawSocket &copy_from)
-  : IOInterface(IOInterface::iface_type_sock_raw),
-    _default_remote_addr(copy_from._default_remote_addr),
-    _default_remote_protocol(copy_from._default_remote_protocol),
-    _family(copy_from._family), _protocol(copy_from._protocol) {
+om::net::RawSocket::RawSocket(const om::net::RawSocket& copy_from)
+  : IOInterface(IOInterface::iface_type_sock_raw),_family(copy_from._family), 
+    _protocol(copy_from._protocol) {
 
   _fd = copy_from._fd;
 }
 
-int om::net::RawSocket::send_raw(const char* tx_data, 
-  const size_t data_len) {
+om::net::RawSocket& om::net::RawSocket::operator=(om::net::RawSocket& copy_from) {
 
-  return this->send_raw(_default_remote_addr, tx_data, data_len);
+  _family = copy_from._family;
+  _protocol = copy_from._protocol;
+
+  return *this;
 }
 
-int om::net::RawSocket::send_raw(const std::string remote_addr, 
+int om::net::RawSocket::send(const om::net::nw_addr remote_addr, 
   const char* tx_data, const size_t data_len) {
 
   struct sockaddr_in dst_addr;
-  om::net::setup_addr_struct(&dst_addr, AF_INET, remote_addr, 0);
+  om::net::sockaddr_from_nw_addr(&remote_addr, &dst_addr);
 
   int tx_bytes = sendto(_fd, tx_data, data_len, 0, 
     (struct sockaddr *)&dst_addr, sizeof(struct sockaddr));
@@ -55,8 +44,10 @@ int om::net::RawSocket::send_raw(const std::string remote_addr,
   return tx_bytes;
 }
 
-int om::net::RawSocket::receive(std::string *from, int* protocol, 
-  unsigned char *rx_buf, const size_t buf_len) {
+int om::net::RawSocket::receive(om::net::nw_addr* from, int* protocol, 
+  unsigned char* rx_buf, const size_t buf_len) {
+
+  /////////////////
 
   return 0;
 }
