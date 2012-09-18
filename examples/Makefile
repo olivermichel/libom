@@ -12,15 +12,20 @@ CXXFLAGS=-I$(INC_DIR) -L$(LIB_STATIC_DIR) -Wall
 CXXPOSTFIX=-lom
 
 .PHONY: all
-all: $(BIN_DIR)/example_tunnel_device $(BIN_DIR)/example_net_addresses
+all: $(BIN_DIR)/example_tunnel_device $(BIN_DIR)/example_net_addresses \
+	$(BIN_DIR)/example_datagram_socket
 
-bin/example_tunnel_device: $(BIN_DIR) example_tunnel_device.cc
+$(BIN_DIR)/example_tunnel_device: $(BIN_DIR) example_tunnel_device.cc
 		$(CXX) $(CXXFLAGS) -o $(BIN_DIR)/example_tunnel_device \
 			example_tunnel_device.cc $(CXXPOSTFIX)
 
-bin/example_net_addresses: $(BIN_DIR) example_net_addresses.cc
+$(BIN_DIR)/example_net_addresses: $(BIN_DIR) example_net_addresses.cc
 		$(CXX) $(CXXFLAGS) -o $(BIN_DIR)/example_net_addresses \
 			example_net_addresses.cc $(CXXPOSTFIX)
+
+$(BIN_DIR)/example_datagram_socket: $(BIN_DIR) example_datagram_socket.cc
+		$(CXX) $(CXXFLAGS) -o $(BIN_DIR)/example_datagram_socket \
+			example_datagram_socket.cc $(CXXPOSTFIX)
 
 $(BIN_DIR):
 	mkdir -p bin
