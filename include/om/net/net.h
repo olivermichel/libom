@@ -105,30 +105,6 @@ namespace om {
       tp_addr dst;
     };
 
-    // DEPRECATED
-    struct ip_endpoint {
-      
-      explicit ip_endpoint() {}
-      ip_endpoint(tp_proto proto, std::string nw_addr, 
-        int tp_addr);
-      ip_endpoint(const ip_endpoint& copy_from);
-      
-      tp_proto proto;
-      std::string nw_addr;
-      int tp_addr;
-    };
-
-    // DEPRECATED
-    struct ip_pair {
-
-      explicit ip_pair() {}
-      ip_pair(ip_endpoint src, ip_endpoint dst);
-      ip_pair(const ip_pair& copy_from);
-
-      ip_endpoint src;
-      ip_endpoint dst;
-    };
-
     void pack_i8(unsigned char *buf, unsigned int i);
 
     unsigned int unpack_i8(unsigned char *buf);
@@ -150,16 +126,6 @@ namespace om {
     void sockaddr_from_nw_addr(const nw_addr na, sockaddr_in* sa);
 
     void tp_addr_from_sockaddr(const sockaddr_in* sa, tp_addr* ta);
-
-    // DEPRECATED
-    void setup_addr_struct(sockaddr_in *s, int family, std::string addr, 
-      int port);
-
-    // DEPRECATED
-    void setup_addr_struct(sockaddr_in *s, ip_endpoint endpoint);
-
-    // DEPRECATED
-    void ip_endpoint_from_addr_struct(sockaddr_in *s, om::net::ip_endpoint *e);
 
     void setup_ip_header(struct iphdr* header, char* src, char* dst, int proto, 
       size_t msg_len);
