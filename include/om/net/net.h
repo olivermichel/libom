@@ -31,8 +31,8 @@ namespace om {
       nw_addr(const std::string& addr) throw(std::invalid_argument);
       nw_addr(const nw_addr& copy_from);
 
-      nw_addr& operator=(nw_addr&);
-      nw_addr& operator=(std::string addr);
+      nw_addr& operator=(const nw_addr& copy_from);
+      nw_addr& operator=(const std::string addr);
 
       bool operator==(const nw_addr& other) const;
       bool operator<(const nw_addr& other) const;
@@ -54,7 +54,7 @@ namespace om {
       explicit nw_pair(nw_addr src, nw_addr dst);
       explicit nw_pair(const nw_pair& copy_from);
 
-      nw_pair& operator=(nw_pair&);
+      nw_pair& operator=(const nw_pair& copy_from);
 
       bool operator==(const nw_pair& other) const;
       bool operator<(const nw_pair& other) const;
@@ -76,7 +76,7 @@ namespace om {
       tp_addr(nw_addr addr, uint8_t proto, uint16_t port);
       tp_addr(const tp_addr& copy_from);
 
-      tp_addr& operator=(tp_addr&);
+      tp_addr& operator=(const tp_addr& copy_from);
 
       bool operator==(const tp_addr& other) const;
       bool operator<(const tp_addr& other) const;
@@ -94,7 +94,7 @@ namespace om {
       explicit tp_pair(tp_addr src, tp_addr dst);
       explicit tp_pair(const tp_pair& copy_from);
 
-      tp_pair& operator=(tp_pair&);
+      tp_pair& operator=(const tp_pair& copy_from);
 
       bool operator==(const tp_pair& other) const;
       bool operator<(const tp_pair& other) const;

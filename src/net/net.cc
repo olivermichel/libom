@@ -28,13 +28,13 @@ om::net::nw_addr::nw_addr(const om::net::nw_addr& copy_from) {
   std::memcpy(&_addr, copy_from._addr, 4);
 }
 
-om::net::nw_addr& om::net::nw_addr::operator=(om::net::nw_addr& copy_from) {
+om::net::nw_addr& om::net::nw_addr::operator=(const om::net::nw_addr& copy_from) {
 
   std::memcpy(&_addr, copy_from._addr, 4);
   return *this;
 }
 
-om::net::nw_addr& om::net::nw_addr::operator=(std::string addr) {
+om::net::nw_addr& om::net::nw_addr::operator=(const std::string addr) {
 
   _addr[0] = 0, _addr[1] = 0, _addr[2] = 0, _addr[3] = 0;
   return *this;
@@ -101,7 +101,7 @@ om::net::nw_pair::nw_pair(om::net::nw_addr src, om::net::nw_addr dst)
 om::net::nw_pair::nw_pair(const om::net::nw_pair& copy_from) 
   : src(copy_from.src), dst(copy_from.dst) {}
 
-om::net::nw_pair& om::net::nw_pair::operator=(om::net::nw_pair& copy_from) {
+om::net::nw_pair& om::net::nw_pair::operator=(const om::net::nw_pair& copy_from) {
 
   src = copy_from.src, dst = copy_from.dst;
   return *this;
@@ -126,7 +126,11 @@ om::net::tp_addr::tp_addr(om::net::nw_addr addr, uint8_t proto, uint16_t port)
 om::net::tp_addr::tp_addr(const om::net::tp_addr& copy_from) 
   : addr(copy_from.addr), proto(copy_from.proto), port(copy_from.port) {}
 
-om::net::tp_addr& om::net::tp_addr::operator=(om::net::tp_addr&) {
+om::net::tp_addr& om::net::tp_addr::operator=(const om::net::tp_addr& copy_from) {
+
+  addr = copy_from.addr;
+  proto = copy_from.proto;
+  port = copy_from.port;
 
   return *this;
 }
@@ -157,7 +161,7 @@ om::net::tp_pair::tp_pair(om::net::tp_addr src, om::net::tp_addr dst)
 om::net::tp_pair::tp_pair(const om::net::tp_pair& copy_from) 
   : src(copy_from.src), dst(copy_from.dst) {}
 
-om::net::tp_pair& om::net::tp_pair::operator=(om::net::tp_pair& copy_from) {
+om::net::tp_pair& om::net::tp_pair::operator=(const om::net::tp_pair& copy_from) {
 
   src = copy_from.src, dst = copy_from.dst;
   return *this;

@@ -6,23 +6,15 @@
 
 #include <om/net/datagram_socket.h>
 
-om::net::DatagramSocket::DatagramSocket(const om::net::ip_pair addr_pair)
-  throw(std::runtime_error, std::invalid_argument)
-  : om::net::Socket(om::net::IOInterface::iface_type_sock_dgram, addr_pair) {
-
-  this->open(addr_pair.src);
-}
-
-om::net::DatagramSocket::DatagramSocket(const om::net::ip_endpoint addr) 
+om::net::DatagramSocket::DatagramSocket(const om::net::tp_addr addr) 
   throw(std::runtime_error, std::invalid_argument)
   : om::net::Socket(om::net::IOInterface::iface_type_sock_dgram, addr) {
 
   this->open(addr);
 }
 
-om::net::DatagramSocket::DatagramSocket(const om::net::DatagramSocket &copy_from)
+om::net::DatagramSocket::DatagramSocket(const om::net::DatagramSocket& copy_from)
   : om::net::Socket(copy_from) {}
-
 
 om::net::DatagramSocket& 
   om::net::DatagramSocket::operator=(om::net::DatagramSocket& copy_from) {
@@ -31,7 +23,7 @@ om::net::DatagramSocket&
   return *this;
 }
 
-int om::net::DatagramSocket::open(const om::net::ip_endpoint addr) 
+int om::net::DatagramSocket::open(const om::net::tp_addr addr) 
   throw(std::runtime_error, std::logic_error, std::invalid_argument) {
 
   if(_fd != 0) 
@@ -52,34 +44,23 @@ int om::net::DatagramSocket::open(const om::net::ip_endpoint addr)
     throw std::runtime_error("setsockopt(): " + std::string(strerror(errno)));
 
   // fill sockaddr_in struct
-  om::net::setup_addr_struct(&addr_struct, AF_INET, addr.nw_addr, addr.tp_addr);
+  om::net::sockaddr_from_tp_addr(addr, &addr_struct);
 
   // bind newly created socket to address
-  if(bind(fd, (struct sockaddr *)&addr_struct, sizeof(addr_struct)) == -1)
+  if(bind(fd, (struct sockaddr*)&addr_struct, sizeof(addr_struct)) == -1)
     throw std::runtime_error("bind(): " + std::string(strerror(errno)));
 
-  _fd = fd, _addr = addr;
+  _fd = fd;
+  _addr = addr;
 
   return fd;
 }
 
-int om::net::DatagramSocket::send(const unsigned char *tx_data, 
-  const size_t data_len) {
+int om::net::DatagramSocket::send(const om::net::tp_addr remote_addr, 
+  const unsigned char* tx_data, const size_t data_len) {
 
   struct sockaddr_in remote_addr_struct;
-  om::net::setup_addr_struct(&remote_addr_struct, _default_remote_addr);
-
-  int tx_bytes = sendto(_fd, tx_data, data_len, 0, 
-    (struct sockaddr *)&remote_addr_struct, sizeof(remote_addr_struct));
-
-  return tx_bytes;
-}
-
-int om::net::DatagramSocket::send(const om::net::ip_endpoint remote_addr, 
-  const unsigned char *tx_data, const size_t data_len) {
-
-  struct sockaddr_in remote_addr_struct;
-  om::net::setup_addr_struct(&remote_addr_struct, remote_addr);
+  om::net::sockaddr_from_tp_addr(remote_addr, &remote_addr_struct);
   
   int tx_bytes = sendto(_fd, tx_data, data_len, 0, 
     (struct sockaddr *)&remote_addr_struct, sizeof(remote_addr_struct));
@@ -87,8 +68,8 @@ int om::net::DatagramSocket::send(const om::net::ip_endpoint remote_addr,
   return tx_bytes;
 }
 
-int om::net::DatagramSocket::receive(om::net::ip_endpoint *from, 
-  unsigned char *rx_buf, const size_t buf_len) {
+int om::net::DatagramSocket::receive(om::net::tp_addr* from, 
+  unsigned char* rx_buf, const size_t buf_len) {
 
   struct sockaddr_in rx_addr;
   socklen_t addr_len = sizeof(rx_addr);
@@ -99,7 +80,7 @@ int om::net::DatagramSocket::receive(om::net::ip_endpoint *from,
   if(rx_bytes == -1)
     throw std::runtime_error("recvfrom(): " + std::string(strerror(errno)));
 
-  om::net::ip_endpoint_from_addr_struct(&rx_addr, from);
+  om::net::tp_addr_from_sockaddr(&rx_addr, from);
   return rx_bytes;
 }
 

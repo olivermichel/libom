@@ -25,26 +25,26 @@ namespace om {
     class DatagramSocket : public om::net::Socket {
 
     public:
-
-      explicit DatagramSocket(const om::net::ip_pair addr_pair)
+      
+      explicit DatagramSocket(const om::net::tp_addr addr) 
         throw(std::runtime_error, std::invalid_argument);
-      explicit DatagramSocket(const om::net::ip_endpoint addr) 
-        throw(std::runtime_error, std::invalid_argument);
+      
       DatagramSocket(const om::net::DatagramSocket &copy_from);
+      
       DatagramSocket& operator=(DatagramSocket& copy_from);
 
-      int open(const om::net::ip_endpoint addr)
+      int open(const om::net::tp_addr addr)
         throw(std::runtime_error, std::logic_error, std::invalid_argument);
 
-      int send(const unsigned char *tx_data, const size_t data_len);
-      int send(const om::net::ip_endpoint remote_addr, 
+      int send(const om::net::tp_addr remote_addr, 
         const unsigned char *tx_data, const size_t data_len);
-      
-      int receive(om::net::ip_endpoint *from, unsigned char *rx_buf, 
+
+      int receive(om::net::tp_addr *from, unsigned char *rx_buf, 
         const size_t buf_len);
 
       void close()
         throw(std::logic_error);
+      
       ~DatagramSocket();
     };
   }

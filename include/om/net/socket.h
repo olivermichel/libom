@@ -22,33 +22,27 @@ namespace om {
 
     public:
 
-      explicit Socket(const om::net::IOInterface::iface_type type, 
-        const om::net::ip_pair ip_pair);
-      explicit Socket(const om::net::IOInterface::iface_type type, 
-        const om::net::ip_endpoint addr);
+      explicit Socket(const om::net::IOInterface::iface_type type,
+        const om::net::tp_addr addr);
+      
       Socket(const om::net::Socket &copy_from);
-
+      
       Socket& operator=(Socket& copy_from);
 
-      om::net::ip_endpoint addr();
-      om::net::ip_endpoint default_remote_addr();
+      om::net::tp_addr addr();
 
-      void set_default_remote_addr(const om::net::ip_endpoint remote);
+      virtual int open(const om::net::tp_addr addr) = 0;
 
-      virtual int open(const om::net::ip_endpoint addr) = 0;
-      
-      virtual int send(const unsigned char *tx_data, const size_t data_len) = 0;
-      virtual int send(const om::net::ip_endpoint remote_addr, 
+      virtual int send(const om::net::tp_addr remote_addr, 
         const unsigned char *tx_data, const size_t data_len) = 0;
-      
-      virtual int receive(om::net::ip_endpoint *from, unsigned char *rx_buffer, 
+
+      virtual int receive(om::net::tp_addr *from, unsigned char *rx_buffer, 
         const size_t buffer_len) = 0;
 
       virtual ~Socket() = 0;
 
     protected:
-      om::net::ip_endpoint _addr;
-      om::net::ip_endpoint _default_remote_addr;
+      om::net::tp_addr _addr;   
     };
   }
 }
