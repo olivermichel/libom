@@ -23,6 +23,12 @@ om::net::nw_addr::nw_addr(const char* addr)
   this->read_string(std::string(addr));
 }
 
+om::net::nw_addr::nw_addr(const unsigned char oct1, const unsigned char oct2, 
+  const unsigned char oct3, const unsigned char oct4) {
+
+  _addr[0] = oct1, _addr[1] = oct2, _addr[2] = oct3, _addr[3] = oct4;
+}
+
 om::net::nw_addr::nw_addr(const om::net::nw_addr& copy_from) {
 
   std::memcpy(&_addr, copy_from._addr, 4);

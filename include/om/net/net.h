@@ -29,6 +29,8 @@ namespace om {
       nw_addr();
       nw_addr(const char* addr) throw(std::invalid_argument);
       nw_addr(const std::string& addr) throw(std::invalid_argument);
+      nw_addr(const unsigned char oct1, const unsigned char oct2, 
+        const unsigned char oct3, const unsigned char oct4);
       nw_addr(const nw_addr& copy_from);
 
       nw_addr& operator=(const nw_addr& copy_from);

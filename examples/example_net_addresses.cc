@@ -39,6 +39,10 @@ int main(int argc, char const *argv[]) {
   if(addr3.is_empty())
     std::cout << "0.0.0.0 is empty" << std::endl;
 
+  // read nw_addr from characters (e.g. when parsing packets)
+  unsigned char ip[] = {0x12, 0x0, 0x01, 0xf9};
+  om::net::nw_addr addr4(ip[0], ip[1], ip[2], ip[3]);
+  std::cout << "read from bytes: " << addr4.to_string() << std::endl;
 
   // explicitely call conversion functions to c++ and c strings
   std::cout << addr2.to_string() << std::endl;
