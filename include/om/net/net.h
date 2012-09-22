@@ -107,17 +107,24 @@ namespace om {
       tp_addr dst;
     };
 
-    void pack_i8(unsigned char *buf, unsigned int i);
-
-    unsigned int unpack_i8(unsigned char *buf);
-
-    void pack_i16(unsigned char *buf, unsigned int i);
-
-    unsigned int unpack_i16(unsigned char *buf);
+    uint8_t unpack_uint8(unsigned char* buf);
     
-    void pack_i32(unsigned char *buf, unsigned long i);
+    uint8_t unpack_uint8(unsigned char c);
+    
+    void pack_uint8(uint8_t i, unsigned char* buf);
 
-    unsigned long unpack_i32(unsigned char *buf);
+    uint16_t unpack_uint16(unsigned char* buf);
+    
+    uint16_t unpack_uint16(unsigned char c1, unsigned char c2);
+    
+    void pack_uint16(uint16_t i, unsigned char* buf);
+
+    uint32_t unpack_uint32(unsigned char* buf);
+    
+    uint32_t unpack_uint32(unsigned char c1, unsigned char c2, unsigned char c3,
+      unsigned char c4);
+    
+    void pack_uint32(uint32_t i, unsigned char* buf);
 
     void sockaddr_from_tp_addr(const tp_addr* ta, sockaddr_in* sa);
 

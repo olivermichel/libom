@@ -192,34 +192,50 @@ void om::net::tp_pair::copy_bytes(unsigned char* dst) const {
   std::memcpy(dst, buf2, 7);
 }
 
-void om::net::pack_i8(unsigned char *buf, unsigned int i) {
-
-  *buf = i;
-}
-
-unsigned int om::net::unpack_i8(unsigned char *buf) {
+uint8_t om::net::unpack_uint8(unsigned char* buf) {
 
   return buf[0];
 }
 
-void om::net::pack_i16(unsigned char *buf, unsigned int i) {
+uint8_t om::net::unpack_uint8(unsigned char c) {
 
-  *buf++ = i >> 8, *buf++ = i;
+  return c;
 }
 
-unsigned int om::net::unpack_i16(unsigned char *buf) {
+void om::net::pack_uint8(uint8_t i, unsigned char* buf) {
+
+  *buf = i;
+}
+
+uint16_t om::net::unpack_uint16(unsigned char* buf) {
 
   return (buf[0] << 8) | (buf[1]);
 }
 
-void om::net::pack_i32(unsigned char *buf, unsigned long i) {
-  
-  *buf++ = i >> 24, *buf++ = i >> 16, *buf++ = i >> 8, *buf++ = i;
+uint16_t om::net::unpack_uint16(unsigned char c1, unsigned char c2) {
+
+  return (c1 << 8) | (c2);
 }
 
-unsigned long om::net::unpack_i32(unsigned char *buf) {
+void om::net::pack_uint16(uint16_t i, unsigned char* buf) {
+
+  *buf++ = i >> 8, *buf++ = i;
+}
+
+uint32_t om::net::unpack_uint32(unsigned char* buf) {
 
   return (buf[0] << 24) | (buf[1] << 16) | (buf[2] << 8) | (buf[3]);
+}
+
+uint32_t om::net::unpack_uint32(unsigned char c1, unsigned char c2,
+  unsigned char c3, unsigned char c4) {
+
+  return (c1) | (c2) | (c3) | (c4);
+}
+
+void om::net::pack_uint32(uint32_t i, unsigned char* buf) {
+
+  *buf++ = i >> 24, *buf++ = i >> 16, *buf++ = i >> 8, *buf++ = i;
 }
 
 void om::net::sockaddr_from_tp_addr(const om::net::tp_addr* ta, sockaddr_in* sa) {
