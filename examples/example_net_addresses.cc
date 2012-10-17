@@ -1,6 +1,6 @@
 //
 //  Olli's C++ Library
-//  examples/ex_tun_device.cc
+//  examples/example_net_addresses.cc
 //  (c) 2012 Oliver Michel
 //
 
