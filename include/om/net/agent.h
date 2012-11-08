@@ -43,17 +43,23 @@ namespace om {
       virtual void add_interface(IOInterface* iface) throw(std::logic_error);
       
       std::map<int, IOInterface*>* interfaces() const;
-      
+      std::map<int, IOInterface*> interfaces(IOInterface::iface_type type) const;
+
       void set_timeout_mode(timeout_mode_t t);
       timeout_mode_t timeout_mode() const;
       void set_manual_timeout(double t);
-      double manual_timeout();
+      double manual_timeout() const;
       void set_uniform_lower(double l);
-      double uniform_lower();
+      double uniform_lower() const;
       void set_uniform_upper(double u);
-      double uniform_upper();
+      double uniform_upper() const;
       void set_exponential_lambda(double l);
-      double exponential_lambda();
+      double exponential_lambda() const;
+
+      IOInterface* random_interface() const throw(std::logic_error);;
+      IOInterface* random_interface(IOInterface::iface_type type) const
+        throw(std::logic_error);
+      IOInterface* interface_by_fd(int fd) const throw(std::logic_error);;
 
       void run() throw(std::runtime_error);
       

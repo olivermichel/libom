@@ -39,6 +39,23 @@ std::map<int, om::net::IOInterface*>* om::net::Agent::interfaces() const {
   return _interfaces;
 }
 
+std::map<int, om::net::IOInterface*> 
+  om::net::Agent::interfaces(IOInterface::iface_type type) const {
+
+  std::map<int, IOInterface*>* all_ifaces = this->interfaces();
+  std::map<int, IOInterface*> return_ifaces;
+
+  for(std::map<int, IOInterface*>::iterator i = all_ifaces->begin();
+    i != all_ifaces->end(); ++i) {
+
+    if(i->second->type() == type)
+      return_ifaces[i->first] = i->second;
+  }
+
+  return return_ifaces;
+}
+
+
 void om::net::Agent::set_timeout_mode(om::net::Agent::timeout_mode_t t) {
 
   _timeout_mode = t;
@@ -54,7 +71,7 @@ void om::net::Agent::set_manual_timeout(double t) {
   _manual_timeout = t;
 }
 
-double om::net::Agent::manual_timeout() {
+double om::net::Agent::manual_timeout() const {
 
   return _manual_timeout;
 }
@@ -64,7 +81,7 @@ void om::net::Agent::set_uniform_lower(double l) {
   _uniform_lower = l;
 }
 
-double om::net::Agent::uniform_lower() {
+double om::net::Agent::uniform_lower() const {
 
   return _uniform_lower;
 }
@@ -74,7 +91,7 @@ void om::net::Agent::set_uniform_upper(double u) {
   _uniform_upper = u;
 }
 
-double om::net::Agent::uniform_upper() {
+double om::net::Agent::uniform_upper() const {
 
   return _uniform_upper;
 }
@@ -84,7 +101,7 @@ void om::net::Agent::set_exponential_lambda(double l) {
   _exponential_lambda = l;
 }
 
-double om::net::Agent::exponential_lambda() {
+double om::net::Agent::exponential_lambda() const {
 
   return _exponential_lambda;
 }
@@ -149,6 +166,60 @@ timeval om::net::Agent::next_timeout_timeval()
       throw std::logic_error("next_timeout_timeval(): t/o mode set to none");
       break;
   }
+}
+
+om::net::IOInterface* om::net::Agent::random_interface() const
+  throw(std::logic_error) {
+
+  int j = 0;
+  std::map<int, IOInterface*>* interfaces = this->interfaces();
+
+  if(!interfaces->size())
+    throw std::logic_error("random_interface(): no interfaces avail");
+
+  int r = (int) om::tools::random::uniform_sample(0, interfaces->size());
+  std::map<int, int> fds;
+  
+  for(std::map<int, IOInterface*>::iterator i = interfaces->begin(); 
+    i != interfaces->end(); ++i) {
+
+    fds[j++] = i->first;
+  }
+
+  return interfaces->operator[](fds[r]);
+}
+
+om::net::IOInterface* 
+  om::net::Agent::random_interface(IOInterface::iface_type type) const
+  throw(std::logic_error) {
+
+  int j = 0;
+  std::map<int, IOInterface*> interfaces = this->interfaces(type);
+
+  if(!interfaces.size())
+    throw std::logic_error("random_interface(): no interfaces avail");
+
+  int r = (int) om::tools::random::uniform_sample(0, interfaces.size());  
+  std::map<int, int> fds;
+
+  for(std::map<int, IOInterface*>::iterator i = interfaces.begin(); 
+    i != interfaces.end(); ++i) {
+
+    fds[j++] = i->first;
+  }
+
+  return interfaces[fds[r]];
+}
+
+om::net::IOInterface* om::net::Agent::interface_by_fd(int fd) const
+  throw(std::logic_error) {
+
+  std::map<int, IOInterface*>::iterator i = this->interfaces()->find(fd);
+    
+  if(i == this->interfaces()->end())
+    throw std::logic_error("interface_by_fd(): iface does not exist");
+
+  return i->second;
 }
 
 void om::net::Agent::run()
