@@ -29,6 +29,10 @@ om::net::nw_addr::nw_addr(const unsigned char oct1, const unsigned char oct2,
   _addr[0] = oct1, _addr[1] = oct2, _addr[2] = oct3, _addr[3] = oct4;
 }
 
+om::net::nw_addr::nw_addr(uint32_t a) {
+  _addr[0] = a, _addr[1] = a >> 8, _addr[2] = a >> 16, _addr[3] = a >> 24;
+}
+
 om::net::nw_addr::nw_addr(const om::net::nw_addr& copy_from) {
 
   std::memcpy(&_addr, copy_from._addr, 4);
@@ -97,6 +101,11 @@ unsigned char* om::net::nw_addr::bytes() const {
 
   return (unsigned char*)_addr;
 }
+
+uint32_t om::net::nw_addr::packed() const {
+
+  return (_addr[0]) | (_addr[1] << 8) | (_addr[2] << 16) | (_addr[3] << 24);
+} 
 
 om::net::nw_pair::nw_pair()
   : src(), dst() {}

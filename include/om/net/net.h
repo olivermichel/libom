@@ -31,6 +31,7 @@ namespace om {
       nw_addr(const std::string& addr) throw(std::invalid_argument);
       nw_addr(const unsigned char oct1, const unsigned char oct2, 
         const unsigned char oct3, const unsigned char oct4);
+      nw_addr(uint32_t addr);
       nw_addr(const nw_addr& copy_from);
 
       nw_addr& operator=(const nw_addr& copy_from);
@@ -43,7 +44,9 @@ namespace om {
 
       std::string to_string() const;
       char* to_cstring() const;
+      
       unsigned char* bytes() const;
+      uint32_t packed() const; 
 
     private:
       void read_string(std::string s);

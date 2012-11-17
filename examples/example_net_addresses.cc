@@ -44,6 +44,12 @@ int main(int argc, char const *argv[]) {
   om::net::nw_addr addr4(ip[0], ip[1], ip[2], ip[3]);
   std::cout << "read from bytes: " << addr4.to_string() << std::endl;
 
+  uint32_t int_rep = addr4.packed();
+  om::net::nw_addr addr5(int_rep);
+
+  if(addr4 == addr5)
+    std::cout << "integer conversion successful" << std::endl;
+
   // explicitely call conversion functions to c++ and c strings
   std::cout << addr2.to_string() << std::endl;
   std::cout << addr3.to_cstring() << std::endl;
