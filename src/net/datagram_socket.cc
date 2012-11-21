@@ -6,11 +6,12 @@
 
 #include <om/net/datagram_socket.h>
 
-om::net::DatagramSocket::DatagramSocket(const om::net::tp_addr addr) 
+om::net::DatagramSocket::DatagramSocket(const om::net::tp_addr addr,
+  const std::string iface) 
   throw(std::runtime_error, std::invalid_argument)
   : om::net::Socket(om::net::IOInterface::iface_type_sock_dgram, addr) {
 
-  this->open(addr);
+  this->open(addr, iface);
 }
 
 om::net::DatagramSocket::DatagramSocket(const om::net::DatagramSocket& copy_from)
@@ -24,6 +25,13 @@ om::net::DatagramSocket&
 }
 
 int om::net::DatagramSocket::open(const om::net::tp_addr addr) 
+  throw(std::runtime_error, std::logic_error, std::invalid_argument) {
+
+  return this->open(addr, "");
+}
+
+int om::net::DatagramSocket::open(const om::net::tp_addr addr, 
+  const std::string iface) 
   throw(std::runtime_error, std::logic_error, std::invalid_argument) {
 
   if(_fd != 0) 
@@ -42,6 +50,22 @@ int om::net::DatagramSocket::open(const om::net::tp_addr addr)
   // reuse socket address if in use
   if(setsockopt(fd, SOL_SOCKET, SO_REUSEADDR, &yes, sizeof(int)) == -1)
     throw std::runtime_error("setsockopt(): " + std::string(strerror(errno)));
+
+  if(iface != "") {
+    // bind socket to specific interface (must be run w/ super-user previleges)
+
+    int res;
+    struct ifreq ifr;
+    memset(&ifr, 0, sizeof(ifr));
+    std::strcpy(ifr.ifr_name, iface.c_str());
+
+    res = setsockopt(fd, SOL_SOCKET, SO_BINDTODEVICE,(void*)&ifr, sizeof(ifr));
+
+    if(res == -1) {
+      std::string msg = "setsockopt(): " + std::string(strerror(errno));
+      throw new std::runtime_error(msg);
+    }
+  }
 
   // fill sockaddr_in struct
   om::net::sockaddr_from_tp_addr(addr, &addr_struct);

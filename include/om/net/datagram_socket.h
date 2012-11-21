@@ -26,7 +26,8 @@ namespace om {
 
     public:
       
-      explicit DatagramSocket(const om::net::tp_addr addr) 
+      explicit DatagramSocket(const om::net::tp_addr addr, 
+        const std::string iface = "") 
         throw(std::runtime_error, std::invalid_argument);
       
       DatagramSocket(const om::net::DatagramSocket &copy_from);
@@ -34,6 +35,9 @@ namespace om {
       DatagramSocket& operator=(DatagramSocket& copy_from);
 
       int open(const om::net::tp_addr addr)
+        throw(std::runtime_error, std::logic_error, std::invalid_argument);
+        
+      int open(const om::net::tp_addr addr, const std::string iface)
         throw(std::runtime_error, std::logic_error, std::invalid_argument);
 
       int send(const om::net::tp_addr remote_addr, 

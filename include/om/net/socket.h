@@ -9,8 +9,11 @@
 
 #include <stdexcept>
 #include <iostream>
+#include <cstring>
 
 #include <sys/select.h>
+#include <sys/ioctl.h>
+#include <net/if.h>
 
 #include <om/net/net.h>
 #include <om/net/io_interface.h>
@@ -42,7 +45,7 @@ namespace om {
       virtual ~Socket() = 0;
 
     protected:
-      om::net::tp_addr _addr;   
+      om::net::tp_addr _addr;
     };
   }
 }
