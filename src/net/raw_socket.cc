@@ -33,7 +33,13 @@ int om::net::RawSocket::send(const om::net::nw_addr remote_addr,
   const char* tx_data, const size_t data_len) {
 
   struct sockaddr_in dst_addr;
-  om::net::sockaddr_from_nw_addr(&remote_addr, &dst_addr);
+  memset(&dst_addr, 0, sizeof(dst_addr));
+
+  dst_addr.sin_family = AF_INET;
+  dst_addr.sin_addr.s_addr = inet_addr(remote_addr.to_cstring());
+
+
+  //om::net::sockaddr_from_nw_addr(&remote_addr, &dst_addr);
 
   int tx_bytes = sendto(_fd, tx_data, data_len, 0, 
     (struct sockaddr *)&dst_addr, sizeof(struct sockaddr));
