@@ -106,8 +106,8 @@ int om::net::DatagramSocket::receive(om::net::tp_addr* from,
 
   from->addr = om::net::nw_addr(rx_addr.sin_addr.s_addr);
   from->port = rx_addr.sin_port;
-  from->proto = om::net::tp_proto_udp
-  
+  from->proto = om::net::tp_proto_udp;
+
   return rx_bytes;
 }
 
