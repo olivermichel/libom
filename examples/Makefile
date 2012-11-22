@@ -15,6 +15,7 @@ CXXPOSTFIX=-lom
 all: $(BIN_DIR)/example_tunnel_device $(BIN_DIR)/example_net_addresses \
 	$(BIN_DIR)/example_net_datagram_socket $(BIN_DIR)/example_raw_socket \
 	$(BIN_DIR)/example_net_packing $(BIN_DIR)/example_net_agent \
+	$(BIN_DIR)/example_net_stream_socket
 
 $(BIN_DIR)/example_tunnel_device: $(BIN_DIR) example_tunnel_device.cc
 		$(CXX) $(CXXFLAGS) -o $(BIN_DIR)/example_tunnel_device \
@@ -28,6 +29,9 @@ $(BIN_DIR)/example_net_datagram_socket: $(BIN_DIR) example_net_datagram_socket.c
 		$(CXX) $(CXXFLAGS) -o $(BIN_DIR)/example_net_datagram_socket \
 			example_net_datagram_socket.cc $(CXXPOSTFIX)
 
+$(BIN_DIR)/example_net_stream_socket: $(BIN_DIR) example_net_stream_socket.cc
+		$(CXX) $(CXXFLAGS) -o $(BIN_DIR)/example_net_stream_socket \
+			example_net_stream_socket.cc $(CXXPOSTFIX)
 
 $(BIN_DIR)/example_raw_socket: $(BIN_DIR) example_raw_socket.cc
 		$(CXX) $(CXXFLAGS) -o $(BIN_DIR)/example_raw_socket \

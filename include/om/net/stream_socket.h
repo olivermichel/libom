@@ -24,6 +24,32 @@ namespace om {
 
     class StreamSocket : public om::net::Socket {
 
+    public:
+
+      explicit StreamSocket(const om::net::tp_addr addr, 
+        const std::string iface = "") 
+        throw(std::runtime_error, std::invalid_argument);
+
+      StreamSocket(const om::net::StreamSocket &copy_from);
+      
+      StreamSocket& operator=(StreamSocket& copy_from);
+
+      int open(const om::net::tp_addr addr)
+        throw(std::runtime_error, std::logic_error, std::invalid_argument);
+        
+      int open(const om::net::tp_addr addr, const std::string iface)
+        throw(std::runtime_error, std::logic_error, std::invalid_argument);
+
+      int send(const om::net::tp_addr remote_addr, 
+        const unsigned char *tx_data, const size_t data_len);
+
+      int receive(om::net::tp_addr *from, unsigned char *rx_buf, 
+        const size_t buf_len);
+
+      void close()
+        throw(std::logic_error);
+      
+      ~StreamSocket();
     };
   }
 }
