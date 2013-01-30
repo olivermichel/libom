@@ -20,6 +20,7 @@ namespace om {
       void seed();
       double uniform_sample(double lower, double upper);
       double exponential_sample(double lambda);
+      double bounded_exponential_sample(double lambda, double lower, double upper);
     }
   }
 }
