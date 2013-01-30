@@ -158,7 +158,7 @@ timeval om::net::Agent::next_timeout_timeval()
       if(fabs(_exponential_lambda) <= 0.0001)
         throw std::invalid_argument("next_timeout_timeval(): exp args are 0");
       return om::tools::time::timeval_from_sec(
-        om::tools::random::exponential_sample(_exponential_lambda)
+        om::tools::random::bounded_exponential_sample(_exponential_lambda, 0.25, 2000.0)
       );      
       break;
 
