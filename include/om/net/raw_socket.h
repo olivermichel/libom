@@ -10,12 +10,13 @@
 #include <stdexcept>
 #include <string>
 
-#include <sys/types.h>
-#include <sys/socket.h>
+#include <arpa/inet.h>
 #include <errno.h>
 #include <netinet/in.h>
-#include <arpa/inet.h>
 #include <netinet/ip.h>
+#include <sys/socket.h>
+#include <sys/types.h>
+#include <unistd.h>
 
 #include <om/net/net.h>
 #include <om/net/io_interface.h>

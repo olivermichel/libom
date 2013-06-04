@@ -14,6 +14,7 @@
 #include <linux/if_tun.h>
 #include <net/if.h>
 #include <sys/ioctl.h>
+#include <unistd.h>
 
 #include <om/net/net.h>
 #include <om/net/io_interface.h>
