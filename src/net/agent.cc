@@ -166,6 +166,8 @@ timeval om::net::Agent::next_timeout_timeval()
       throw std::logic_error("next_timeout_timeval(): t/o mode set to none");
       break;
   }
+
+  throw std::logic_error("next_timeout_timeval(): no t/o mode set");    
 }
 
 om::net::IOInterface* om::net::Agent::random_interface() const
