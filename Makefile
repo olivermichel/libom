@@ -33,6 +33,7 @@ TOOLS_INC_DIR = $(INC_DIR)/tools
 
 DYNLIB_DIR = $(LIB_DIR)/dynamic
 STATLIB_DIR = $(LIB_DIR)/static
+
 # lib target names
 
 DYNLIB_NAME = libom.so
