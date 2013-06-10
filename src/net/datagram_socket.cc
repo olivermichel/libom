@@ -4,6 +4,7 @@
 //  (c) 2012 Oliver Michel
 //
 
+/*
 #include <om/net/datagram_socket.h>
 
 om::net::DatagramSocket::DatagramSocket(const om::net::tp_addr addr,
@@ -124,3 +125,5 @@ om::net::DatagramSocket::~DatagramSocket() {
 
   //this->close();
 }
+
+*/

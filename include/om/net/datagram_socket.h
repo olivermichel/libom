@@ -4,6 +4,7 @@
 //  (c) 2012 Oliver Michel
 //
 
+/*
 #ifndef OM_NET_DATAGRAM_SOCKET_H
 #define OM_NET_DATAGRAM_SOCKET_H
 
@@ -56,3 +57,5 @@ namespace om {
 }
 
 #endif
+
+*/
