@@ -1,28 +1,28 @@
 //
-//  Olli's C++ Library
+//  Olli's C++ Library [https://bitbucket.org/omichel/om-lib]
 //  net/stream_client.cc
-//  (c) 2013 Oliver Michel
+//  (c) 2013 Oliver Michel <oliver dot michel at editum dot de>
 //
 
 #include <om/net/stream_client.h>
 
 
 om::net::StreamClient::StreamClient()
-  : om::net::IOInterface(om::net::IOInterface::iface_type_sock_stream) { }
+  : om::net::Socket(om::net::IOInterface::iface_type_sock_stream) { }
 
 om::net::StreamClient::StreamClient(const om::net::tp_addr remote_addr) 
   throw(std::runtime_error, std::invalid_argument)
-  : om::net::IOInterface(om::net::IOInterface::iface_type_sock_stream) {
+  : om::net::Socket(om::net::IOInterface::iface_type_sock_stream) {
 
   this->open(remote_addr);
 }
 
 om::net::StreamClient::StreamClient(const om::net::StreamClient& copy_from)
-  : om::net::IOInterface(copy_from), _remote_addr(copy_from._remote_addr) {}
+  : om::net::Socket(copy_from), _remote_addr(copy_from._remote_addr) {}
 
 om::net::StreamClient& om::net::StreamClient::operator=(StreamClient& copy_from) {
 
-  om::net::IOInterface::operator=(copy_from);
+  om::net::Socket::operator=(copy_from);
   _remote_addr = copy_from._remote_addr;
   return *this;
 }
