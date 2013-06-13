@@ -35,8 +35,8 @@ namespace om {
         timeout_mode_exponential  = 3
       };
 
-      Agent();
-      Agent(const Agent& copy_from);
+      explicit Agent();
+      explicit Agent(const Agent& copy_from);
       Agent& operator=(const Agent& copy_from);
 
       // overrideable to add custom logic
