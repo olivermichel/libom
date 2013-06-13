@@ -130,14 +130,6 @@ void om::net::Agent::update_fd_max() {
   _fd_max = max;
 }
 
-void om::net::Agent::clean_iface_fds() {
-
-  // remove those fd's from _fds that do not belong to the configured sockets
-  for(int fd = 0; fd <= _fd_max; fd++)
-    if(_interfaces->find(fd) == _interfaces->end())
-      FD_CLR(fd, &_fds);
-}
-
 void om::net::Agent::check_read_interfaces(timeval* timestamp) {
 
   // iterate over sockets and read data if available
@@ -246,7 +238,6 @@ void om::net::Agent::run()
   timeval timestamp = {0,0}, timeout_copy = {0,0};
   int n_read_sockets = -1;
 
-  this->clean_iface_fds();
   gettimeofday(&timestamp, 0);
   this->agent_start(&timestamp);
 
