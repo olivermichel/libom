@@ -150,9 +150,18 @@ void om::net::Agent::update_fd_max() {
 
 void om::net::Agent::check_read_interfaces(timeval* timestamp) {
 
-  // iterate over devices and read data if available
+  if(FD_ISSET(STDIN_FILENO+1, &_read_fds)) {
+
+    char read_buf[1024] = {0};
+
+    if(fgets(read_buf, 1024, stdin) != NULL)
+      this->read_stdin(read_buf, strlen(read_buf), timestamp);
+  }
+
+  // iterate over registered devices and read data if available
   for(std::map<int,om::net::IOInterface*>::iterator i = _interfaces->begin();
     i != _interfaces->end(); ++i) {
+
     if(FD_ISSET(i->first, &_read_fds))
       this->device_ready(timestamp, (*_interfaces)[i->first]);
   }  

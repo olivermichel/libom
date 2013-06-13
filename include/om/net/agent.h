@@ -5,12 +5,14 @@
 //
 
 #include <ctime>
+#include <cstdio>
 #include <map>
 #include <stdexcept>
 
 #include <errno.h>
 #include <netinet/in.h>
 #include <sys/select.h>
+#include <unistd.h>
 
 #include <om/net/io_interface.h>
 #include <om/net/net.h>
@@ -76,6 +78,8 @@ namespace om {
       virtual void device_ready(timeval* timestamp, IOInterface* iface) = 0;
       virtual void timeout_trigger(timeval* timestamp, timeval* timeout_tv) {}
       virtual void agent_start(timeval* timestamp) {}
+
+      virtual void read_stdin(char* buf, size_t len, timeval* timestamp) {}
 
     private:
       
