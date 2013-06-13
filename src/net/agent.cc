@@ -107,11 +107,14 @@ double om::net::Agent::exponential_lambda() const {
 }
 
 void om::net::Agent::add_interface(om::net::IOInterface* iface)
-   throw(std::logic_error) {
+  throw(std::logic_error) {
 
-  if(_interfaces->insert(std::make_pair(iface->fd(), iface)).second)
-    iface->add_to_fd_set(&_fds), _fd_max = iface->fd();
-  else
+  if(_interfaces->insert(std::make_pair(iface->fd(), iface)).second) {
+
+    iface->add_to_fd_set(&_fds);
+    this->update_fd_max();
+
+  } else
     throw std::logic_error("device is already added to this agent");
 }
 
