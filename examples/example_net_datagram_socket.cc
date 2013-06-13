@@ -16,9 +16,9 @@
 int main(int argc, char const *argv[]) {
 
   // bind to any source ip address (0.0.0.0)
-  om::net::tp_addr addr("192.168.60.4", om::net::tp_proto_udp, 42742);
+  om::net::tp_addr addr("192.168.56.4", om::net::tp_proto_udp, 42742);
 
-  om::net::DatagramSocket* sock = new om::net::DatagramSocket(addr, "wlan0");
+  om::net::DatagramSocket* sock = new om::net::DatagramSocket(addr);
 
   om::net::tp_addr dest("192.168.60.1", om::net::tp_proto_udp, 42742);
   const char* msg = "hello";
