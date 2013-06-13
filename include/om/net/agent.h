@@ -41,7 +41,8 @@ namespace om {
 
       // overrideable to add custom logic
       virtual void add_interface(IOInterface* iface) throw(std::logic_error);
-      
+      virtual void remove_interface(IOInterface* iface) throw(std::logic_error);
+
       std::map<int, IOInterface*>* interfaces() const;
       std::map<int, IOInterface*> interfaces(IOInterface::iface_type type) const;
 

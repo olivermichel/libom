@@ -115,6 +115,21 @@ void om::net::Agent::add_interface(om::net::IOInterface* iface)
     throw std::logic_error("device is already added to this agent");
 }
 
+void om::net::Agent::remove_interface(IOInterface* iface)
+  throw(std::logic_error) {
+
+  std::map<int, IOInterface*>::iterator i = _interfaces->find(iface->fd());
+
+  if(i != _interfaces->end()) {
+
+    _interfaces->erase(i);
+    iface->remove_from_fd_set(&_fds);
+    this->update_fd_max();
+
+  } else 
+    throw std::logic_error("device is not registered with this agent");
+}
+
 void om::net::Agent::update_fd_max() {
 
   // set initial max_fd to stdout
