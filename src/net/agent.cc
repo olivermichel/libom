@@ -150,7 +150,7 @@ void om::net::Agent::update_fd_max() {
 
 void om::net::Agent::check_read_interfaces(timeval* timestamp) {
 
-  // iterate over sockets and read data if available
+  // iterate over devices and read data if available
   for(std::map<int,om::net::IOInterface*>::iterator i = _interfaces->begin();
     i != _interfaces->end(); ++i) {
     if(FD_ISSET(i->first, &_read_fds))
@@ -254,7 +254,7 @@ void om::net::Agent::run()
 
   timeval* timeout_ptr = 0;
   timeval timestamp = {0,0}, timeout_copy = {0,0};
-  int n_read_sockets = -1;
+  int n_read_devices = -1;
 
   gettimeofday(&timestamp, 0);
   this->agent_start(&timestamp);
@@ -269,15 +269,20 @@ void om::net::Agent::run()
     }
 
     // call select, pass null-pointers for write and error fds
-    n_read_sockets = select(_fd_max+1, &_read_fds, 0, 0, timeout_ptr);
+    n_read_devices = select(_fd_max+1, &_read_fds, 0, 0, timeout_ptr);
 
     gettimeofday(&timestamp, 0);
 
-    if(n_read_sockets == 0) { // timeout triggered
+    if(n_read_devices == 0) { // timeout triggered
+    
       this->timeout_trigger(&timestamp, &timeout_copy);
-    } else if(n_read_sockets > 0) { // n sockets ready for reading
+    
+    } else if(n_read_devices > 0) { // n devices ready for reading
+    
       this->check_read_interfaces(&timestamp);
-    } else if(n_read_sockets == -1) { // error occured
+
+    } else if(n_read_devices == -1) { // error occured
+    
       throw std::runtime_error("select(): " + std::string(strerror(errno)));
     }
   }
