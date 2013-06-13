@@ -20,8 +20,8 @@ namespace om {
 
 		public:
 
-			explicit Socket(const om::net::IOInterface::iface_type typ);
-			Socket(const om::net::Socket &copy_from);  
+			explicit Socket(const om::net::IOInterface::iface_type type);
+			explicit Socket(const om::net::Socket &copy_from);  
 			Socket& operator=(Socket& copy_from);
 
 			virtual ~Socket();
