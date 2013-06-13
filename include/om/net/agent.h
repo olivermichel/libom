@@ -86,6 +86,8 @@ namespace om {
       double _exponential_lambda;
       timeval _current_timeout;
 
+      void update_fd_max();
+
       void clean_iface_fds();
       void check_read_interfaces(timeval* timestamp);
       timeval next_timeout_timeval()

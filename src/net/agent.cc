@@ -115,6 +115,21 @@ void om::net::Agent::add_interface(om::net::IOInterface* iface)
     throw std::logic_error("device is already added to this agent");
 }
 
+void om::net::Agent::update_fd_max() {
+
+  // set initial max_fd to stdout
+  int max = 2;
+
+  // iterate over registered file descriptors and set max
+  for(std::map<int, IOInterface*>::iterator i = _interfaces->begin();
+    i != _interfaces->end(); ++i) {
+
+    max = i->first > max ? i->first : max;
+  }
+
+  _fd_max = max;
+}
+
 void om::net::Agent::clean_iface_fds() {
 
   // remove those fd's from _fds that do not belong to the configured sockets
