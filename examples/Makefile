@@ -19,7 +19,8 @@ all: $(BIN_DIR)/example_tunnel_device \
 	$(BIN_DIR)/example_tools_random \
 	$(BIN_DIR)/example_net_stream_client \
 	$(BIN_DIR)/example_net_datagram_socket \
-	$(BIN_DIR)/example_net_agent
+	$(BIN_DIR)/example_net_agent \
+	$(BIN_DIR)/example_net_stream_listener
 
 $(BIN_DIR)/example_tunnel_device: $(BIN_DIR) example_tunnel_device.cc
 		$(CXX) $(CXXFLAGS) -o $(BIN_DIR)/example_tunnel_device \
@@ -52,6 +53,10 @@ $(BIN_DIR)/example_tools_random: $(BIN_DIR) example_tools_random.cc
 $(BIN_DIR)/example_net_stream_client: $(BIN_DIR) example_net_stream_client.cc
 		$(CXX) $(CXXFLAGS) -o $(BIN_DIR)/example_net_stream_client \
 			example_net_stream_client.cc $(CXXPOSTFIX)
+
+$(BIN_DIR)/example_net_stream_listener: $(BIN_DIR) example_net_stream_listener.cc
+		$(CXX) $(CXXFLAGS) -o $(BIN_DIR)/example_net_stream_listener \
+			example_net_stream_listener.cc $(CXXPOSTFIX)
 
 $(BIN_DIR):
 	mkdir -p bin

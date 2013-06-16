@@ -24,6 +24,8 @@ namespace om {
 	namespace net {
 
 		class StreamListener : public om::net::Socket {
+		
+		public:
 			
 			// constructs a new StreamListener object without opening a socket
 			explicit StreamListener();
