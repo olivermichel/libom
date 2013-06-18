@@ -6,8 +6,7 @@
 //  available under the GNU General Public License v3
 //  https://gnu.org/licenses/gpl.html
 //
-//  implements a listening TCP socket which is delegating new incoming
-//  connections to an om::net::Agent session
+//  implements a listening TCP socket
 //
 
 #ifndef OM_NET_STREAM_LISTENER_H
@@ -27,13 +26,16 @@ namespace om {
 		
 		public:
 			
+			// the length of the pending connection backlog for connections
+			// that have not been accepted yet 
+			static const int PENDING_CONN_QLEN = 32;
+
 			// constructs a new StreamListener object without opening a socket
 			explicit StreamListener();
 
 			// constructs a new StreamListener object and immediately opens 
 			// the socket immediately
-			explicit StreamListener(const om::net::tp_addr addr, 
-				om::net::Agent* conn_handler) 
+			explicit StreamListener(const om::net::tp_addr addr) 
 				throw(std::runtime_error, std::invalid_argument);
 
 			// copy constructor
@@ -44,8 +46,13 @@ namespace om {
 
 			// begins listening on a specified TCP port and passes new incoming
 			// connections to an instance of om::net::Agent
-			int open(const om::net::tp_addr addr, om::net::Agent* conn_handler)
+			int open(const om::net::tp_addr addr)
 				throw(std::runtime_error, std::logic_error, std::invalid_argument);
+
+			// accepts a new incoming connection and returns a new fd for this
+			// connection, the peer address is written into remote_addr
+			int accept(om::net::tp_addr* remote_addr)
+				throw(std::runtime_error);
 
 			// terminates the listener
 			void close()
@@ -55,9 +62,8 @@ namespace om {
 			~StreamListener();
 
 		private:
-			
+
 			om::net::tp_addr _addr;
-			om::net::Agent* _conn_handler;
 		};
 	}
 }

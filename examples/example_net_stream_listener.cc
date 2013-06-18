@@ -20,9 +20,24 @@ public:
 
   void device_ready(timeval* timestamp, om::net::IOInterface* iface) {
 
+
     if(typeid(*iface) == typeid(om::net::StreamListener)) {
 
-      // new connection
+      om::net::StreamListener* listener = 0;
+      om::net::tp_addr remote;
+
+      std::cout << "new connection:" << std::endl;
+
+      // cast interface to StreamListener object
+      listener = dynamic_cast<om::net::StreamListener*>(iface);
+
+      // accept new incoming connection and write remote addr into remote
+      int new_fd = listener->accept(&remote);
+
+      std::cout << "   " << new_fd << " - " << remote.addr.to_string() << ":" 
+        << remote.port << std::endl;
+
+      // add to Agent, read from socket...
 
     } // else if(typeid(*iface) == typeid(om::net::StreamConnection))
 
@@ -30,16 +45,16 @@ public:
 }; 
 
 
-
 int main(int argc, char const *argv[]) {
-
-  ListeningExampleAgent* a = new ListeningExampleAgent;
 
   // configure wildcard address and tcp port to listen on
   om::net::tp_addr endpoint("0.0.0.0", om::net::tp_proto_tcp, 42742);
 
   // pass pointer to agent to new listener
-  om::net::StreamListener* listener = new om::net::StreamListener(endpoint, a);
+  om::net::StreamListener* listener = new om::net::StreamListener(endpoint);
+
+  // initiate the agent
+  ListeningExampleAgent* a = new ListeningExampleAgent;
 
   // add the listener
   a->add_interface(listener);
