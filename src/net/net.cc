@@ -273,7 +273,7 @@ void om::net::sockaddr_from_tp_addr(const om::net::tp_addr ta, sockaddr_in* sa) 
 
 void om::net::tp_addr_from_sockaddr(const sockaddr_in* sa, om::net::tp_addr* ta) {
 
-  ta->addr = std::string(inet_ntoa(sa->sin_addr));
+  ta->addr = om::net::nw_addr(sa->sin_addr.s_addr);
   ta->proto = om::net::tp_proto_undefined;
   ta->port = ntohs(sa->sin_port);
 }
