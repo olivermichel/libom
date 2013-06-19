@@ -42,7 +42,7 @@ STATLIB_NAME = libom.a
 # library sources
 
 NET_FILES = net io_interface socket datagram_socket tunnel_device agent \
-	raw_socket socket_bindable stream_client stream_listener
+	raw_socket socket_bindable stream_client stream_listener stream_connection
 TOOLS_FILES = tools logger time random string
 
 NET_OBJS = $(addsuffix .o, $(NET_FILES))
