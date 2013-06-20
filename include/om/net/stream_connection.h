@@ -26,8 +26,15 @@ namespace om {
 		
 		public:
 
-			// constructs a new StreamConnection object without connecting to an fd
+			// constructs a new StreamConnection object without attaching to a fd
 			explicit StreamConnection();
+
+			// constructs a new StreamConnection object and attaches to fd
+			explicit StreamConnection(int fd)
+				throw(std::logic_error, std::invalid_argument);
+
+			explicit StreamConnection(int fd, om::net::tp_addr remote_addr)
+				throw(std::logic_error, std::invalid_argument);
 
 			// copy constructor
 			StreamConnection(const om::net::StreamConnection &copy_from);
@@ -35,7 +42,13 @@ namespace om {
 			// assignment copy constructor
 			StreamConnection& operator=(StreamConnection& copy_from);
 
+			// attach object to an existing connection socket
+			void attach(int fd)
+				throw(std::logic_error, std::invalid_argument);
 
+			void attach(int fd, om::net::tp_addr remote_addr)
+				throw(std::logic_error, std::invalid_argument);
+				
 			// default destructor
 			~StreamConnection();
 

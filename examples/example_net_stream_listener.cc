@@ -7,11 +7,11 @@
 #include <iostream>
 #include <set>
 #include <string>
-
 #include <typeinfo> 
 
-#include <om/net/net.h>
 #include <om/net/agent.h>
+#include <om/net/net.h>
+#include <om/net/stream_connection.h>
 #include <om/net/stream_listener.h>
 
 class ListeningExampleAgent : public om::net::Agent {
@@ -24,6 +24,7 @@ public:
     if(typeid(*iface) == typeid(om::net::StreamListener)) {
 
       om::net::StreamListener* listener = 0;
+      om::net::StreamConnection* connection = 0;
       om::net::tp_addr remote;
 
       std::cout << "new connection:" << std::endl;
@@ -34,12 +35,17 @@ public:
       // accept new incoming connection and write remote addr into remote
       int new_fd = listener->accept(&remote);
 
+      connection = new om::net::StreamConnection(new_fd, remote);
+      this->add_interface(connection);
+
       std::cout << "   " << new_fd << " - " << remote.addr.to_string() << ":" 
         << remote.port << std::endl;
 
-      // add to Agent, read from socket...
+    } else if(typeid(*iface) == typeid(om::net::StreamConnection)) {
 
-    } // else if(typeid(*iface) == typeid(om::net::StreamConnection))
+
+
+    }
 
   }
 }; 
