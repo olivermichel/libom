@@ -48,7 +48,17 @@ namespace om {
 
 			void attach(int fd, om::net::tp_addr remote_addr)
 				throw(std::logic_error, std::invalid_argument);
-				
+
+			// writes buf_len bytes out of tx_buf to the socket
+			int send(const unsigned char* tx_buf, const size_t buf_len);
+
+			// receives and writes buf_len Bytes from the socket into rx_buf
+			int receive(unsigned char* rx_buf, const size_t buf_len);
+
+			// closes the connection
+			void close()
+				throw(std::logic_error, std::runtime_error);
+
 			// default destructor
 			~StreamConnection();
 
