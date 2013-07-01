@@ -42,6 +42,9 @@ namespace om {
 			// assignment copy constructor
 			StreamConnection& operator=(StreamConnection& copy_from);
 
+			// accessor for remote address
+			om::net::tp_addr remote_addr();
+
 			// attach object to an existing connection socket
 			void attach(int fd)
 				throw(std::logic_error, std::invalid_argument);

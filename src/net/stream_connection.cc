@@ -35,6 +35,11 @@ om::net::StreamConnection& om::net::StreamConnection::operator=(
 	return *this;
 }
 
+om::net::tp_addr om::net::StreamConnection::remote_addr() {
+
+	return _remote_addr;
+}
+
 void om::net::StreamConnection::attach(int fd)
 	throw(std::logic_error, std::invalid_argument) {
 
