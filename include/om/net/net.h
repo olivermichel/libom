@@ -15,8 +15,10 @@
 #include <string>
 
 #include <arpa/inet.h>
+#include <inttypes.h>
 #include <netinet/in.h>
 #include <netinet/ip.h>
+
 
 #include <om/tools/string.h>
 
@@ -128,6 +130,10 @@ namespace om {
       unsigned char c4);
     
     void pack_uint32(uint32_t i, unsigned char* buf);
+
+    uint64_t ntoh64(const uint64_t *input);
+    
+    uint64_t hton64(const uint64_t *input);
 
     void sockaddr_from_tp_addr(const tp_addr* ta, sockaddr_in* sa);
 
