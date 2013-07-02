@@ -25,7 +25,8 @@ namespace om {
         iface_type_sock_raw,
         iface_type_sock_stream,
         iface_type_sock_dgram,
-        iface_type_tun
+        iface_type_tun,
+        iface_type_inotify_handler
       };
 
       explicit IOInterface(iface_type type);
