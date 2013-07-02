@@ -135,6 +135,10 @@ namespace om {
     
     uint64_t hton64(const uint64_t *input);
 
+    uint64_t ntoh64(const uint64_t input);
+    
+    uint64_t hton64(const uint64_t input);
+
     void sockaddr_from_tp_addr(const tp_addr* ta, sockaddr_in* sa);
 
     void sockaddr_from_tp_addr(const tp_addr ta, sockaddr_in* sa);
