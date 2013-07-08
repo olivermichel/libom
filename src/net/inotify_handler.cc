@@ -28,7 +28,7 @@ om::net::INotifyHandler&
 	return *this;
 }
 
-void om::net::INotifyHandler::add_watch(std::string pathname, uint32_t mask)
+int om::net::INotifyHandler::add_watch(std::string pathname, uint32_t mask)
 	throw(std::runtime_error, std::logic_error) {
 
 	int wd = -1;
@@ -44,6 +44,8 @@ void om::net::INotifyHandler::add_watch(std::string pathname, uint32_t mask)
 	}
 
 	_watches->insert(std::make_pair(wd, pathname));
+
+	return wd;
 }
 
 

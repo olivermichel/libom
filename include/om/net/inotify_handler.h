@@ -35,7 +35,7 @@ namespace om {
 
       INotifyHandler& operator=(INotifyHandler& copy_from);
 
-      void add_watch(std::string pathname, uint32_t mask)
+      int add_watch(std::string pathname, uint32_t mask)
         throw(std::runtime_error, std::logic_error);
 
       void remove_watch(int wd)
