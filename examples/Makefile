@@ -21,7 +21,8 @@ all: $(BIN_DIR)/example_tunnel_device \
 	$(BIN_DIR)/example_net_datagram_socket \
 	$(BIN_DIR)/example_net_agent \
 	$(BIN_DIR)/example_net_stream_listener \
-	$(BIN_DIR)/example_net_inotify_handler
+	$(BIN_DIR)/example_net_inotify_handler \
+	$(BIN_DIR)/example_tools_file
 
 $(BIN_DIR)/example_tunnel_device: $(BIN_DIR) example_tunnel_device.cc
 		$(CXX) $(CXXFLAGS) -o $(BIN_DIR)/example_tunnel_device \
@@ -62,6 +63,10 @@ $(BIN_DIR)/example_net_stream_listener: $(BIN_DIR) example_net_stream_listener.c
 $(BIN_DIR)/example_net_inotify_handler: $(BIN_DIR) example_net_inotify_handler.cc
 		$(CXX) $(CXXFLAGS) -o $(BIN_DIR)/example_net_inotify_handler \
 			example_net_inotify_handler.cc $(CXXPOSTFIX)
+
+$(BIN_DIR)/example_tools_file: $(BIN_DIR) example_tools_file.cc
+		$(CXX) $(CXXFLAGS) -o $(BIN_DIR)/example_tools_file \
+			example_tools_file.cc $(CXXPOSTFIX)
 
 $(BIN_DIR):
 	mkdir -p bin
