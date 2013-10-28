@@ -27,6 +27,8 @@ namespace om {
 			template <class T>
 			T read_int_lit(std::string file_name) throw(std::runtime_error);
 
+			void write_data(std::string file_name, const char* buf, size_t len) throw(std::runtime_error);
+
 		}
 	}
 }

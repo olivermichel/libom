@@ -110,3 +110,17 @@ template void om::tools::file::write_int_lit<int64_t>(std::string file_name,
   int64_t data);
 
 template int64_t om::tools::file::read_int_lit<int64_t>(std::string file_name);
+
+
+void om::tools::file::write_data(std::string file_name, const char* buf, size_t len)
+	throw(std::runtime_error) {
+
+	std::ofstream file(file_name.c_str(), std::ios::out | std::ios::trunc | std::ios::binary);
+
+	if(file.good()) {
+
+		file.write(buf, len);
+		file.close();
+
+	} else throw std::runtime_error("write_data: failed openining file");
+}
