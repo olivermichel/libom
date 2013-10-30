@@ -5,6 +5,147 @@
 //
 
 #include <om/net/net.h>
+#include <iomanip>
+
+// HW Addr
+
+om::net::hw_addr::hw_addr() {
+  
+  _addr[0] = 0, _addr[1] = 0, _addr[2] = 0;
+  _addr[3] = 0, _addr[4] = 0, _addr[5] = 0;
+}
+
+om::net::hw_addr::hw_addr(const char* addr)
+  throw(std::invalid_argument) {
+
+  this->read_string(std::string(addr));
+}
+
+om::net::hw_addr::hw_addr(const std::string& addr)
+  throw(std::invalid_argument) {
+
+  this->read_string(addr);
+}
+
+om::net::hw_addr::hw_addr(uint8_t a, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint8_t f) {
+
+  _addr[0] = a; _addr[1] = b; _addr[2] = c;
+  _addr[3] = d; _addr[4] = e; _addr[5] = f;
+}
+
+om::net::hw_addr::hw_addr(uint64_t addr)
+  throw(std::invalid_argument) {
+
+  if (addr & 0xFFFF000000000000)
+    throw std::invalid_argument("hw_addr(): MAC addresses are only 48 bits");
+
+  _addr[5] = addr & 0xFF;
+  addr >>= 8;
+  _addr[4] = addr & 0xFF;
+  addr >>= 8;
+  _addr[3] = addr & 0xFF;
+  addr >>= 8;
+  _addr[2] = addr & 0xFF;
+  addr >>= 8;
+  _addr[1] = addr & 0xFF;
+  addr >>= 8;
+  _addr[0] = addr & 0xFF;
+}
+
+om::net::hw_addr::hw_addr(const hw_addr& copy_from) {
+
+  std::memcpy(&_addr, copy_from._addr, 6);
+}
+
+om::net::hw_addr& om::net::hw_addr::operator=(const hw_addr& copy_from) {
+
+  std::memcpy(&_addr, copy_from._addr, 6);
+  return *this;
+}
+
+om::net::hw_addr& om::net::hw_addr::operator=(const std::string addr) {
+
+  this->read_string(addr);
+  return *this;
+}
+
+om::net::hw_addr& om::net::hw_addr::operator=(uint64_t addr) {
+
+  if (addr & 0xFFFF000000000000)
+    throw std::invalid_argument("hw_addr(): MAC addresses are only 48 bits");
+
+  _addr[5] = addr & 0xFF;
+  addr >>= 8;
+  _addr[4] = addr & 0xFF;
+  addr >>= 8;
+  _addr[3] = addr & 0xFF;
+  addr >>= 8;
+  _addr[2] = addr & 0xFF;
+  addr >>= 8;
+  _addr[1] = addr & 0xFF;
+  addr >>= 8;
+  _addr[0] = addr & 0xFF;
+  return *this;
+}
+
+bool om::net::hw_addr::operator==(const hw_addr& other) const {
+
+  return _addr[0] == other._addr[0] && _addr[1] == other._addr[1] && _addr[2] == other._addr[2] &&
+         _addr[3] == other._addr[3] && _addr[4] == other._addr[4] && _addr[5] == other._addr[5];
+}
+
+bool om::net::hw_addr::operator<(const hw_addr& other) const {
+
+  return  _addr[0] < other._addr[0] || _addr[1] < other._addr[1] || _addr[2] < other._addr[2] ||
+          _addr[3] < other._addr[3] || _addr[4] < other._addr[4] || _addr[5] < other._addr[5];
+}
+
+bool om::net::hw_addr::is_empty() const {
+  
+  return _addr[0] == 0 && _addr[1] == 0 && _addr[2] == 0 &&
+         _addr[3] == 0 && _addr[4] == 0 && _addr[5] == 0;
+}
+
+std::string om::net::hw_addr::to_string() const {
+
+  std::stringstream s;
+  s << std::hex << std::setw(2) << std::setfill('0')
+    << _addr[0] << ':' << _addr[1] << ':' << _addr[2] << ':'
+    << _addr[3] << ':' << _addr[4] << ':' << _addr[5];
+  return s.str();
+}
+
+const char* om::net::hw_addr::to_cstring() const {
+
+  return to_string().c_str();
+}
+
+const uint8_t* om::net::hw_addr::bytes() const {
+
+  return _addr;
+}
+
+uint64_t om::net::hw_addr::packed() const {
+
+  return ((uint64_t) _addr[0] << 40) | ((uint64_t) _addr[1] << 32) |
+         (_addr[2] << 24) | (_addr[3] << 16) | (_addr[4] <<  8) | (_addr[5]);
+}
+
+void om::net::hw_addr::read_string(std::string s) {
+
+  std::vector<std::string> v;
+  om::tools::string::split(s, ':', v);
+
+  if (v.size() != 4)
+    throw std::invalid_argument("hw_addr(): invalid MAC address");
+
+  for (int i = 0; i < 6; i++) {
+    uint32_t b = strtoul(v[i].c_str(), NULL, 16);
+    _addr[i] = b & 0xFF;
+  }
+}
+
+// NW Addr
 
 om::net::nw_addr::nw_addr() {
 
@@ -361,3 +502,5 @@ void om::net::setup_ip_header(struct iphdr* header, char* src, char* dst,
   header->saddr = inet_addr(src);
   header->daddr = inet_addr(dst);
 }
+
+// vim: set et ts=2 sts=2 sw=2 :

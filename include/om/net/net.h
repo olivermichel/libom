@@ -25,6 +25,36 @@
 namespace om {
   namespace net {
 
+    class hw_addr {
+
+    public:
+      hw_addr();
+      hw_addr(const char* addr) throw(std::invalid_argument);
+      hw_addr(const std::string& addr) throw(std::invalid_argument);
+      hw_addr(uint8_t a, uint8_t b, uint8_t c, uint8_t d, uint8_t e, uint8_t f);
+      hw_addr(uint64_t addr) throw(std::invalid_argument);
+      hw_addr(const hw_addr& copy_from);
+
+      hw_addr& operator=(const hw_addr& copy_from);
+      hw_addr& operator=(const std::string addr);
+      hw_addr& operator=(uint64_t addr);
+
+      bool operator==(const hw_addr& other) const;
+      bool operator<(const hw_addr& other) const;
+
+      bool is_empty() const;
+
+      std::string to_string() const;
+      const char* to_cstring() const;
+
+      const uint8_t* bytes() const;
+      uint64_t packed() const;
+
+    private:
+      void read_string(std::string s);
+      uint8_t _addr[6];
+    };
+
     class nw_addr {
 
     public:
