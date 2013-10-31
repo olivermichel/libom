@@ -7,33 +7,31 @@
 #ifndef OM_TOOLS_LOGGER_H
 #define OM_TOOLS_LOGGER_H
 
-#include <fstream>
-#include <iostream>
-#include <stdexcept>
 #include <string>
+#include <fstream>
 
 namespace om {
-  namespace tools {
+	namespace tools {
 
-    class Logger {
+		class Logger {
 
-    // implements singleton-pattern
+		// implements singleton-pattern
 
-    public:
-      static Logger* initialize(std::string filename);
-      static Logger* instance();
-      std::ofstream& fstream() { return _fstream; }
-    
-    private:
-      static Logger* _instance;
-      std::string _filename;
-      std::ofstream _fstream;
-      Logger();
-      Logger(std::string filename);
-      Logger(const Logger&);
-      Logger& operator=(const Logger&);
-    };
-  }
+		public:
+			static Logger* initialize(std::string filename);
+			static Logger* instance();
+			std::ofstream& fstream() { return _fstream; }
+
+		private:
+			static Logger* _instance;
+			std::string _filename;
+			std::ofstream _fstream;
+			Logger();
+			Logger(std::string filename);
+			Logger(const Logger&);
+			Logger& operator=(const Logger&);
+		};
+	}
 }
 
 #endif
