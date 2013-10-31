@@ -7,8 +7,8 @@
 CXX = g++
 CXXFLAGS = -fPIC -Wall -g
 
-NET_LIB = libom_net.so
-TOOLS_LIB = libom_tools.so
+NET_LIB = libom-net.so
+TOOLS_LIB = libom-tools.so
 LIBS = $(NET_LIB) $(TOOLS_LIB)
 
 NET_NAMES = net \
@@ -48,5 +48,4 @@ clean:
 
 .PHONY: spotless
 spotless: clean
-	$(RM) libom_net.so
-	$(RM) libom_tools.so
+	$(RM) $(LIBS)
