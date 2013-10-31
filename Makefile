@@ -15,7 +15,7 @@ LIBS = $(NET_LIB) $(TOOLS_LIB)
 
 NET_NAMES = net \
 	agent io_interface socket \
-	datagram_socket stream_client stream_listener stream_connection \
+	datagram_socket stream_client stream_listener stream_connection socket_bindable \
 	tunnel_device raw_socket \
  	inotify_handler
 

@@ -4,6 +4,7 @@
 //  (c) 2012 Oliver Michel
 //
 
+#include <cstring>
 #include "socket_bindable.h"
 
 om::net::SocketBindable::SocketBindable()
