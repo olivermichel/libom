@@ -4,6 +4,7 @@
 //  (c) 2012 Oliver Michel
 //
 
+#include <cstring>
 #include "tunnel_device.h"
 
 om::net::TunnelDevice::TunnelDevice()

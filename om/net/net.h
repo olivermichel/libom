@@ -7,20 +7,11 @@
 #ifndef OM_NET_NET_H
 #define OM_NET_NET_H
 
-#include <cstdlib>
-#include <cstring>
-#include <iostream>
-#include <sstream>
+#include <stdint.h>
 #include <stdexcept>
 #include <string>
-
-#include <arpa/inet.h>
-#include <inttypes.h>
 #include <netinet/in.h>
 #include <netinet/ip.h>
-
-
-#include "../tools/string.h"
 
 namespace om {
   namespace net {

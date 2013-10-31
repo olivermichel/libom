@@ -4,6 +4,7 @@
 //  (c) 2012 Oliver Michel
 //
 
+#include <cstring>
 #include "raw_socket.h"
       
 om::net::RawSocket::RawSocket(const int family, const int protocol)

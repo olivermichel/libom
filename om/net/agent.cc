@@ -4,6 +4,7 @@
 //  (c) 2012 Oliver Michel
 //
 
+#include <cstring>
 #include "agent.h"
 
 om::net::Agent::Agent() 

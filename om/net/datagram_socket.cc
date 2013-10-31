@@ -5,6 +5,7 @@
 //
 
 
+#include <cstring>
 #include "datagram_socket.h"
 
 om::net::DatagramSocket::DatagramSocket()

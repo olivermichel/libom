@@ -4,8 +4,15 @@
 //  (c) 2012 Oliver Michel
 //
 
-#include "net.h"
+#include <cstdlib>
+#include <cstring>
+#include <iostream>
+#include <sstream>
 #include <iomanip>
+#include <arpa/inet.h>
+
+#include "net.h"
+#include "om/tools/string.h"
 
 // HW Addr
 
