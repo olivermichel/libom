@@ -4,6 +4,8 @@
 #  (c) 2013 Oliver Michel
 #
 
+VERSION = 0.1
+
 CXX = g++
 CXXFLAGS = -fPIC -Wall -g
 
@@ -27,10 +29,10 @@ TOOLS_OBJS = $(addprefix src/tools/, $(addsuffix .o, $(TOOLS_NAMES)))
 all: $(NET_LIB) $(TOOLS_LIB)
 
 $(NET_LIB): $(NET_OBJS)
-	$(CXX) -shared -o $@ $^
+	$(CXX) -shared -o $@ -Wl,-soname,$@.$(VERSION) $^
 
 $(TOOLS_LIB): $(TOOLS_OBJS)
-	$(CXX) -shared -o $@ $^
+	$(CXX) -shared -o $@ -Wl,-soname,$@.$(VERSION) $^
 
 
 %.o: %.cc %.h
