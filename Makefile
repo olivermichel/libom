@@ -35,16 +35,22 @@ $(TOOLS_LIB): $(TOOLS_OBJS)
 	$(CXX) -shared -o $@ -Wl,-soname,$@.$(VERSION) $^
 
 
-%.o: %.cc %.h
+%.o: %.cc
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
 examples:
 	$(MAKE) -C ./examples
 
 clean:
-	$(RM) $(NET_OBJS) $(TOOLS_OBJS)
+	$(RM) $(NET_OBJS) $(TOOLS_OBJS) .deps
 
 spotless: clean
 	$(RM) $(LIBS)
 
 .PHONY: all examples clean spotless
+
+-include .deps
+.deps: $(NET_OBJS:.o=.cc) $(TOOLS_OBJS:.o=.cc)
+	for src in $^; do \
+		$(CXX) $(CXXFLAGS) -MM -MT $${src/.cc/.o} $$src; \
+	done > $@ 2> /dev/null

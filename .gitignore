@@ -12,6 +12,7 @@
 *.a
 
 # Build and bin directories
+.deps
 bin/*
 build/*
 examples/bin/*
