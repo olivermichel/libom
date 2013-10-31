@@ -4,14 +4,11 @@
 #  (c) 2013 Oliver Michel
 #
 
-VERSION = 0.1
 
-CXX = g++
-CXXFLAGS = -fPIC -Wall -g -I.
-
-NET_LIB = libom-net.so
-TOOLS_LIB = libom-tools.so
-LIBS = $(NET_LIB) $(TOOLS_LIB)
+LIB_NET   = libom-net.so
+LIB_TOOLS = libom-tools.so
+AR_NET    = libom-net.a
+AR_TOOLS  = libom-tools.a
 
 NET_NAMES = net \
 	agent io_interface socket \
@@ -22,21 +19,27 @@ NET_NAMES = net \
 TOOLS_NAMES = tools \
 	logger time random string file
 
+CXX = g++
+CXXFLAGS = -Wall -g -I. -fPIC
+AR = ar
+
+all: $(LIB_NET) $(LIB_TOOLS) $(AR_NET) $(AR_TOOLS)
 
 NET_OBJS = $(addprefix om/net/, $(addsuffix .o, $(NET_NAMES)))
 TOOLS_OBJS = $(addprefix om/tools/, $(addsuffix .o, $(TOOLS_NAMES)))
-
-all: $(NET_LIB) $(TOOLS_LIB)
-
-$(NET_LIB): $(NET_OBJS)
-	$(CXX) -shared -o $@ -Wl,-soname,$@.$(VERSION) $^
-
-$(TOOLS_LIB): $(TOOLS_OBJS)
-	$(CXX) -shared -o $@ -Wl,-soname,$@.$(VERSION) $^
-
+$(LIB_NET): $(NET_OBJS)
+$(LIB_TOOLS): $(TOOLS_OBJS)
+$(AR_NET): $(NET_OBJS)
+$(AR_TOOLS): $(TOOLS_OBJS)
 
 %.o: %.cc
 	$(CXX) $(CXXFLAGS) -c $< -o $@
+
+%.so:
+	$(CXX) $(CXXFLAGS) -shared -o $@ $^
+
+%.a:
+	$(AR) -cvr $@ $^
 
 examples:
 	$(MAKE) -C ./examples
@@ -45,7 +48,7 @@ clean:
 	$(RM) $(NET_OBJS) $(TOOLS_OBJS) .deps
 
 spotless: clean
-	$(RM) $(LIBS)
+	$(RM) $(LIB_NET) $(LIB_TOOLS) $(AR_NET) $(AR_TOOLS)
 
 .PHONY: all examples clean spotless
 
