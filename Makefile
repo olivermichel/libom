@@ -7,7 +7,7 @@
 VERSION = 0.1
 
 CXX = g++
-CXXFLAGS = -fPIC -Wall -g
+CXXFLAGS = -fPIC -Wall -g -I.
 
 NET_LIB = libom-net.so
 TOOLS_LIB = libom-tools.so
