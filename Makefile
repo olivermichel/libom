@@ -23,8 +23,8 @@ TOOLS_NAMES = tools \
 	logger time random string file
 
 
-NET_OBJS = $(addprefix src/net/, $(addsuffix .o, $(NET_NAMES)))
-TOOLS_OBJS = $(addprefix src/tools/, $(addsuffix .o, $(TOOLS_NAMES)))
+NET_OBJS = $(addprefix om/net/, $(addsuffix .o, $(NET_NAMES)))
+TOOLS_OBJS = $(addprefix om/tools/, $(addsuffix .o, $(TOOLS_NAMES)))
 
 all: $(NET_LIB) $(TOOLS_LIB)
 
