@@ -10,8 +10,8 @@
 #ifndef OM_NET_SOCKET_H
 #define OM_NET_SOCKET_H
 
-#include <om/net/net.h>
-#include <om/net/io_interface.h>
+#include "net.h"
+#include "io_interface.h"
 
 namespace om {
 	namespace net {

@@ -4,7 +4,7 @@
 //  (c) 2013 Oliver Michel <oliver dot michel at editum dot de>
 //
 
-#include <om/net/stream_connection.h>
+#include "stream_connection.h"
 
 om::net::StreamConnection::StreamConnection()
 	: om::net::Socket(om::net::IOInterface::iface_type_sock_stream) {}

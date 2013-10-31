@@ -15,8 +15,8 @@
 #include <errno.h>
 #include <net/if.h>
 
-#include <om/net/io_interface.h>
-#include <om/net/net.h>
+#include "io_interface.h"
+#include "net.h"
 
 namespace om {
   namespace net {

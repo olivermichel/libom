@@ -1,109 +1,56 @@
 #
 #  Olli's C++ Library
 #  Makefile
-#  (c) 2012 Oliver Michel
+#  (c) 2013 Oliver Michel
 #
 
-# vpath
-
-VPATH = include/om/net:include/om/tools:src/net:src/tools:build
-
-# flags
-
-CXXFLAGS = -fPIC -I ./$(INC_DIR) -Wall
+CXX = g++
+CXXFLAGS = -fPIC -Wall
 
 ifeq ($(DEBUG), 1)
 	CXXFLAGS += -ggdb
 endif
 
-# directory specifications
+NET_LIB = libom_net.so
+TOOLS_LIB = libom_tools.so
+LIBS = $(NET_LIB) $(TOOLS_LIB)
 
-BUILD_DIR = build
-INC_DIR = include
-LIB_DIR = lib
-SRC_DIR = src
+NET_NAMES = net \
+	agent io_interface socket \
+	datagram_socket stream_client stream_listener stream_connection \
+	tunnel_device raw_socket \
+ 	inotify_handler
 
-NET_BUILD_DIR = $(BUILD_DIR)/net
-NET_SRC_DIR = $(SRC_DIR)/net
-NET_INC_DIR = $(INC_DIR)/net
+TOOLS_NAMES = tools \
+	logger time random string file
 
-TOOLS_BUILD_DIR = $(BUILD_DIR)/tools
-TOOLS_SRC_DIR = $(SRC_DIR)/tools
-TOOLS_INC_DIR = $(INC_DIR)/tools
 
-DYNLIB_DIR = $(LIB_DIR)/dynamic
-STATLIB_DIR = $(LIB_DIR)/static
-
-# lib target names
-
-DYNLIB_NAME = libom.so
-STATLIB_NAME = libom.a
-
-# library sources
-
-NET_FILES = net io_interface socket datagram_socket tunnel_device agent \
-	raw_socket socket_bindable stream_client stream_listener stream_connection \
-	inotify_handler
-TOOLS_FILES = tools logger time random string file
-
-NET_OBJS = $(addsuffix .o, $(NET_FILES))
-TOOLS_OBJS = $(addsuffix .o, $(TOOLS_FILES))
-
-# special targets
+NET_OBJS = $(addprefix src/net/, $(addsuffix .o, $(NET_NAMES)))
+TOOLS_OBJS = $(addprefix src/tools/, $(addsuffix .o, $(TOOLS_NAMES)))
 
 .PHONY: all
-all: libs
+all: $(NET_LIB) $(TOOLS_LIB)
+
+$(NET_LIB): $(NET_OBJS)
+	$(CXX) -shared -o $@ $(NET_OBJS)
+
+$(TOOLS_LIB): $(TOOLS_OBJS)
+	$(CXX) -shared -o $@ $(TOOLS_OBJS)
+
+
+%.o: %.cc %.h
+	$(CXX) $(CXXFLAGS) -c $< -o $@
+
+.PHONY: examples
+examples:
+	$(MAKE) -C ./examples
 
 .PHONY: clean
 clean:
-		rm -f $(NET_BUILD_DIR)/*.o
-		rm -f $(TOOLS_BUILD_DIR)/*.o 
-		rm -f $(DYNLIB_DIR)/$(DYNLIB_NAME) $(STATLIB_DIR)/$(STATLIB_NAME)
+	$(RM) src/net/*.o
+	$(RM) src/tools/*.o
 
-# libraries
-
-.PHONY: libs
-libs: $(DYNLIB_NAME) $(STATLIB_NAME)
-
-.PHONY: $(DYNLIB_NAME)
-$(DYNLIB_NAME): $(LIB_DIR) $(DYNLIB_DIR) build-dirs \
-		$(addprefix $(TOOLS_BUILD_DIR)/, $(TOOLS_OBJS)) \
-		$(addprefix $(NET_BUILD_DIR)/, $(NET_OBJS))
-	
-	$(CXX) -shared -o $(DYNLIB_DIR)/$(DYNLIB_NAME) \
-		$(addprefix $(TOOLS_BUILD_DIR)/, $(TOOLS_OBJS)) \
-		$(addprefix $(NET_BUILD_DIR)/, $(NET_OBJS))
-
-.PHONY: $(STATLIB_NAME)
-$(STATLIB_NAME): $(LIB_DIR) $(STATLIB_DIR) build-dirs \
-		$(addprefix $(TOOLS_BUILD_DIR)/, $(TOOLS_OBJS)) \
-		$(addprefix $(NET_BUILD_DIR)/, $(NET_OBJS))
-
-	ar ru $(STATLIB_DIR)/$(STATLIB_NAME) $(addprefix $(NET_BUILD_DIR)/, $(NET_OBJS)) \
-		$(addprefix $(TOOLS_BUILD_DIR)/, $(TOOLS_OBJS))
-	ranlib $(STATLIB_DIR)/$(STATLIB_NAME)
-
-# general compile rule
-
-$(NET_BUILD_DIR)/%.o: $(NET_SRC_DIR)/%.cc
-		$(CXX) $(CXXFLAGS) -c -o $(NET_BUILD_DIR)/$*.o $(NET_SRC_DIR)/$*.cc
-
-$(TOOLS_BUILD_DIR)/%.o: $(TOOLS_SRC_DIR)/%.cc
-		$(CXX) $(CXXFLAGS) -c -o $(TOOLS_BUILD_DIR)/$*.o $(TOOLS_SRC_DIR)/$*.cc
-
-# directories
-
-$(LIB_DIR):
-		mkdir -p $(LIB_DIR)
-
-$(DYNLIB_DIR):
-		mkdir -p $(DYNLIB_DIR)
-
-$(STATLIB_DIR):
-		mkdir -p $(STATLIB_DIR)
-
-.PHONY: build-dirs
-build-dirs:
-		mkdir -p $(BUILD_DIR)
-		mkdir -p $(NET_BUILD_DIR)
-		mkdir -p $(TOOLS_BUILD_DIR)
+.PHONY: spotless
+spotless: clean
+	$(RM) libom_net.so
+	$(RM) libom_tools.so

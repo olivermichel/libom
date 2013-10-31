@@ -5,7 +5,7 @@
 //  University of Vienna, University of Illinois at Urbana-Champaign
 //
 
-#include <om/tools/logger.h>
+#include "logger.h"
 
 om::tools::Logger* om::tools::Logger::_instance = 0;
 

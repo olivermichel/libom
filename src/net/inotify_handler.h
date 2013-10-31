@@ -17,8 +17,8 @@
 #include <sys/types.h>
 #include <unistd.h>
 
-#include <om/net/io_interface.h>
-#include <om/net/net.h>
+#include "io_interface.h"
+#include "net.h"
 
 
 namespace om {

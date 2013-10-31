@@ -4,7 +4,7 @@
 //  (c) 2013 Oliver Michel <oliver dot michel at editum dot de>
 //
 
-#include <om/net/stream_client.h>
+#include "stream_client.h"
 
 
 om::net::StreamClient::StreamClient()

@@ -4,7 +4,7 @@
 //  (c) 2013 Oliver Michel <oliver dot michel at editum dot de>
 //
 
-#include <om/net/socket.h>
+#include "socket.h"
 
 om::net::Socket::Socket(const om::net::IOInterface::iface_type type)
 	: om::net::IOInterface(type) {}

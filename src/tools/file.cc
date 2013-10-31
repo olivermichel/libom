@@ -3,7 +3,7 @@
 //  (c) 2013 Oliver Michel <oliver.michel@editum.de>
 //
 
-#include <om/tools/file.h>
+#include "file.h"
 
 template<class T>
 void om::tools::file::write_uint_lit(std::string file_name, T data)

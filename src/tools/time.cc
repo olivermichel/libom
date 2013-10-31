@@ -4,7 +4,7 @@
 //  (c) 2012 Oliver Michel
 //
 
-#include <om/tools/time.h>
+#include "time.h"
 
 double om::tools::time::utimediff(timeval a, timeval b) {
   

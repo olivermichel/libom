@@ -4,7 +4,7 @@
 //  (c) 2013 Oliver Michel <oliver dot michel at editum dot de>
 //
 
-#include <om/net/inotify_handler.h>
+#include "inotify_handler.h"
 
 om::net::INotifyHandler::INotifyHandler()
 	throw(std::runtime_error)

@@ -5,7 +5,7 @@
 //  University of Vienna, University of Illinois at Urbana-Champaign
 //
 
-#include <om/tools/string.h>
+#include "string.h"
 
 void om::tools::string::split(const std::string& s, char c, 
   std::vector<std::string>& v) {

@@ -5,7 +5,7 @@
 //
 
 
-#include <om/net/datagram_socket.h>
+#include "datagram_socket.h"
 
 om::net::DatagramSocket::DatagramSocket()
   : om::net::Socket(om::net::IOInterface::iface_type_sock_dgram) {}

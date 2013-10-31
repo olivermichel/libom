@@ -14,11 +14,12 @@
 #include <sys/select.h>
 #include <unistd.h>
 
-#include <om/net/io_interface.h>
-#include <om/net/net.h>
-#include <om/tools/random.h>
-#include <om/tools/time.h>
-#include <om/tools/tools.h>
+#include "io_interface.h"
+#include "net.h"
+#include "../tools/random.h"
+#include "../tools/time.h"
+#include "../tools/tools.h"
+
 
 #ifndef OM_NET_AGENT_H
 #define OM_NET_AGENT_H

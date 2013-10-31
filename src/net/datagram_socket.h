@@ -13,8 +13,8 @@
 #include <errno.h>
 #include <unistd.h>
 
-#include <om/net/net.h>
-#include <om/net/socket.h>
+#include "net.h"
+#include "socket.h"
 
 namespace om {
   namespace net {

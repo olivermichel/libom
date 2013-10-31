@@ -4,7 +4,7 @@
 //  (c) 2012 Oliver Michel
 //
 
-#include <om/tools/random.h>
+#include "random.h"
 
 void om::tools::random::seed() {
 

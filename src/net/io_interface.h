@@ -11,7 +11,7 @@
 
 #include <sys/select.h>
 
-#include <om/net/net.h>
+#include "net.h"
 
 namespace om {
   namespace net {

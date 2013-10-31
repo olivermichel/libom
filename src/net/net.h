@@ -20,7 +20,7 @@
 #include <netinet/ip.h>
 
 
-#include <om/tools/string.h>
+#include "../tools/string.h"
 
 namespace om {
   namespace net {

@@ -18,9 +18,9 @@
 #include <sys/types.h>
 #include <unistd.h>
 
-#include <om/net/net.h>
-#include <om/net/io_interface.h>
-#include <om/net/socket_bindable.h>
+#include "net.h"
+#include "io_interface.h"
+#include "socket_bindable.h"
 
 namespace om {
   namespace net {

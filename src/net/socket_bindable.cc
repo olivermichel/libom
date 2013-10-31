@@ -4,7 +4,7 @@
 //  (c) 2012 Oliver Michel
 //
 
-#include <om/net/socket_bindable.h>
+#include "socket_bindable.h"
 
 om::net::SocketBindable::SocketBindable()
   : om::net::IOInterface(IOInterface::iface_type_unknown) {}

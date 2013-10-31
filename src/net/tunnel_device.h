@@ -16,8 +16,8 @@
 #include <sys/ioctl.h>
 #include <unistd.h>
 
-#include <om/net/net.h>
-#include <om/net/io_interface.h>
+#include "net.h"
+#include "io_interface.h"
 
 namespace om {
   namespace net {

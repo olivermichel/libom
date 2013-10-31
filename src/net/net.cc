@@ -4,7 +4,7 @@
 //  (c) 2012 Oliver Michel
 //
 
-#include <om/net/net.h>
+#include "net.h"
 #include <iomanip>
 
 // HW Addr

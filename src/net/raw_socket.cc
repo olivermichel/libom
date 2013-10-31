@@ -4,7 +4,7 @@
 //  (c) 2012 Oliver Michel
 //
 
-#include <om/net/raw_socket.h>
+#include "raw_socket.h"
       
 om::net::RawSocket::RawSocket(const int family, const int protocol)
   throw(std::runtime_error)

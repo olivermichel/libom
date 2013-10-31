@@ -4,7 +4,7 @@
 //  (c) 2012 Oliver Michel
 //
 
-#include <om/net/tunnel_device.h>
+#include "tunnel_device.h"
 
 om::net::TunnelDevice::TunnelDevice()
   : om::net::IOInterface(om::net::IOInterface::iface_type_tun),
