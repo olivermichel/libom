@@ -5,11 +5,7 @@
 #
 
 CXX = g++
-CXXFLAGS = -fPIC -Wall
-
-ifeq ($(DEBUG), 1)
-	CXXFLAGS += -ggdb
-endif
+CXXFLAGS = -fPIC -Wall -g
 
 NET_LIB = libom_net.so
 TOOLS_LIB = libom_tools.so
