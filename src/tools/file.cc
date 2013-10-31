@@ -92,22 +92,22 @@ template uint64_t om::tools::file::read_uint_lit<uint64_t>(std::string file_name
 
 
 template void om::tools::file::write_int_lit<int8_t>(std::string file_name, 
-  int8_t data);
+	int8_t data);
 
 template int8_t om::tools::file::read_int_lit<int8_t>(std::string file_name);
 
 template void om::tools::file::write_int_lit<int16_t>(std::string file_name, 
-  int16_t data);
+	int16_t data);
 
 template int16_t om::tools::file::read_int_lit<int16_t>(std::string file_name);
 
 template void om::tools::file::write_int_lit<int32_t>(std::string file_name, 
-  int32_t data);
+	int32_t data);
 
 template int32_t om::tools::file::read_int_lit<int32_t>(std::string file_name);
 
 template void om::tools::file::write_int_lit<int64_t>(std::string file_name, 
-  int64_t data);
+	int64_t data);
 
 template int64_t om::tools::file::read_int_lit<int64_t>(std::string file_name);
 
