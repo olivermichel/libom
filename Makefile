@@ -24,7 +24,6 @@ TOOLS_NAMES = tools \
 NET_OBJS = $(addprefix src/net/, $(addsuffix .o, $(NET_NAMES)))
 TOOLS_OBJS = $(addprefix src/tools/, $(addsuffix .o, $(TOOLS_NAMES)))
 
-.PHONY: all
 all: $(NET_LIB) $(TOOLS_LIB)
 
 $(NET_LIB): $(NET_OBJS)
@@ -37,15 +36,14 @@ $(TOOLS_LIB): $(TOOLS_OBJS)
 %.o: %.cc %.h
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
-.PHONY: examples
 examples:
 	$(MAKE) -C ./examples
 
-.PHONY: clean
 clean:
 	$(RM) src/net/*.o
 	$(RM) src/tools/*.o
 
-.PHONY: spotless
 spotless: clean
 	$(RM) $(LIBS)
+
+.PHONY: all examples clean spotless
