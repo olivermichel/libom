@@ -27,10 +27,10 @@ TOOLS_OBJS = $(addprefix src/tools/, $(addsuffix .o, $(TOOLS_NAMES)))
 all: $(NET_LIB) $(TOOLS_LIB)
 
 $(NET_LIB): $(NET_OBJS)
-	$(CXX) -shared -o $@ $(NET_OBJS)
+	$(CXX) -shared -o $@ $^
 
 $(TOOLS_LIB): $(TOOLS_OBJS)
-	$(CXX) -shared -o $@ $(TOOLS_OBJS)
+	$(CXX) -shared -o $@ $^
 
 
 %.o: %.cc %.h
@@ -40,8 +40,7 @@ examples:
 	$(MAKE) -C ./examples
 
 clean:
-	$(RM) src/net/*.o
-	$(RM) src/tools/*.o
+	$(RM) $(NET_OBJS) $(TOOLS_OBJS)
 
 spotless: clean
 	$(RM) $(LIBS)
