@@ -1,10 +1,18 @@
 //
 //  Olli's C++ Library
 //  net/agent.cc
-//  (c) 2012 Oliver Michel
+//  (c) 2012 Oliver Michel <oliver.michel@editum.de>
+//  http://ngn.cs.colorado/~oliver
 //
 
+#include <cstdio>
 #include <cstring>
+#include <errno.h>
+#include <unistd.h>
+
+#include <om/tools/random.h>
+#include <om/tools/time.h>
+
 #include "agent.h"
 
 om::net::Agent::Agent() 
