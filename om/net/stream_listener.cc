@@ -5,6 +5,11 @@
 //
 
 #include <cstring>
+#include <errno.h>
+#include <unistd.h>
+
+#include <om/net/socket.h>
+
 #include "stream_listener.h"
 
 om::net::StreamListener::StreamListener()
@@ -20,7 +25,8 @@ om::net::StreamListener::StreamListener(const om::net::tp_addr addr)
 om::net::StreamListener::StreamListener(const om::net::StreamListener &copy_from)
 	: om::net::Socket(copy_from), _addr(copy_from._addr) {}
 
-om::net::StreamListener& om::net::StreamListener::operator=(StreamListener& copy_from) {
+om::net::StreamListener& om::net::StreamListener::operator=(StreamListener& 
+	copy_from) {
 
 	om::net::Socket::operator=(copy_from);
 	_addr = copy_from._addr;
@@ -31,10 +37,10 @@ int om::net::StreamListener::open(const om::net::tp_addr addr)
 	throw(std::runtime_error, std::logic_error, std::invalid_argument) {
 
 	if(_fd != 0) 
-   	throw std::logic_error("Socket already opened");
+		throw std::logic_error("Socket already opened");
   
-  	if(addr.proto != om::net::tp_proto_tcp)
-   	throw std::invalid_argument("ip_endpoint must be a TCP endpoint");
+	if(addr.proto != om::net::tp_proto_tcp)
+		throw std::invalid_argument("ip_endpoint must be a TCP endpoint");
 
 	int fd, yes = 1;
 	struct sockaddr_in addr_struct;

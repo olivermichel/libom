@@ -1,8 +1,10 @@
 //
-//  Olli's C++ Library
+//  Olli's C++ Library [https://bitbucket.org/omichel/om-lib]
 //  net/agent.h
-//  (c) 2012 Oliver Michel <oliver.michel@editum.de>
+//  (c) 2012 Oliver Michel <oliver dot michel at editum dot de>
 //  http://ngn.cs.colorado/~oliver
+//
+//  Asynchronous event handler for TCP, UDP, RAW Sockets, Inotify Handler
 //
 
 #include <ctime>

@@ -3,21 +3,11 @@
 //  net/stream_listener.h
 //  (c) 2013 Oliver Michel <oliver dot michel at editum dot de>
 //
-//  available under the GNU General Public License v3
-//  https://gnu.org/licenses/gpl.html
-//
 //  implements a listening TCP socket
 //
 
 #ifndef OM_NET_STREAM_LISTENER_H
 #define OM_NET_STREAM_LISTENER_H
-
-#include <errno.h>
-#include <unistd.h>
-
-#include "agent.h"
-#include "net.h"
-#include "socket.h"
 
 namespace om {
 	namespace net {
