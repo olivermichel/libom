@@ -20,14 +20,12 @@
 
 #include "net.h"
 #include "io_interface.h"
-#include "socket_bindable.h"
 
 namespace om {
   namespace net {
 
     class RawSocket 
-      : public virtual om::net::IOInterface, 
-        public virtual om::net::SocketBindable {
+      : public virtual om::net::IOInterface {
 
     public:
 

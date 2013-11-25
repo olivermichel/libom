@@ -12,9 +12,8 @@ AR_TOOLS  = libom-tools.a
 
 NET_NAMES = net \
 	agent io_interface socket \
-	datagram_socket stream_client stream_listener stream_connection socket_bindable \
-	tunnel_device raw_socket \
- 	inotify_handler
+	datagram_socket stream_client stream_listener stream_connection tunnel_device \
+	raw_socket inotify_handler
 
 TOOLS_NAMES = tools \
 	logger time random string file
