@@ -2,9 +2,7 @@
 //  Olli's C++ Library [https://bitbucket.org/omichel/om-lib]
 //  net/stream_connection.h
 //  (c) 2013 Oliver Michel <oliver dot michel at editum dot de>
-//
-//  available under the GNU General Public License v3
-//  https://gnu.org/licenses/gpl.html
+//  http://ngn.cs.colorado/~oliver
 //
 //  implements a TCP connection which can be used after an accept call
 //
@@ -12,12 +10,8 @@
 #ifndef OM_NET_STREAM_CONNECTION_H
 #define OM_NET_STREAM_CONNECTION_H
 
-#include <errno.h>
-#include <unistd.h>
-
-#include "agent.h"
-#include "net.h"
-#include "socket.h"
+#include <om/net/net.h>
+#include <om/net/socket.h>
 
 namespace om {
 	namespace net {

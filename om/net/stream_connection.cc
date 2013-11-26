@@ -2,9 +2,13 @@
 //  Olli's C++ Library [https://bitbucket.org/omichel/om-lib]
 //  net/stream_connection.cc
 //  (c) 2013 Oliver Michel <oliver dot michel at editum dot de>
+//  http://ngn.cs.colorado/~oliver
 //
 
 #include <cstring>
+#include <errno.h>
+#include <unistd.h>
+
 #include "stream_connection.h"
 
 om::net::StreamConnection::StreamConnection()
@@ -64,13 +68,13 @@ int om::net::StreamConnection::send(const unsigned char* tx_buf,
 	const size_t buf_len) {
 
 	int tx_bytes = ::send(_fd, tx_buf, buf_len, 0);
-  	return tx_bytes;
+	return tx_bytes;
 }
 
 int om::net::StreamConnection::receive(unsigned char* rx_buf,
 	const size_t buf_len) {
 
- 	int rx_bytes = ::recv(_fd, rx_buf, buf_len, 0);
+	int rx_bytes = ::recv(_fd, rx_buf, buf_len, 0);
 	return rx_bytes;
 }
 
@@ -82,7 +86,7 @@ void om::net::StreamConnection::close()
 
 	if(::close(_fd) == 0)
 		_fd = 0;
-  	else
+	else
 		throw std::runtime_error("close(): " + std::string(strerror(errno)));
 }
 
