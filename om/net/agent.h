@@ -7,15 +7,15 @@
 //  Asynchronous event handler for TCP, UDP, RAW Sockets, Inotify Handler
 //
 
+#ifndef OM_NET_AGENT_H
+#define OM_NET_AGENT_H
+
 #include <ctime>
 #include <map>
 #include <stdexcept>
 #include <sys/select.h>
 
 #include <om/net/io_interface.h>
-
-#ifndef OM_NET_AGENT_H
-#define OM_NET_AGENT_H
 
 namespace om {
 	namespace net {

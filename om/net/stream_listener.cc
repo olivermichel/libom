@@ -2,6 +2,7 @@
 //  Olli's C++ Library [https://bitbucket.org/omichel/om-lib]
 //  net/stream_listener.cc
 //  (c) 2013 Oliver Michel <oliver dot michel at editum dot de>
+//  http://ngn.cs.colorado/~oliver
 //
 
 #include <cstring>
