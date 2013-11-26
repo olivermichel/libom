@@ -1,7 +1,8 @@
 //
-//  Olli's C++ Library
+//  Olli's C++ Library [https://bitbucket.org/omichel/om-lib]
 //  net/socket.cc
 //  (c) 2013 Oliver Michel <oliver dot michel at editum dot de>
+//  http://ngn.cs.colorado/~oliver
 //
 
 #include "socket.h"

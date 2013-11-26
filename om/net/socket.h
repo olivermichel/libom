@@ -1,7 +1,8 @@
 //
-//  Olli's C++ Library
+//  Olli's C++ Library [https://bitbucket.org/omichel/om-lib]
 //  net/socket.h
 //  (c) 2013 Oliver Michel <oliver dot michel at editum dot de>
+//  http://ngn.cs.colorado/~oliver
 //  
 //  This class introduces an abstraction level for socket-like I/O devices.
 //  To be extended with functions like packet/byte counters at some point.
@@ -10,8 +11,8 @@
 #ifndef OM_NET_SOCKET_H
 #define OM_NET_SOCKET_H
 
-#include "net.h"
-#include "io_interface.h"
+#include <om/net/net.h>
+#include <om/net/io_interface.h>
 
 namespace om {
 	namespace net {
