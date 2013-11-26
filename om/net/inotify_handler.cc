@@ -1,11 +1,16 @@
 //
-//  Olli's C++ Library
+//  Olli's C++ Library [https://bitbucket.org/omichel/om-lib]
 //  net/inotify_handler.cc
 //  (c) 2013 Oliver Michel <oliver dot michel at editum dot de>
+//  http://ngn.cs.colorado/~oliver
 //
 
 #include <cstring>
-#include "inotify_handler.h"
+#include <sys/inotify.h>
+#include <unistd.h>
+
+#include <om/net/net.h>
+#include <om/net/inotify_handler.h>
 
 om::net::INotifyHandler::INotifyHandler()
 	throw(std::runtime_error)
