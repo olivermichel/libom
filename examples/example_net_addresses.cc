@@ -7,6 +7,7 @@
 #include <iostream>
 #include <set>
 #include <string>
+#include <cstring>
 
 #include <netinet/in.h>
 
@@ -84,8 +85,8 @@ int main(int argc, char const *argv[]) {
   e1.copy_bytes(buf1);
   e2.copy_bytes(buf2);
 
-  std::memcpy(buf, buf1, 7);
-  std::memcpy(buf+7, buf2, 7);
+  memcpy(buf, buf1, 7);
+  memcpy(buf+7, buf2, 7);
 
   return 0;
 }

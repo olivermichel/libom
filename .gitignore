@@ -15,7 +15,17 @@
 .deps
 bin/*
 build/*
-examples/bin/*
+examples/example_net_addresses
+examples/example_net_agent
+examples/example_net_datagram_socket
+examples/example_net_inotify_handler
+examples/example_net_packing
+examples/example_net_stream_client
+examples/example_net_stream_listener
+examples/example_raw_socket
+examples/example_tools_file
+examples/example_tools_random
+examples/example_tunnel_device
 
 # OSX specific
 .DS_Store
