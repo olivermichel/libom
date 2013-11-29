@@ -19,7 +19,11 @@ CXX = g++
 CXXFLAGS = -Wall -g -I. -fPIC -std=c++11
 AR = ar
 
-all: $(LIB_NET) $(LIB_TOOLS) $(AR_NET) $(AR_TOOLS)
+all: ar so
+
+ar: $(AR_NET) $(AR_TOOLS)
+
+so: $(LIB_NET) $(LIB_TOOLS)
 
 NET_OBJS = $(addprefix om/net/, $(addsuffix .o, $(NET_NAMES)))
 TOOLS_OBJS = $(addprefix om/tools/, $(addsuffix .o, $(TOOLS_NAMES)))
@@ -47,7 +51,7 @@ clean:
 spotless: clean
 	$(RM) $(LIB_NET) $(LIB_TOOLS) $(AR_NET) $(AR_TOOLS)
 
-.PHONY: all examples clean spotless
+.PHONY: all ar so examples clean spotless
 
 -include .deps
 .deps: $(NET_OBJS:.o=.cc) $(TOOLS_OBJS:.o=.cc)
