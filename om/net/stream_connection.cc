@@ -91,3 +91,13 @@ void om::net::StreamConnection::close()
 }
 
 om::net::StreamConnection::~StreamConnection() {}
+
+namespace om {
+namespace net {
+std::ostream& operator<<(std::ostream& out, const om::net::StreamConnection& sc)
+{
+	out << "StreamConnection(" << sc._remote_addr.to_string() << ")";
+	return out;
+}
+}
+}

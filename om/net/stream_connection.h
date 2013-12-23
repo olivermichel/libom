@@ -12,6 +12,7 @@
 
 #include <om/net/net.h>
 #include <om/net/socket.h>
+#include <ostream>
 
 namespace om {
 	namespace net {
@@ -58,6 +59,8 @@ namespace om {
 
 			// default destructor
 			~StreamConnection();
+
+			friend std::ostream& operator<<(std::ostream&, const StreamConnection&);
 
 		private:
 

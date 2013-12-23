@@ -308,6 +308,13 @@ bool om::net::tp_addr::operator<(const om::net::tp_addr& other) const {
   return addr < other.addr || proto < other.proto || port < other.port;
 }
 
+std::string om::net::tp_addr::to_string() const
+{
+  std::stringstream ss;
+  ss << this->addr.to_string() << ":" << this->port;
+  return ss.str();
+}
+
 void om::net::tp_addr::copy_bytes(unsigned char* dst) const {
 
   std::memcpy(dst, addr.bytes(), 4);

@@ -111,6 +111,8 @@ namespace om {
 
       void copy_bytes(unsigned char* dst) const;
 
+      std::string to_string() const;
+
       nw_addr addr;
       uint8_t proto;
       uint16_t port;
