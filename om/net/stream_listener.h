@@ -10,6 +10,8 @@
 #ifndef OM_NET_STREAM_LISTENER_H
 #define OM_NET_STREAM_LISTENER_H
 
+#include "socket.h"
+
 namespace om {
 	namespace net {
 
