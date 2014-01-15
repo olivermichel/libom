@@ -13,6 +13,7 @@
 
 #include <om/net/io_interface.h>
 #include <map>
+#include <functional>
 
 namespace om {
 	namespace net {
@@ -28,25 +29,24 @@ namespace om {
 
 			INotifyHandler& operator=(INotifyHandler& copy_from);
 
-			int add_watch(std::string pathname, uint32_t mask)
+			int add_watch(std::string pathname, uint32_t mask,
+				std::function<void (struct inotify_event*)> handler)
 				throw(std::runtime_error, std::logic_error);
 
 			void remove_watch(int wd)
 				throw(std::logic_error);
 
-			ssize_t read_event(char* buf, size_t len)
+			void handle_events()
 				throw(std::runtime_error);
-
-			std::string pathname_for_watch(int wd) const
-				throw(std::logic_error);
-
-			const std::map<int, std::string>* watches() const;
 
 			virtual ~INotifyHandler();
 
 		private:
 
-			std::map<int, std::string>* _watches;
+			ssize_t _read_event(char* buf, size_t len)
+				throw(std::runtime_error);
+
+			std::map<int, std::function<void (struct inotify_event*)> >* _watches;
 		};
 	}
 }
