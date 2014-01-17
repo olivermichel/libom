@@ -22,22 +22,17 @@ namespace om {
 
 		public:
 
-			explicit INotifyHandler()
-				throw(std::runtime_error);
-
+			explicit INotifyHandler() throw(std::runtime_error);
 			explicit INotifyHandler(const om::net::INotifyHandler& copy_from);  
-
 			INotifyHandler& operator=(INotifyHandler& copy_from);
 
 			int add_watch(std::string pathname, uint32_t mask,
 				std::function<void (struct inotify_event*)> handler)
 				throw(std::runtime_error, std::logic_error);
 
-			void remove_watch(int wd)
-				throw(std::logic_error);
+			void remove_watch(int wd) throw(std::logic_error);
 
-			void handle_events()
-				throw(std::runtime_error);
+			void handle_events() throw(std::runtime_error);
 
 			virtual ~INotifyHandler();
 

@@ -88,10 +88,10 @@ namespace om {
 			double _exponential_lambda;
 			timeval _current_timeout;
 
-			void update_fd_max();
+			void _update_fd_max();
 
-			void check_read_interfaces(timeval* timestamp);
-			timeval next_timeout_timeval()
+			void _check_read_interfaces(timeval* timestamp);
+			timeval _next_timeout_timeval()
 				throw(std::invalid_argument, std::logic_error);
 		};
 	}

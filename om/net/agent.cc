@@ -8,11 +8,10 @@
 #include <cstdio>
 #include <cstring>
 #include <errno.h>
-#include <unistd.h>
 #include <typeinfo>
+#include <unistd.h>
 
 #include <om/net/inotify_handler.h>
-
 #include <om/tools/random.h>
 #include <om/tools/time.h>
 
@@ -66,6 +65,7 @@ std::map<int, om::net::IOInterface*>
 
 	return return_ifaces;
 }
+
 
 
 void om::net::Agent::set_timeout_mode(om::net::Agent::timeout_mode_t t) {
@@ -124,7 +124,7 @@ void om::net::Agent::add_interface(om::net::IOInterface* iface)
 	if(_interfaces->insert(std::make_pair(iface->fd(), iface)).second) {
 
 		iface->add_to_fd_set(&_fds);
-		this->update_fd_max();
+		this->_update_fd_max();
 
 	} else
 		throw std::logic_error("device is already added to this agent");
@@ -139,13 +139,13 @@ void om::net::Agent::remove_interface(IOInterface* iface)
 
 		_interfaces->erase(i);
 		iface->remove_from_fd_set(&_fds);
-		this->update_fd_max();
+		this->_update_fd_max();
 
 	} else 
 		throw std::logic_error("device is not registered with this agent");
 }
 
-void om::net::Agent::update_fd_max() {
+void om::net::Agent::_update_fd_max() {
 
 	// set initial max_fd to stdout
 	int max = 2;
@@ -160,7 +160,7 @@ void om::net::Agent::update_fd_max() {
 	_fd_max = max;
 }
 
-void om::net::Agent::check_read_interfaces(timeval* timestamp) {
+void om::net::Agent::_check_read_interfaces(timeval* timestamp) {
 
 	om::net::IOInterface* iface = 0;
 
@@ -191,21 +191,21 @@ void om::net::Agent::check_read_interfaces(timeval* timestamp) {
 	}  
 }
 
-timeval om::net::Agent::next_timeout_timeval() 
+timeval om::net::Agent::_next_timeout_timeval() 
 	throw(std::invalid_argument, std::logic_error) {
 
 	switch(_timeout_mode) {
 		
 		case om::net::Agent::timeout_mode_manual:
 			if(fabs(_manual_timeout) <= 0.0001)
-				throw std::invalid_argument("next_timeout_timeval(): manual t/o is 0");
+				throw std::invalid_argument("_next_timeout_timeval(): manual t/o is 0");
 			return om::tools::time::timeval_from_sec(_manual_timeout);
 			break;
 			
 		case om::net::Agent::timeout_mode_uniform:
 
 			if(fabs(_uniform_upper) <= 0.0001 && fabs(_uniform_upper) <= 0.0001)
-				throw std::invalid_argument("next_timeout_timeval(): uniform args are 0");
+				throw std::invalid_argument("_next_timeout_timeval(): uniform args are 0");
 			return om::tools::time::timeval_from_sec(
 				om::tools::random::uniform_sample(_uniform_lower, _uniform_upper)
 			);
@@ -214,18 +214,18 @@ timeval om::net::Agent::next_timeout_timeval()
 		case om::net::Agent::timeout_mode_exponential:
 
 			if(fabs(_exponential_lambda) <= 0.0001)
-				throw std::invalid_argument("next_timeout_timeval(): exp args are 0");
+				throw std::invalid_argument("_next_timeout_timeval(): exp args are 0");
 			return om::tools::time::timeval_from_sec(
 				om::tools::random::bounded_exponential_sample(_exponential_lambda, 0.25, 2000.0)
 			);      
 			break;
 
 		case om::net::Agent::timeout_mode_none:
-			throw std::logic_error("next_timeout_timeval(): t/o mode set to none");
+			throw std::logic_error("_next_timeout_timeval(): t/o mode set to none");
 			break;
 	}
 
-	throw std::logic_error("next_timeout_timeval(): no t/o mode set");    
+	throw std::logic_error("_next_timeout_timeval(): no t/o mode set");    
 }
 
 om::net::IOInterface* om::net::Agent::random_interface() const
@@ -297,7 +297,7 @@ void om::net::Agent::run()
 		_read_fds = _fds;
 
 		if(_timeout_mode != om::net::Agent::timeout_mode_none) {
-			_current_timeout = this->next_timeout_timeval();
+			_current_timeout = this->_next_timeout_timeval();
 			timeout_copy = _current_timeout, timeout_ptr = &_current_timeout;
 		}
 
@@ -312,7 +312,7 @@ void om::net::Agent::run()
 		
 		} else if(n_read_devices > 0) { // n devices ready for reading
 		
-			this->check_read_interfaces(&timestamp);
+			this->_check_read_interfaces(&timestamp);
 
 		} else if(n_read_devices == -1) { // error occured
 		

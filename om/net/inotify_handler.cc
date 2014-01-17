@@ -26,36 +26,14 @@ om::net::INotifyHandler::INotifyHandler()
 om::net::INotifyHandler::INotifyHandler(const om::net::INotifyHandler& copy_from)
 	: om::net::IOInterface(copy_from), _watches(copy_from._watches) {}
 
-om::net::INotifyHandler& 
-	om::net::INotifyHandler::operator=(INotifyHandler& copy_from) {
+om::net::INotifyHandler& om::net::INotifyHandler
+	::operator=(INotifyHandler& copy_from) {
 
 	om::net::IOInterface::operator=(copy_from);
 	_watches = copy_from._watches;
 
 	return *this;
 }
-
-/*
-int om::net::INotifyHandler::add_watch(std::string pathname, uint32_t mask)
-	throw(std::runtime_error, std::logic_error) {
-
-	int wd = -1;
-
-	if((wd = inotify_add_watch(_fd, pathname.c_str(), mask)) < 0) {
-
-		if(errno == ENOMEM || errno == ENOSPC)
-			throw std::runtime_error("inotify_add_watch(): " 
-				+ std::string(strerror(errno)));
-		else
-			throw std::logic_error("inotify_add_watch(): " 
-				+ std::string(strerror(errno)));
-	}
-
-	_watches->insert(std::make_pair(wd, pathname));
-
-	return wd;
-}
-*/
 
 int om::net::INotifyHandler::add_watch(std::string pathname, uint32_t mask,
 	std::function<void (struct inotify_event*)> handler)
@@ -129,22 +107,10 @@ ssize_t om::net::INotifyHandler::_read_event(char* buf, size_t len)
 	return read_len;
 }
 
-/*
-std::string om::net::INotifyHandler::pathname_for_watch(int wd) const
-	throw(std::logic_error) {
+om::net::INotifyHandler::~INotifyHandler() {
 
-	std::map<int, std::string>::const_iterator i;
+	for(auto watch = _watches->begin(); watch != _watches->end(); watch++) {
 
-	if((i = _watches->find(wd)) != _watches->end())
-		return i->second;
-	else
-		throw std::logic_error("pathname_for_watch: invalid watch descriptor " + wd);
+		this->remove_watch(watch->first);
+	}
 }
-
-const std::map<int, std::string>* om::net::INotifyHandler::watches() const {
-
-	return _watches;
-}
-*/
-
-om::net::INotifyHandler::~INotifyHandler() {}
