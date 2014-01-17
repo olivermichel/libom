@@ -72,7 +72,7 @@ namespace om {
 			int _fd_max;
 
 			// callbacks
-			virtual void device_ready(timeval* timestamp, IOInterface* iface) = 0;
+			virtual void device_ready(timeval* timestamp, IOInterface* iface) {}
 			virtual void timeout_trigger(timeval* timestamp, timeval* timeout_tv) {}
 			virtual void agent_start(timeval* timestamp) {}
 

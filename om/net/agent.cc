@@ -9,6 +9,9 @@
 #include <cstring>
 #include <errno.h>
 #include <unistd.h>
+#include <typeinfo>
+
+#include <om/net/inotify_handler.h>
 
 #include <om/tools/random.h>
 #include <om/tools/time.h>
@@ -159,6 +162,8 @@ void om::net::Agent::update_fd_max() {
 
 void om::net::Agent::check_read_interfaces(timeval* timestamp) {
 
+	om::net::IOInterface* iface = 0;
+
 	if(FD_ISSET(STDIN_FILENO+1, &_read_fds)) {
 
 		char read_buf[1024] = {0};
@@ -171,8 +176,18 @@ void om::net::Agent::check_read_interfaces(timeval* timestamp) {
 	for(std::map<int,om::net::IOInterface*>::iterator i = _interfaces->begin();
 		i != _interfaces->end(); ++i) {
 
-		if(FD_ISSET(i->first, &_read_fds))
-			this->device_ready(timestamp, (*_interfaces)[i->first]);
+		if(FD_ISSET(i->first, &_read_fds)) {
+
+			iface = (*_interfaces)[i->first];
+
+			if(typeid(*iface) == typeid(om::net::INotifyHandler)) {
+				dynamic_cast<om::net::INotifyHandler*>(iface)->handle_events();
+				std::cout << "is an inotify handler" << std::endl;
+			} else {
+				std::cout << "is not an inofy handler" << std::endl;
+				this->device_ready(timestamp, iface);
+			}
+		}
 	}  
 }
 
