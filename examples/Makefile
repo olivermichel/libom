@@ -14,7 +14,9 @@ CXXPOSTFIX = -lom-net -lom-tools
 EXAMPLES_NAMES = example_tunnel_device example_net_addresses example_raw_socket \
 	example_net_packing example_tools_random example_net_stream_client \
 	example_net_datagram_socket example_net_agent example_net_stream_listener \
-	example_net_inotify_handler example_tools_file
+	example_tools_file example_tools_dir
+
+# example_net_inotify_handler
 
 all: $(EXAMPLES_NAMES)
 
