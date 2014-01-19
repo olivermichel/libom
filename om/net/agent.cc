@@ -182,9 +182,7 @@ void om::net::Agent::_check_read_interfaces(timeval* timestamp) {
 
 			if(typeid(*iface) == typeid(om::net::INotifyHandler)) {
 				dynamic_cast<om::net::INotifyHandler*>(iface)->handle_events();
-				std::cout << "is an inotify handler" << std::endl;
 			} else {
-				std::cout << "is not an inofy handler" << std::endl;
 				this->device_ready(timestamp, iface);
 			}
 		}
