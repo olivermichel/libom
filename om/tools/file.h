@@ -9,10 +9,9 @@
 #ifndef OM_TOOLS_FILE_H
 #define OM_TOOLS_FILE_H
 
-#include <fstream>
 #include <stdexcept>
 #include <string>
-#include <stdint.h>
+
 
 namespace om {
 	namespace tools {
@@ -31,6 +30,10 @@ namespace om {
 			T read_int_lit(std::string file_name) throw(std::runtime_error);
 
 			void write_data(std::string file_name, const char* buf, size_t len) throw(std::runtime_error);
+
+			void copy(std::string from, std::string to) throw(std::runtime_error);
+
+			void touch(std::string file) throw(std::runtime_error);
 
 		}
 	}

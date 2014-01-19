@@ -5,6 +5,10 @@
 //  http://ngn.cs.colorado/~oliver
 //
 
+#include <stdio.h>
+#include <stdint.h>
+#include <fstream>
+
 
 #include "file.h"
 
@@ -127,3 +131,34 @@ void om::tools::file::write_data(std::string file_name, const char* buf, size_t 
 
 	} else throw std::runtime_error("write_data: failed openining file");
 }
+
+void om::tools::file::copy(std::string from, std::string to)
+	throw(std::runtime_error) {
+
+	std::ifstream from_file(from);
+	std::ofstream to_file(to);
+
+	if(from_file.is_open() && to_file.is_open()) {
+
+		while(from_file.good())
+			to_file.put(from_file.get());
+
+		from_file.close(), to_file.close();
+
+	} else throw std::runtime_error("copy: failed openining file");
+}
+
+
+void om::tools::file::touch(std::string file)
+	throw(std::runtime_error) {
+
+	std::ofstream fs(file);
+
+	if(!fs.is_open())
+		throw std::runtime_error("touch: failed openining file");
+
+	fs.close();
+}
+
+
+
