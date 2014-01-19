@@ -13,7 +13,7 @@ AR_TOOLS  = libom-tools.a
 NET_NAMES = net agent io_interface socket datagram_socket stream_client \
 	stream_listener stream_connection tunnel_device raw_socket inotify_handler
 
-TOOLS_NAMES = tools logger time random string file
+TOOLS_NAMES = tools logger time random string file dir
 
 CXX = g++
 CXXFLAGS = -Wall -g -I. -fPIC -std=c++11
