@@ -30,9 +30,11 @@ namespace om {
 				std::function<void (struct inotify_event*)> handler)
 				throw(std::runtime_error, std::logic_error);
 
-			void remove_watch(int wd) throw(std::logic_error);
+			void remove_watch(int wd)
+				throw(std::runtime_error, std::logic_error);
 
-			void handle_events() throw(std::runtime_error);
+			void handle_events()
+				throw(std::runtime_error);
 
 			virtual ~INotifyHandler();
 

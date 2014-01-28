@@ -12,6 +12,8 @@
 #include <om/net/net.h>
 #include <om/net/inotify_handler.h>
 
+#include <iostream>
+
 om::net::INotifyHandler::INotifyHandler()
 	throw(std::runtime_error)
 	:	om::net::IOInterface(om::net::IOInterface::iface_type_inotify_handler),
@@ -52,20 +54,19 @@ int om::net::INotifyHandler::add_watch(std::string pathname, uint32_t mask,
 	}
 
 	_watches->insert(std::make_pair(wd, handler));
-
 	return wd;
 }
 
 
 void om::net::INotifyHandler::remove_watch(int wd)
-	throw(std::logic_error)
+	throw(std::runtime_error, std::logic_error)
 {
 	std::map<int, std::function<void (struct inotify_event*)> >::iterator i;
 
-	if(_watches->find(wd) != _watches->end()) {
+	if((i = _watches->find(wd)) != _watches->end()) {
 
 		if(inotify_rm_watch(_fd, wd) < 0)
-  			throw std::logic_error("inotify_rm_watch(): "
+  			throw std::runtime_error("inotify_rm_watch(): "
   				+ std::string(strerror(errno)));
 		
 		_watches->erase(i);
