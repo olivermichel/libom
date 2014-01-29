@@ -9,6 +9,9 @@
 
 #include <algorithm>
 #include <dirent.h>
+#include <error.h>
+#include <string.h>
+#include <unistd.h>
 
 std::vector<om::tools::dir::entry> om::tools::dir::contents(std::string path) 
 	throw(std::runtime_error)
@@ -23,7 +26,7 @@ std::vector<om::tools::dir::entry> om::tools::dir::contents(std::string path)
       	v.push_back({std::string(dirent->d_name), dirent->d_type});
 
 	} else {
-		throw std::runtime_error("om::tools::dir::contents: failed opening directory");
+		throw std::runtime_error("om::tools::dir::contents(): failed opening directory");
 	}
 
 	return v;
@@ -38,4 +41,21 @@ bool om::tools::dir::contains(std::string path, std::string entry)
 			return true;
 
 	return false;
+}
+
+void om::tools::dir::mkdir(std::string path, mode_t mode)
+	throw(std::runtime_error)
+{
+	if(::mkdir(path.c_str(), mode) < 0)
+		throw std::runtime_error("om::tools::dir::mkdir(): mkdir failed: " +
+			std::string(strerror(errno)));
+}
+
+
+void om::tools::dir::rmdir(std::string path)
+	throw(std::runtime_error)
+{
+	if(::rmdir(path.c_str()) < 0)
+		throw std::runtime_error("om::tools::dir::rmdir(): rmdir failed: " +
+			std::string(strerror(errno)));		
 }

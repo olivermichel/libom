@@ -12,6 +12,8 @@
 #include <vector>
 #include <stdexcept>
 #include <stdint.h>
+#include <sys/stat.h>
+#include <sys/types.h>
 
 namespace om {
 	namespace tools {
@@ -38,6 +40,12 @@ namespace om {
 				throw(std::runtime_error);
 
 			bool contains(std::string path, std::string entry)
+				throw(std::runtime_error);
+
+			void mkdir(std::string path, mode_t mode)
+				throw(std::runtime_error);
+
+			void rmdir(std::string path)
 				throw(std::runtime_error);
 		}
 	}
