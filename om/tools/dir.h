@@ -36,6 +36,9 @@ namespace om {
 
 			std::vector<om::tools::dir::entry> contents(std::string path)
 				throw(std::runtime_error);
+
+			bool contains(std::string path, std::string entry)
+				throw(std::runtime_error);
 		}
 	}
 }

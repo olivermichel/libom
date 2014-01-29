@@ -7,11 +7,12 @@
 
 #include "dir.h"
 
+#include <algorithm>
 #include <dirent.h>
 
 std::vector<om::tools::dir::entry> om::tools::dir::contents(std::string path) 
-	throw(std::runtime_error) {
-
+	throw(std::runtime_error)
+{
 	struct dirent* dirent;
 	DIR* dir;
 	std::vector<om::tools::dir::entry> v;
@@ -26,4 +27,15 @@ std::vector<om::tools::dir::entry> om::tools::dir::contents(std::string path)
 	}
 
 	return v;
+}
+
+
+bool om::tools::dir::contains(std::string path, std::string entry)
+	throw(std::runtime_error)
+{
+	for(om::tools::dir::entry e : om::tools::dir::contents(path))
+		if(e.name == entry)
+			return true;
+
+	return false;
 }
