@@ -31,12 +31,6 @@ namespace om {
 			explicit StreamConnection(int fd, om::net::tp_addr remote_addr)
 				throw(std::logic_error, std::invalid_argument);
 
-			// copy constructor
-			StreamConnection(const om::net::StreamConnection &copy_from);
-
-			// assignment copy constructor
-			StreamConnection& operator=(StreamConnection& copy_from);
-
 			// accessor for remote address
 			om::net::tp_addr remote_addr();
 
@@ -69,6 +63,9 @@ namespace om {
 		private:
 
 			om::net::tp_addr _remote_addr;
+
+			StreamConnection(const om::net::StreamConnection &copy_from);
+			StreamConnection& operator=(StreamConnection& copy_from);
 		};
 	}
 }

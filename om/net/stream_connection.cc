@@ -16,38 +16,26 @@ om::net::StreamConnection::StreamConnection()
 
 om::net::StreamConnection::StreamConnection(int fd)
 	throw(std::logic_error, std::invalid_argument)
-	: om::net::IOInterface() {
-
+	: om::net::IOInterface()
+{
 	this->attach(fd);
 }
 
 om::net::StreamConnection::StreamConnection(int fd, om::net::tp_addr remote_addr)
 	throw(std::logic_error, std::invalid_argument)
-	: om::net::IOInterface() {
-
+	: om::net::IOInterface()
+{
 	this->attach(fd, remote_addr);
 }
 
-om::net::StreamConnection::StreamConnection(const om::net::StreamConnection 
-	&copy_from)
-	: om::net::IOInterface(copy_from), _remote_addr(copy_from._remote_addr) {}
-
-om::net::StreamConnection& om::net::StreamConnection::operator=(
-	StreamConnection& copy_from) {
-
-	om::net::IOInterface::operator=(copy_from);
-	_remote_addr = copy_from._remote_addr;
-	return *this;
-}
-
-om::net::tp_addr om::net::StreamConnection::remote_addr() {
-
+om::net::tp_addr om::net::StreamConnection::remote_addr()
+{
 	return _remote_addr;
 }
 
 void om::net::StreamConnection::attach(int fd)
-	throw(std::logic_error, std::invalid_argument) {
-
+	throw(std::logic_error, std::invalid_argument)
+{
 	if(_fd != 0)
 		throw std::logic_error("StreamConnection is already attached to a socket");
 
@@ -58,8 +46,8 @@ void om::net::StreamConnection::attach(int fd)
 }
 
 void om::net::StreamConnection::attach(int fd, om::net::tp_addr remote_addr)
-	throw(std::logic_error, std::invalid_argument) {
-
+	throw(std::logic_error, std::invalid_argument)
+{
 	_remote_addr = remote_addr;
 	this->attach(fd);
 }
@@ -71,22 +59,22 @@ void om::net::StreamConnection::handle_read()
 }
 
 int om::net::StreamConnection::send(const unsigned char* tx_buf,
-	const size_t buf_len) {
-
+	const size_t buf_len)
+{
 	int tx_bytes = ::send(_fd, tx_buf, buf_len, 0);
 	return tx_bytes;
 }
 
 int om::net::StreamConnection::receive(unsigned char* rx_buf,
-	const size_t buf_len) {
-
+	const size_t buf_len)
+{
 	int rx_bytes = ::recv(_fd, rx_buf, buf_len, 0);
 	return rx_bytes;
 }
 
 void om::net::StreamConnection::close()
-	throw(std::logic_error, std::runtime_error) {
-
+	throw(std::logic_error, std::runtime_error)
+{
 	if(_fd == 0)
 		throw std::logic_error("Socket was already closed or never opened");
 
@@ -96,8 +84,15 @@ void om::net::StreamConnection::close()
 		throw std::runtime_error("close(): " + std::string(strerror(errno)));
 }
 
-om::net::StreamConnection::~StreamConnection() {}
-
+om::net::StreamConnection::~StreamConnection()
+{
+	if(_fd != 0) {
+		if(::close(_fd) == 0)
+			_fd = 0;
+		else
+			throw std::runtime_error("::close(): " + std::string(strerror(errno)));		
+	}
+}
 
 namespace om {
 	namespace net {
