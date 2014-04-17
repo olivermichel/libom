@@ -10,12 +10,14 @@
 #ifndef OM_NET_STREAM_LISTENER_H
 #define OM_NET_STREAM_LISTENER_H
 
-#include "socket.h"
+#include <functional>
+
+#include <om/net/io_interface.h>
 
 namespace om {
 	namespace net {
 
-		class StreamListener : public om::net::Socket {
+		class StreamListener : public om::net::IOInterface {
 		
 		public:
 			
@@ -26,21 +28,20 @@ namespace om {
 			// constructs a new StreamListener object without opening a socket
 			explicit StreamListener();
 
-			// constructs a new StreamListener object and immediately opens 
-			// the socket immediately
-			explicit StreamListener(const om::net::tp_addr addr) 
+			// constructs a new StreamListener object and opens the socket
+			explicit StreamListener(const om::net::tp_addr addr, 
+				std::function<void (om::net::StreamListener*)> new_conn_handler) 
 				throw(std::runtime_error, std::invalid_argument);
-
-			// copy constructor
-			StreamListener(const om::net::StreamListener &copy_from);
-
-			// assignment copy constructor
-			StreamListener& operator=(StreamListener& copy_from);
 
 			// begins listening on a specified TCP port and passes new incoming
 			// connections to an instance of om::net::Agent
-			int open(const om::net::tp_addr addr)
+			int open(const om::net::tp_addr addr, 
+				std::function<void (om::net::StreamListener*)> new_conn_handler)
 				throw(std::runtime_error, std::logic_error, std::invalid_argument);
+
+			// implement om::net::IOInterface
+			void handle_read()
+				throw(std::logic_error);
 
 			// accepts a new incoming connection and returns a new fd for this
 			// connection, the peer address is written into remote_addr
@@ -55,8 +56,12 @@ namespace om {
 			~StreamListener();
 
 		private:
-
+			
 			om::net::tp_addr _addr;
+			std::function<void (om::net::StreamListener*)> _new_conn_handler;
+
+			StreamListener(const om::net::StreamListener &copy_from);
+			StreamListener& operator=(StreamListener& copy_from);
 		};
 	}
 }

@@ -21,26 +21,19 @@ namespace om {
 		class IOInterface {
 
 		public:
-
-			enum iface_type {
-				iface_type_unknown,
-				iface_type_sock_raw,
-				iface_type_sock_stream,
-				iface_type_sock_dgram,
-				iface_type_tun,
-				iface_type_inotify_handler
-			};
-
-			explicit IOInterface(iface_type type);
+			explicit IOInterface();
 			IOInterface(const IOInterface& copy_from);
 			IOInterface& operator=(const IOInterface& copy_from);
 
 			int fd();
 
-			void add_to_fd_set(fd_set *fds) throw(std::logic_error);
-			void remove_from_fd_set(fd_set *fds) throw(std::logic_error);
+			void add_to_fd_set(fd_set* fds)
+				throw(std::logic_error);
+			
+			void remove_from_fd_set(fd_set* fds)
+				throw(std::logic_error);
 
-			iface_type type();
+			virtual void handle_read() = 0;
 
 			virtual void close() {}
 			virtual ~IOInterface() {}
@@ -48,8 +41,6 @@ namespace om {
 		protected:
 			int _fd;
 
-		private:
-			iface_type _iface_type;
 		};
 	}
 }

@@ -33,7 +33,8 @@ namespace om {
 			void remove_watch(int wd)
 				throw(std::runtime_error, std::logic_error);
 
-			void handle_events()
+			// from om::net::IOInterface
+			void handle_read()
 				throw(std::runtime_error);
 
 			virtual ~INotifyHandler();

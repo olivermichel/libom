@@ -14,12 +14,12 @@
 #include <unistd.h>
 
 #include "net.h"
-#include "socket.h"
+#include <om/net/io_interface.h>
 
 namespace om {
   namespace net {
 
-    class DatagramSocket : public om::net::Socket {
+    class DatagramSocket : public om::net::IOInterface {
 
     public:
       

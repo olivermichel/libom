@@ -12,30 +12,30 @@
 #include "stream_connection.h"
 
 om::net::StreamConnection::StreamConnection()
-	: om::net::Socket(om::net::IOInterface::iface_type_sock_stream) {}
+	: om::net::IOInterface() {}
 
 om::net::StreamConnection::StreamConnection(int fd)
 	throw(std::logic_error, std::invalid_argument)
-	: om::net::Socket(om::net::IOInterface::iface_type_sock_stream) {
+	: om::net::IOInterface() {
 
 	this->attach(fd);
 }
 
 om::net::StreamConnection::StreamConnection(int fd, om::net::tp_addr remote_addr)
 	throw(std::logic_error, std::invalid_argument)
-	: om::net::Socket(om::net::IOInterface::iface_type_sock_stream) {
+	: om::net::IOInterface() {
 
 	this->attach(fd, remote_addr);
 }
 
 om::net::StreamConnection::StreamConnection(const om::net::StreamConnection 
 	&copy_from)
-	: om::net::Socket(copy_from), _remote_addr(copy_from._remote_addr) {}
+	: om::net::IOInterface(copy_from), _remote_addr(copy_from._remote_addr) {}
 
 om::net::StreamConnection& om::net::StreamConnection::operator=(
 	StreamConnection& copy_from) {
 
-	om::net::Socket::operator=(copy_from);
+	om::net::IOInterface::operator=(copy_from);
 	_remote_addr = copy_from._remote_addr;
 	return *this;
 }
@@ -62,6 +62,12 @@ void om::net::StreamConnection::attach(int fd, om::net::tp_addr remote_addr)
 
 	_remote_addr = remote_addr;
 	this->attach(fd);
+}
+
+void om::net::StreamConnection::handle_read()
+	throw(std::runtime_error, std::logic_error)
+{
+
 }
 
 int om::net::StreamConnection::send(const unsigned char* tx_buf,
@@ -92,12 +98,14 @@ void om::net::StreamConnection::close()
 
 om::net::StreamConnection::~StreamConnection() {}
 
+
 namespace om {
-namespace net {
-std::ostream& operator<<(std::ostream& out, const om::net::StreamConnection& sc)
-{
-	out << "StreamConnection(" << sc._remote_addr.to_string() << ")";
-	return out;
-}
-}
+	namespace net {
+		std::ostream& operator<<(std::ostream& out, 
+			const om::net::StreamConnection& sc)
+		{
+			out << "StreamConnection(" << sc._remote_addr.to_string() << ")";
+			return out;
+		}
+	}
 }

@@ -14,12 +14,12 @@
 #include <unistd.h>
 
 #include <om/net/net.h>
-#include <om/net/socket.h>
+#include <om/net/io_interface.h>
 
 namespace om {
 	namespace net {
 
-		class StreamClient : public om::net::Socket {
+		class StreamClient : public om::net::IOInterface {
 
 		public:
 

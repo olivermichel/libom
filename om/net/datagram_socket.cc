@@ -4,27 +4,26 @@
 //  (c) 2012 Oliver Michel
 //
 
-
 #include <cstring>
 #include "datagram_socket.h"
 
 om::net::DatagramSocket::DatagramSocket()
-  : om::net::Socket(om::net::IOInterface::iface_type_sock_dgram) {}
+  : om::net::IOInterface() {}
 
 om::net::DatagramSocket::DatagramSocket(const om::net::tp_addr addr) 
   throw(std::runtime_error, std::invalid_argument)
-  : om::net::Socket(om::net::IOInterface::iface_type_sock_dgram) {
+  : om::net::IOInterface() {
 
   this->open(addr);
 }
 
 om::net::DatagramSocket::DatagramSocket(const om::net::DatagramSocket& copy_from)
-  : om::net::Socket(copy_from) {}
+  : om::net::IOInterface(copy_from) {}
 
 om::net::DatagramSocket& 
   om::net::DatagramSocket::operator=(om::net::DatagramSocket& copy_from) {
 
-  om::net::Socket::operator=(copy_from);
+  om::net::IOInterface::operator=(copy_from);
   return *this;
 }
 

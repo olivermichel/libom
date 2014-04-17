@@ -8,34 +8,27 @@
 #include <cstring>
 #include <errno.h>
 #include <unistd.h>
-
-#include <om/net/socket.h>
+#include <iostream>
 
 #include "stream_listener.h"
 
 om::net::StreamListener::StreamListener()
-	: om::net::Socket(om::net::IOInterface::iface_type_sock_stream) {}
+	:	om::net::IOInterface() {}
 
-om::net::StreamListener::StreamListener(const om::net::tp_addr addr)
+om::net::StreamListener::StreamListener(const om::net::tp_addr addr,
+	std::function<void (om::net::StreamListener*)> new_conn_handler)
 	throw(std::runtime_error, std::invalid_argument)
-	: om::net::Socket(om::net::IOInterface::iface_type_sock_stream) {
-
-	this->open(addr);
+	:	om::net::IOInterface()
+{
+	this->open(addr, new_conn_handler);
 }
 
-om::net::StreamListener::StreamListener(const om::net::StreamListener &copy_from)
-	: om::net::Socket(copy_from), _addr(copy_from._addr) {}
-
-om::net::StreamListener& om::net::StreamListener::operator=(StreamListener& 
-	copy_from) {
-
-	om::net::Socket::operator=(copy_from);
-	_addr = copy_from._addr;
-	return *this;
-}
-
-int om::net::StreamListener::open(const om::net::tp_addr addr)
-	throw(std::runtime_error, std::logic_error, std::invalid_argument) {
+int om::net::StreamListener::open(const om::net::tp_addr addr,
+	std::function<void (om::net::StreamListener*)> new_conn_handler)
+	throw(std::runtime_error, std::logic_error, std::invalid_argument)
+{
+	int fd, yes = 1;
+	struct sockaddr_in addr_struct;
 
 	if(_fd != 0) 
 		throw std::logic_error("Socket already opened");
@@ -43,8 +36,8 @@ int om::net::StreamListener::open(const om::net::tp_addr addr)
 	if(addr.proto != om::net::tp_proto_tcp)
 		throw std::invalid_argument("ip_endpoint must be a TCP endpoint");
 
-	int fd, yes = 1;
-	struct sockaddr_in addr_struct;
+	// set new connection handling function
+	_new_conn_handler = new_conn_handler;
 
 	// create new stream socket
 	if((fd = socket(AF_INET, SOCK_STREAM, 0)) < 0) {
@@ -79,9 +72,18 @@ int om::net::StreamListener::open(const om::net::tp_addr addr)
 	return fd;
 }
 
-int om::net::StreamListener::accept(om::net::tp_addr* remote_addr)
-	throw(std::runtime_error) {
+void om::net::StreamListener::handle_read()
+	throw(std::logic_error)
+{
+	if(_new_conn_handler)
+		_new_conn_handler(this);
+	else
+		throw std::logic_error("StreamListener: no new connection handler set");
+}
 
+int om::net::StreamListener::accept(om::net::tp_addr* remote_addr)
+	throw(std::runtime_error)
+{
 	int incoming_fd = -1;
 
 	struct sockaddr_in addr_struct;
@@ -100,8 +102,8 @@ int om::net::StreamListener::accept(om::net::tp_addr* remote_addr)
 }
 
 void om::net::StreamListener::close()
-	throw(std::logic_error, std::runtime_error) {
-	
+	throw(std::logic_error, std::runtime_error)
+{
 	if(_fd == 0)
 		throw std::logic_error("Socket was already ::closed or never opened");
 
@@ -111,4 +113,12 @@ void om::net::StreamListener::close()
 		throw std::runtime_error("::close(): " + std::string(strerror(errno)));
 }
 
-om::net::StreamListener::~StreamListener() {}
+om::net::StreamListener::~StreamListener()
+{
+	if(_fd != 0) {
+		if(::close(_fd) == 0)
+			_fd = 0;
+		else
+			throw std::runtime_error("::close(): " + std::string(strerror(errno)));		
+	}
+}

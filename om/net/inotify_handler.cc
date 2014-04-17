@@ -16,7 +16,7 @@
 
 om::net::INotifyHandler::INotifyHandler()
 	throw(std::runtime_error)
-	:	om::net::IOInterface(om::net::IOInterface::iface_type_inotify_handler),
+	:	om::net::IOInterface(),
 		_watches(new std::map<int, std::function<void (struct inotify_event*)> >()) 
 {
 
@@ -76,7 +76,7 @@ void om::net::INotifyHandler::remove_watch(int wd)
 	}
 }
 
-void om::net::INotifyHandler::handle_events()
+void om::net::INotifyHandler::handle_read()
 	throw(std::runtime_error)
 {
 	ssize_t read_len = 0, parsed_len = 0;

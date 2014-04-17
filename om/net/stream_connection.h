@@ -11,13 +11,13 @@
 #define OM_NET_STREAM_CONNECTION_H
 
 #include <om/net/net.h>
-#include <om/net/socket.h>
+#include <om/net/io_interface.h>
 #include <ostream>
 
 namespace om {
 	namespace net {
 
-		class StreamConnection : public om::net::Socket {
+		class StreamConnection : public om::net::IOInterface {
 		
 		public:
 
@@ -46,6 +46,10 @@ namespace om {
 
 			void attach(int fd, om::net::tp_addr remote_addr)
 				throw(std::logic_error, std::invalid_argument);
+
+			// implement om::net::IOInterface
+			void handle_read()
+				throw(std::runtime_error, std::logic_error);
 
 			// writes buf_len bytes out of tx_buf to the socket
 			int send(const unsigned char* tx_buf, const size_t buf_len);

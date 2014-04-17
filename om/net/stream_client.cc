@@ -11,21 +11,21 @@
 
 
 om::net::StreamClient::StreamClient()
-	: om::net::Socket(om::net::IOInterface::iface_type_sock_stream) { }
+	: om::net::IOInterface() { }
 
 om::net::StreamClient::StreamClient(const om::net::tp_addr remote_addr) 
 	throw(std::runtime_error, std::invalid_argument)
-	: om::net::Socket(om::net::IOInterface::iface_type_sock_stream) {
+	: om::net::IOInterface() {
 
 	this->open(remote_addr);
 }
 
 om::net::StreamClient::StreamClient(const om::net::StreamClient& copy_from)
-	: om::net::Socket(copy_from), _remote_addr(copy_from._remote_addr) {}
+	: om::net::IOInterface(copy_from), _remote_addr(copy_from._remote_addr) {}
 
 om::net::StreamClient& om::net::StreamClient::operator=(StreamClient& copy_from) {
 
-	om::net::Socket::operator=(copy_from);
+	om::net::IOInterface::operator=(copy_from);
 	_remote_addr = copy_from._remote_addr;
 	return *this;
 }

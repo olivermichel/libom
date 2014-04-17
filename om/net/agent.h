@@ -14,6 +14,7 @@
 #include <map>
 #include <stdexcept>
 #include <sys/select.h>
+#include <typeindex>
 
 #include <om/net/io_interface.h>
 
@@ -42,8 +43,7 @@ namespace om {
 				throw(std::logic_error);
 
 			std::map<int, IOInterface*>* interfaces() const;
-			std::map<int, IOInterface*> interfaces(IOInterface::iface_type type) 
-				const;
+			std::map<int, IOInterface*> interfaces(std::type_index type) const;
 
 			void set_timeout_mode(timeout_mode_t t);
 			timeout_mode_t timeout_mode() const;
@@ -56,10 +56,12 @@ namespace om {
 			void set_exponential_lambda(double l);
 			double exponential_lambda() const;
 
-			IOInterface* random_interface() const throw(std::logic_error);;
-			IOInterface* random_interface(IOInterface::iface_type type) const
+			IOInterface* random_interface() const
+				throw(std::logic_error);;
+			IOInterface* random_interface(std::type_index type) const
 				throw(std::logic_error);
-			IOInterface* interface_by_fd(int fd) const throw(std::logic_error);;
+			IOInterface* interface_by_fd(int fd) const
+				throw(std::logic_error);;
 
 			void run() throw(std::runtime_error);
 			
