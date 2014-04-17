@@ -10,8 +10,9 @@ LIB_TOOLS = libom-tools.so
 AR_NET    = libom-net.a
 AR_TOOLS  = libom-tools.a
 
-NET_NAMES = net agent io_interface socket datagram_socket stream_client \
-	stream_listener stream_connection tunnel_device raw_socket inotify_handler
+NET_NAMES = net agent io_interface datagram_socket stream_client \
+	stream_listener stream_connection inotify_handler
+# tunnel_device raw_socket
 
 TOOLS_NAMES = tools logger time random string file dir
 
