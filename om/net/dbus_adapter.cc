@@ -56,12 +56,30 @@ void om::net::DBusAdapter::connect(std::string addr, std::string req_name)
    	throw std::runtime_error("DBusAdapter: failed getting unique name");
 }
 
+void om::net::DBusAdapter::send_signal(om::net::DBusSignal& sig)
+	throw(std::runtime_error)
+{
+	dbus_uint32_t serial = 0;
+	DBusMessage* msg;
+
+	msg = dbus_message_new_signal(sig._addr.c_str(), sig._iface.c_str(),
+		sig._name.c_str());
+
+	if(msg == 0)
+		throw std::runtime_error("DBusAdapter: failed creating signal");
+
+	if(!dbus_connection_send(_conn, msg, &serial))
+		throw std::runtime_error("DBusAdapter: failed sending signal");
+
+	dbus_connection_flush(_conn);
+	dbus_message_unref(msg);
+}
+
 void om::net::DBusAdapter::handle_read()
 	throw(std::logic_error)
 {
 
 }
-
 
 std::string om::net::DBusAdapter::unique_name() const
 {
@@ -76,4 +94,22 @@ void om::net::DBusAdapter::disconnect()
 om::net::DBusAdapter::~DBusAdapter()
 {
 
+}
+
+
+
+om::net::DBusSignal::DBusSignal(std::string addr, std::string iface,
+	std::string name)
+	: _addr(addr), _iface(iface), _name(name) {}
+
+om::net::DBusSignal::DBusSignal(const om::net::DBusSignal& copy_from)
+	: _addr(copy_from._addr), _iface(copy_from._iface), _name(copy_from._name) {}
+
+om::net::DBusSignal& om::net::DBusSignal::operator=(DBusSignal& copy_from)
+{
+	_addr = copy_from._addr;
+	_iface = copy_from._iface;
+	_name = copy_from._name;
+
+	return *this;
 }

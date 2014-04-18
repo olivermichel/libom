@@ -23,10 +23,9 @@ int main(int argc, char const *argv[]) {
 
 	std::cout << "unique name: " << dbus.unique_name() << std::endl;
 
+	om::net::DBusSignal sig("/test/signal/Object", "test.signal.Type", "Test");
 
-	
-
-	// dbus.connect_system();
+	dbus.send_signal(sig);
 
 	// dbus.disconnect();
 

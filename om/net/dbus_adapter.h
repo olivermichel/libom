@@ -17,6 +17,21 @@
 namespace om {
 	namespace net {
 
+		class DBusSignal {
+
+		public:
+			explicit DBusSignal(std::string addr, std::string iface, std::string name);
+			explicit DBusSignal(const om::net::DBusSignal& copy_from);  
+			DBusSignal& operator=(DBusSignal& copy_from);
+
+		private:
+			std::string _addr;
+			std::string _iface;
+			std::string _name;
+		
+			friend class DBusAdapter;
+		};
+
 		class DBusAdapter : public om::net::IOInterface {
 
 		public:
@@ -24,6 +39,9 @@ namespace om {
 			explicit DBusAdapter();
 
 			void connect(std::string addr, std::string req_name)
+				throw(std::runtime_error);
+
+			void send_signal(DBusSignal& sig)
 				throw(std::runtime_error);
 
 			void handle_read()
@@ -39,6 +57,9 @@ namespace om {
 
 			DBusConnection* _conn;
 			std::string _unique_name;
+
+			explicit DBusAdapter(const om::net::DBusAdapter&);  
+			DBusAdapter& operator=(DBusAdapter& copy_from);
 		};
 	}
 }
