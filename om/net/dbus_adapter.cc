@@ -37,6 +37,12 @@ void om::net::DBusAdapter::connect(std::string addr, std::string req_name,
    _set_watch_functions();
 }
 
+void om::net::DBusAdapter::set_default_signal_handler(
+	std::function<void (om::net::DBusAdapter*, DBusMessage*)> dsh)
+{
+	_default_signal_handler = dsh;
+}
+
 void om::net::DBusAdapter::match_signal(std::string iface)
 	throw(std::runtime_error)
 {
@@ -75,7 +81,28 @@ void om::net::DBusAdapter::send_signal(om::net::DBusSignal& sig)
 void om::net::DBusAdapter::handle_read()
 	throw(std::logic_error)
 {
-	std::cout << "handle read called" << std::endl;
+	DBusMessage* msg;
+
+	dbus_connection_read_write(_conn, 0);
+	msg = dbus_connection_pop_message(_conn);
+
+	switch(dbus_message_get_type(msg)) {
+		case DBUS_MESSAGE_TYPE_METHOD_CALL:   _handle_msg_method_call(msg); break;
+		case DBUS_MESSAGE_TYPE_METHOD_RETURN: _handle_msg_method_return(msg); break;
+		case DBUS_MESSAGE_TYPE_SIGNAL:        _handle_msg_signal(msg); break;
+		case DBUS_MESSAGE_TYPE_ERROR:         _handle_msg_error(msg); break;
+
+		default: std::cout << "unknown message" << std::endl; break;
+	}
+
+	dbus_message_unref(msg);
+/*	
+
+	if(_read_handler)
+		_read_handler(this);
+	else
+		throw std::logic_error("DBusAdapter: no read handler set");
+*/
 }
 
 std::string om::net::DBusAdapter::unique_name() const
@@ -144,6 +171,27 @@ void om::net::DBusAdapter::_set_watch_functions()
 		&data,
 		NULL
 	);
+}
+
+void om::net::DBusAdapter::_handle_msg_method_call(DBusMessage* msg)
+{
+	std::cout << "_handle_msg_method_call()" << std::endl;
+}
+
+void om::net::DBusAdapter::_handle_msg_method_return(DBusMessage* msg)
+{
+	std::cout << "_handle_msg_method_return()" << std::endl;
+}
+
+void om::net::DBusAdapter::_handle_msg_signal(DBusMessage* msg)
+{
+	_default_signal_handler(this, msg);
+
+}
+
+void om::net::DBusAdapter::_handle_msg_error(DBusMessage* msg)
+{
+	std::cout << "_handle_msg_error()" << std::endl;
 }
 
 unsigned om::net::DBusAdapter::_add_watch_static_callback(DBusWatch* w, void* d)

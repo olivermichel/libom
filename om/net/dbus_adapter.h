@@ -43,6 +43,9 @@ namespace om {
 				std::function<void (om::net::DBusAdapter*)> connected_callback)
 				throw(std::runtime_error, std::logic_error);
 
+			void set_default_signal_handler(
+				std::function<void (om::net::DBusAdapter*, DBusMessage*)> dsh);
+
 			void match_signal(std::string iface)
 				throw(std::runtime_error);
 
@@ -65,6 +68,9 @@ namespace om {
 			
 			std::function<void (om::net::DBusAdapter*)> _connected_callback;
 
+			std::function<void (om::net::DBusAdapter*, DBusMessage*)>
+				_default_signal_handler;
+
 			void _open_connection(std::string addr)
 				throw(std::runtime_error);
 
@@ -72,6 +78,12 @@ namespace om {
 				throw(std::runtime_error);
 
 			void _set_watch_functions();
+
+			// message handlers
+			void _handle_msg_method_call(DBusMessage* msg);
+			void _handle_msg_method_return(DBusMessage* msg);
+			void _handle_msg_signal(DBusMessage* msg);
+			void _handle_msg_error(DBusMessage* msg);
 
 			// static callback methods, receive pointer to current instance via d
 			static unsigned _add_watch_static_callback(DBusWatch* w, void* d);

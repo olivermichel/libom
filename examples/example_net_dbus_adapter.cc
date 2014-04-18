@@ -14,21 +14,38 @@
 class ExampleDBusAdapterAgent : public om::net::Agent {
 
 public:
-	
-	void connected(om::net::DBusAdapter* dbus) {
 
+	void connected(om::net::DBusAdapter* dbus)
+	{
 		std::cout << "connected: " << dbus->unique_name() << std::endl;
 		std::cout << "fd: " << dbus->fd() << std::endl;
 
-		om::net::DBusSignal sig(
-			"/test/signal/Object",
-			"test.signal.Type",
-			"Test"
+		dbus->set_default_signal_handler(
+			[this](om::net::DBusAdapter* dbus, DBusMessage* msg) { 
+				this->receive_signal(dbus, msg); 
+			}
 		);
 
 		dbus->match_signal("test.signal.Type");
-		
+
+		om::net::DBusSignal sig(
+			"/test/signal/Object", "test.signal.Type", "Test"
+		);
+
 		dbus->send_signal(sig);
+	}
+
+	void receive_signal(om::net::DBusAdapter* dbus, DBusMessage* msg)
+	{
+		std::cout << "receive_signal()" << std::endl;
+
+
+		std::string iface(dbus_message_get_interface(msg));
+		std::string sender(dbus_message_get_sender(msg));
+
+		std::cout << "iface: " << iface << std::endl;
+		std::cout << "sender: " << iface << std::endl;
+
 	}
 
 };
