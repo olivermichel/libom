@@ -1,53 +1,65 @@
 //
-//  Olli's C++ Library
+//  Olli's C++ Library [https://bitbucket.org/omichel/om-lib]
 //  net/datagram_socket.h
-//  (c) 2012 Oliver Michel
+//  (c) 2013 Oliver Michel <oliver dot michel at editum dot de>
+//  http://ngn.cs.colorado/~oliver
+//
+//  implements a UDP socket
 //
 
 
 #ifndef OM_NET_DATAGRAM_SOCKET_H
 #define OM_NET_DATAGRAM_SOCKET_H
 
-#include <stdexcept>
-
 #include <errno.h>
+#include <functional>
+#include <stdexcept>
 #include <unistd.h>
 
 #include "net.h"
 #include <om/net/io_interface.h>
 
 namespace om {
-  namespace net {
+	namespace net {
 
-    class DatagramSocket : public om::net::IOInterface {
+		class DatagramSocket : public om::net::IOInterface {
 
-    public:
-      
-      explicit DatagramSocket();
-      explicit DatagramSocket(const om::net::tp_addr addr) 
-        throw(std::runtime_error, std::invalid_argument);
-      explicit DatagramSocket(const om::net::DatagramSocket &copy_from);
-      DatagramSocket& operator=(DatagramSocket& copy_from);
+		public:
+			
+			explicit DatagramSocket();
 
-      int open(const om::net::tp_addr addr)
-        throw(std::runtime_error, std::logic_error, std::invalid_argument);
+			explicit DatagramSocket(const om::net::tp_addr addr,
+				std::function<void (om::net::DatagramSocket*)> read_handler) 
+				throw(std::runtime_error, std::invalid_argument);
 
-      int send(const om::net::tp_addr remote_addr, 
-        const unsigned char *tx_data, const size_t data_len);
+			int open(const om::net::tp_addr addr,
+				std::function<void (om::net::DatagramSocket*)> read_handler)
+				throw(std::runtime_error, std::logic_error, std::invalid_argument);
 
-      int receive(om::net::tp_addr *from, unsigned char *rx_buf, 
-        const size_t buf_len);
+			// implement om::net::IOInterface
+			void handle_read()
+				throw(std::runtime_error, std::logic_error);
 
-      void close()
-        throw(std::logic_error);
-      
-      ~DatagramSocket();
+			int send(const om::net::tp_addr remote_addr, 
+				const unsigned char *tx_data, const size_t data_len);
 
-    private:
+			int receive(om::net::tp_addr *from, unsigned char *rx_buf, 
+				const size_t buf_len);
 
-      om::net::tp_addr _addr;
-    };
-  }
+			void close()
+				throw(std::logic_error);
+			
+			~DatagramSocket();
+
+		private:
+
+			om::net::tp_addr _addr;
+			std::function<void (om::net::DatagramSocket*)> _read_handler;
+
+			DatagramSocket(const om::net::DatagramSocket &copy_from);
+			DatagramSocket& operator=(DatagramSocket& copy_from);
+		};
+	}
 }
 
 #endif
