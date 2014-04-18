@@ -15,12 +15,15 @@ om::net::DBusAdapter::DBusAdapter()
 		_conn(), 
 		_unique_name() {}
 
-void om::net::DBusAdapter::connect(std::string addr, std::string req_name)
-	throw(std::runtime_error)
+void om::net::DBusAdapter::connect(std::string addr, std::string req_name,
+	std::function<void (om::net::DBusAdapter*)> connected_callback)
+	throw(std::runtime_error, std::logic_error)
 {
 	int name_res;
 	DBusError err;
 	const char* assign_name;
+
+	_connected_callback = connected_callback;
 
 	dbus_error_init(&err);
 
@@ -114,7 +117,7 @@ om::net::DBusAdapter::~DBusAdapter()
 unsigned om::net::DBusAdapter::_add_watch_static_callback(DBusWatch* w, void* d)
 {
 	int fd = dbus_watch_get_unix_fd(w);
-	struct callback_context* data = (callback_context*) d;
+	((callback_context*)d)->adapter_instance->_connected(fd);
 
 	return 0;
 }
@@ -127,6 +130,17 @@ void om::net::DBusAdapter::_toggle_watch_static_callback(DBusWatch* w, void* d)
 void om::net::DBusAdapter::_rm_watch_static_callback(DBusWatch* w, void* d)
 {
 	std::cout << "_rm_watch_static_callback()" << std::endl;
+}
+
+void om::net::DBusAdapter::_connected(int fd)
+	throw(std::logic_error)
+{
+	_fd = fd;
+
+	if(_connected_callback)
+		_connected_callback(this);
+	else
+		throw std::logic_error("DBusAdapter: no connected handler set");
 }
 
 

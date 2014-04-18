@@ -11,6 +11,7 @@
 #include <om/net/io_interface.h>
 
 #include <dbus/dbus.h>
+#include <functional>
 #include <stdexcept>
 #include <string>
 
@@ -38,8 +39,9 @@ namespace om {
 			
 			explicit DBusAdapter();
 
-			void connect(std::string addr, std::string req_name)
-				throw(std::runtime_error);
+			void connect(std::string addr, std::string req_name,
+				std::function<void (om::net::DBusAdapter*)> connected_callback)
+				throw(std::runtime_error, std::logic_error);
 
 			void send_signal(DBusSignal& sig)
 				throw(std::runtime_error);
@@ -65,6 +67,11 @@ namespace om {
 			static unsigned _add_watch_static_callback(DBusWatch* w, void* d);
 			static void _toggle_watch_static_callback(DBusWatch* w, void* d);
 			static void _rm_watch_static_callback(DBusWatch* w, void* d);
+
+			void _connected(int fd)
+				throw(std::logic_error);
+
+			std::function<void (om::net::DBusAdapter*)> _connected_callback;
 
 			// wraps a pointer to an instance of DBusAdapter for passing
 			// to dbus watch callbacks
