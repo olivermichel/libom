@@ -62,19 +62,29 @@ namespace om {
 
 			DBusConnection* _conn;
 			std::string _unique_name;
+			
+			std::function<void (om::net::DBusAdapter*)> _connected_callback;
 
-			explicit DBusAdapter(const om::net::DBusAdapter&);  
-			DBusAdapter& operator=(DBusAdapter& copy_from);
+			void _open_connection(std::string addr)
+				throw(std::runtime_error);
+
+			void _request_name(std::string name)
+				throw(std::runtime_error);
+
+			void _set_watch_functions();
 
 			// static callback methods, receive pointer to current instance via d
 			static unsigned _add_watch_static_callback(DBusWatch* w, void* d);
 			static void _toggle_watch_static_callback(DBusWatch* w, void* d);
 			static void _rm_watch_static_callback(DBusWatch* w, void* d);
 
+			// callbacks from static members
 			void _connected(int fd)
 				throw(std::logic_error);
 
-			std::function<void (om::net::DBusAdapter*)> _connected_callback;
+			// disable copy constructor and assignment operator
+			explicit DBusAdapter(const om::net::DBusAdapter&);  
+			DBusAdapter& operator=(DBusAdapter& copy_from);
 
 			// wraps a pointer to an instance of DBusAdapter for passing
 			// to dbus watch callbacks

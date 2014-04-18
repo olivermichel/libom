@@ -19,38 +19,12 @@ void om::net::DBusAdapter::connect(std::string addr, std::string req_name,
 	std::function<void (om::net::DBusAdapter*)> connected_callback)
 	throw(std::runtime_error, std::logic_error)
 {
-	int name_res;
-	DBusError err;
 	const char* assign_name;
 
 	_connected_callback = connected_callback;
 
-	dbus_error_init(&err);
-
-	// open connection to the bus with provided address
-	_conn = dbus_connection_open(addr.c_str(), &err);
-
-	if(dbus_error_is_set(&err)) { 
-		throw std::runtime_error("DBusAdapter: connection error: "
-			+ std::string(err.message));
-		dbus_error_free(&err); 
-	}
-	if(!_conn)
-		throw std::runtime_error("DBusAdapter: connection error");
-
-	// register connection on the bus
-   dbus_bus_register(_conn, &err);
-
-   // request specified name on the bus
-	name_res = dbus_bus_request_name(_conn, req_name.c_str(), 0, &err);
-
-	if(dbus_error_is_set(&err)) {
-		throw std::runtime_error("DBusAdapter: request name error: "
-			+ std::string(err.message));
-		dbus_error_free(&err);
-	}
-	if(DBUS_REQUEST_NAME_REPLY_PRIMARY_OWNER != name_res)
-		throw std::runtime_error("DBusAdapter: request name error");
+	_open_connection(addr);
+	_request_name(req_name);
 
 	// query assigned unique name
    assign_name = dbus_bus_get_unique_name(_conn);
@@ -60,18 +34,7 @@ void om::net::DBusAdapter::connect(std::string addr, std::string req_name,
    else
    	throw std::runtime_error("DBusAdapter: failed getting unique name");
 
-
-   callback_context data(this);
-
-   dbus_connection_set_watch_functions(
-   	_conn,
-   	_add_watch_static_callback,
-   	_toggle_watch_static_callback,
-   	_rm_watch_static_callback,
-   	&data,
-   	NULL
-   );
-
+   _set_watch_functions();
 }
 
 void om::net::DBusAdapter::match_signal(std::string iface)
@@ -128,6 +91,59 @@ void om::net::DBusAdapter::disconnect()
 om::net::DBusAdapter::~DBusAdapter()
 {
 
+}
+
+void om::net::DBusAdapter::_open_connection(std::string addr)
+	throw(std::runtime_error)
+{
+	DBusError err;
+	dbus_error_init(&err);
+
+	// open connection to the bus with provided address
+	_conn = dbus_connection_open(addr.c_str(), &err);
+
+	if(dbus_error_is_set(&err)) { 
+		throw std::runtime_error("DBusAdapter: connection error: "
+			+ std::string(err.message));
+		dbus_error_free(&err); 
+	}
+	if(!_conn)
+		throw std::runtime_error("DBusAdapter: connection error");
+
+	// register connection on the bus
+	dbus_bus_register(_conn, &err);
+}
+
+void om::net::DBusAdapter::_request_name(std::string name)
+	throw(std::runtime_error)
+{
+	DBusError err;
+	dbus_error_init(&err);
+
+	// request specified name on the bus
+	int name_res = dbus_bus_request_name(_conn, name.c_str(), 0, &err);
+
+	if(dbus_error_is_set(&err)) {
+		throw std::runtime_error("DBusAdapter: request name error: "
+			+ std::string(err.message));
+		dbus_error_free(&err);
+	}
+	if(DBUS_REQUEST_NAME_REPLY_PRIMARY_OWNER != name_res)
+		throw std::runtime_error("DBusAdapter: request name error");
+}
+
+void om::net::DBusAdapter::_set_watch_functions()
+{
+	callback_context data(this);
+
+	dbus_connection_set_watch_functions(
+		_conn,
+		_add_watch_static_callback,
+		_toggle_watch_static_callback,
+		_rm_watch_static_callback,
+		&data,
+		NULL
+	);
 }
 
 unsigned om::net::DBusAdapter::_add_watch_static_callback(DBusWatch* w, void* d)
