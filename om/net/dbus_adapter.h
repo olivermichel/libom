@@ -60,6 +60,20 @@ namespace om {
 
 			explicit DBusAdapter(const om::net::DBusAdapter&);  
 			DBusAdapter& operator=(DBusAdapter& copy_from);
+
+			// static callback methods, receive pointer to current instance via d
+			static unsigned _add_watch_static_callback(DBusWatch* w, void* d);
+			static void _toggle_watch_static_callback(DBusWatch* w, void* d);
+			static void _rm_watch_static_callback(DBusWatch* w, void* d);
+
+			// wraps a pointer to an instance of DBusAdapter for passing
+			// to dbus watch callbacks
+			struct callback_context
+			{
+				callback_context() : adapter_instance(0) {};
+				callback_context(DBusAdapter* a) : adapter_instance(a) {};
+				DBusAdapter* adapter_instance;
+			};
 		};
 	}
 }

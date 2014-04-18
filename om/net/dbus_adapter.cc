@@ -11,7 +11,9 @@
 #include "dbus_adapter.h"
 
 om::net::DBusAdapter::DBusAdapter()
-	: om::net::IOInterface(), _conn(), _unique_name() {}
+	: 	om::net::IOInterface(), 
+		_conn(), 
+		_unique_name() {}
 
 void om::net::DBusAdapter::connect(std::string addr, std::string req_name)
 	throw(std::runtime_error)
@@ -54,6 +56,19 @@ void om::net::DBusAdapter::connect(std::string addr, std::string req_name)
    	_unique_name = std::string(assign_name);
    else
    	throw std::runtime_error("DBusAdapter: failed getting unique name");
+
+
+   callback_context data(this);
+
+   dbus_connection_set_watch_functions(
+   	_conn,
+   	_add_watch_static_callback,
+   	_toggle_watch_static_callback,
+   	_rm_watch_static_callback,
+   	&data,
+   	NULL
+   );
+
 }
 
 void om::net::DBusAdapter::send_signal(om::net::DBusSignal& sig)
@@ -78,7 +93,7 @@ void om::net::DBusAdapter::send_signal(om::net::DBusSignal& sig)
 void om::net::DBusAdapter::handle_read()
 	throw(std::logic_error)
 {
-
+	std::cout << "handle read called" << std::endl;
 }
 
 std::string om::net::DBusAdapter::unique_name() const
@@ -96,6 +111,23 @@ om::net::DBusAdapter::~DBusAdapter()
 
 }
 
+unsigned om::net::DBusAdapter::_add_watch_static_callback(DBusWatch* w, void* d)
+{
+	int fd = dbus_watch_get_unix_fd(w);
+	struct callback_context* data = (callback_context*) d;
+
+	return 0;
+}
+
+void om::net::DBusAdapter::_toggle_watch_static_callback(DBusWatch* w, void* d)
+{
+	std::cout << "_toggle_watch_static_callback()" << std::endl;
+}
+
+void om::net::DBusAdapter::_rm_watch_static_callback(DBusWatch* w, void* d)
+{
+	std::cout << "_rm_watch_static_callback()" << std::endl;
+}
 
 
 om::net::DBusSignal::DBusSignal(std::string addr, std::string iface,
