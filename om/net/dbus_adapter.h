@@ -11,6 +11,8 @@
 #include <om/net/io_interface.h>
 
 #include <dbus/dbus.h>
+#include <stdexcept>
+#include <string>
 
 namespace om {
 	namespace net {
@@ -21,11 +23,22 @@ namespace om {
 			
 			explicit DBusAdapter();
 
+			void connect(std::string addr, std::string req_name)
+				throw(std::runtime_error);
+
+			void handle_read()
+				throw(std::logic_error);
+
+			void disconnect();
+
+			std::string unique_name() const;
+
 			~DBusAdapter();
 
 		private:
 
 			DBusConnection* _conn;
+			std::string _unique_name;
 		};
 	}
 }

@@ -12,7 +12,23 @@
 
 int main(int argc, char const *argv[]) {
 
+	om::net::DBusAdapter dbus;
 
+	try {
+		dbus.connect("unix:path=/tmp/test_bus", "edu.colorado.cs.ngn.DBusTest");
+	} catch(std::exception& e) {
+		std::cout << e.what() << std::endl;
+		std::exit(EXIT_FAILURE);
+	}
+
+	std::cout << "unique name: " << dbus.unique_name() << std::endl;
+
+
+	
+
+	// dbus.connect_system();
+
+	// dbus.disconnect();
 
 	return 0;
 }

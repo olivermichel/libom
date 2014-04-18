@@ -27,7 +27,7 @@ examples/example_tools_file
 examples/example_tools_random
 examples/example_tunnel_device
 examples/example_tools_dir
-examples/example_net_dbus_connection
+examples/example_net_dbus_adapter
 
 # OSX specific
 .DS_Store

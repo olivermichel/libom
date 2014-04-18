@@ -12,13 +12,13 @@ AR_TOOLS  = libom-tools.a
 
 NET_NAMES = net agent io_interface datagram_socket stream_client \
 	stream_listener stream_connection inotify_handler tunnel_device \
-	dbus_connection
+	dbus_adapter
 	# raw_socket
 
 TOOLS_NAMES = tools logger time random string file dir
 
 CXX = g++
-CXXFLAGS = $(shell pkg-config --cflags dbus-1) -Wall -g -I. -fPIC -std=c++11
+CXXFLAGS = $(shell pkg-config --cflags dbus-1) -ldbus-1 -Wall -g -I. -fPIC -std=c++11
 AR = ar
 
 all: ar so
