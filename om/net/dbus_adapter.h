@@ -43,6 +43,9 @@ namespace om {
 				std::function<void (om::net::DBusAdapter*)> connected_callback)
 				throw(std::runtime_error, std::logic_error);
 
+			void match_signal(std::string iface)
+				throw(std::runtime_error);
+
 			void send_signal(DBusSignal& sig)
 				throw(std::runtime_error);
 

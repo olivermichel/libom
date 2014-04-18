@@ -27,6 +27,8 @@ int main(int argc, char const *argv[]) {
 					"test.signal.Type",
 					"Test"
 				);
+
+				dbus->match_signal("test.signal.Type");
 				
 				dbus->send_signal(sig);
 

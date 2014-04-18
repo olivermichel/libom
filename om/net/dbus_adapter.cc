@@ -74,6 +74,22 @@ void om::net::DBusAdapter::connect(std::string addr, std::string req_name,
 
 }
 
+void om::net::DBusAdapter::match_signal(std::string iface)
+	throw(std::runtime_error)
+{
+	DBusError err;
+	dbus_error_init(&err);
+
+	std::string match_string = "type='signal',interface='" + iface + "'";
+
+	dbus_bus_add_match(_conn, match_string.c_str(), &err);
+	dbus_connection_flush(_conn);
+
+	if(dbus_error_is_set(&err))
+		throw std::runtime_error("DBusAdapter: failed matching signal: "
+			+ std::string(err.message));
+}
+
 void om::net::DBusAdapter::send_signal(om::net::DBusSignal& sig)
 	throw(std::runtime_error)
 {
