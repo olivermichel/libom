@@ -6,6 +6,7 @@
 //
 
 #include <cstring>
+#include <unistd.h>
 #include "datagram_socket.h"
 
 om::net::DatagramSocket::DatagramSocket()
@@ -54,7 +55,6 @@ int om::net::DatagramSocket::open(const om::net::tp_addr addr,
 	return fd;
 }
 
-// implement om::net::IOInterface
 void om::net::DatagramSocket::handle_read()
 	throw(std::runtime_error, std::logic_error)
 {

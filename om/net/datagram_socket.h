@@ -14,9 +14,7 @@
 #include <errno.h>
 #include <functional>
 #include <stdexcept>
-#include <unistd.h>
 
-#include "net.h"
 #include <om/net/io_interface.h>
 
 namespace om {

@@ -18,12 +18,13 @@ om::net::TunnelDevice::TunnelDevice()
 	: om::net::IOInterface(),
 		_flags(IFF_TUN | IFF_NO_PI) {}
 
-om::net::TunnelDevice::TunnelDevice(std::string name) 
+om::net::TunnelDevice::TunnelDevice(std::string name,
+	std::function<void (om::net::TunnelDevice*)> read_handler) 
 	throw(std::runtime_error) 
 	: om::net::IOInterface(), _name(name),
 		_flags(IFF_TUN | IFF_NO_PI)
 {  
-	this->open();
+	this->open(read_handler);
 }
 
 short int om::net::TunnelDevice::flags()
@@ -36,7 +37,8 @@ void om::net::TunnelDevice::set_flags(short int flags)
 	_flags = flags;
 }
 
-int om::net::TunnelDevice::open() 
+int om::net::TunnelDevice::open(
+	std::function<void (om::net::TunnelDevice*)> read_handler) 
 	throw(std::runtime_error, std::logic_error)
 {
 	if(_fd != 0) throw std::logic_error("Device already opened");
@@ -64,8 +66,18 @@ int om::net::TunnelDevice::open()
 	}
 
 	_fd = fd;
+	_read_handler = read_handler;
 	
 	return fd;
+}
+
+void om::net::TunnelDevice::handle_read()
+	throw(std::runtime_error, std::logic_error)
+{
+	if(_read_handler)
+		_read_handler(this);
+	else
+		throw std::logic_error("TunnelDevice: no read handler set");
 }
 
 int om::net::TunnelDevice::write(const unsigned char *tx_data, 
