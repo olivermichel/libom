@@ -11,6 +11,7 @@
 #define OM_NET_STREAM_LISTENER_H
 
 #include <functional>
+#include <ostream>
 
 #include <om/net/io_interface.h>
 
@@ -54,6 +55,8 @@ namespace om {
 			
 			// default destructor
 			~StreamListener();
+
+			friend std::ostream& operator<<(std::ostream&, const StreamListener&);
 
 		private:
 			

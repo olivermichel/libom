@@ -63,7 +63,7 @@ void om::net::StreamConnection::handle_read()
 	if(_read_handler)
 		_read_handler(this);
 	else
-		throw std::logic_error("StreamConenction: no read handler set");
+		throw std::logic_error("StreamConnection: no read handler set");
 }
 
 int om::net::StreamConnection::send(const unsigned char* tx_buf,

@@ -8,7 +8,6 @@
 #include <cstring>
 #include <errno.h>
 #include <unistd.h>
-#include <iostream>
 
 #include "stream_listener.h"
 
@@ -120,5 +119,16 @@ om::net::StreamListener::~StreamListener()
 			_fd = 0;
 		else
 			throw std::runtime_error("::close(): " + std::string(strerror(errno)));		
+	}
+}
+
+namespace om {
+	namespace net {
+		std::ostream& operator<<(std::ostream& out, 
+			const om::net::StreamListener& sl)
+		{
+			out << "StreamListener(" << sl._addr.to_string() << ")";
+			return out;
+		}
 	}
 }
