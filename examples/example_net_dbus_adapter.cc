@@ -1,16 +1,18 @@
 //
 //  Olli's C++ Library [https://bitbucket.org/omichel/om-lib]
-//  net/dbus_connection.cc
+//  examples/example_net_dbus_adapter.cc
 //  (c) 2014 Oliver Michel <oliver dot michel at editum dot de>
 //  http://ngn.cs.colorado/~oliver
 //
 
-#include "dbus_connection.h"
+#include <iostream>
+#include <unistd.h>
 
-om::net::DBusConnection::DBusConnection()
-	: om::net::IOInterface() {}
+#include <om/net/dbus_adapter.h>
 
-om::net::DBusConnection::~DBusConnection()
-{
+int main(int argc, char const *argv[]) {
 
+
+
+	return 0;
 }
