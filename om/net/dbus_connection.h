@@ -10,6 +10,8 @@
 
 #include <om/net/io_interface.h>
 
+#include <dbus/dbus.h>
+
 namespace om {
 	namespace net {
 
@@ -20,6 +22,10 @@ namespace om {
 			explicit DBusConnection();
 
 			~DBusConnection();
+
+		private:
+
+			::DBusConnection* _conn;
 		};
 	}
 }

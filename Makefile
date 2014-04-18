@@ -18,7 +18,7 @@ NET_NAMES = net agent io_interface datagram_socket stream_client \
 TOOLS_NAMES = tools logger time random string file dir
 
 CXX = g++
-CXXFLAGS = -Wall -g -I. -fPIC -std=c++11
+CXXFLAGS = $(shell pkg-config --cflags dbus-1) -Wall -g -I. -fPIC -std=c++11
 AR = ar
 
 all: ar so
