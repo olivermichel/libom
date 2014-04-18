@@ -14,18 +14,20 @@
 om::net::StreamConnection::StreamConnection()
 	: om::net::IOInterface() {}
 
-om::net::StreamConnection::StreamConnection(int fd)
+om::net::StreamConnection::StreamConnection(int fd,
+	std::function<void (om::net::StreamConnection*)> read_handler)
 	throw(std::logic_error, std::invalid_argument)
 	: om::net::IOInterface()
 {
-	this->attach(fd);
+	this->attach(fd, read_handler);
 }
 
-om::net::StreamConnection::StreamConnection(int fd, om::net::tp_addr remote_addr)
+om::net::StreamConnection::StreamConnection(int fd, om::net::tp_addr remote_addr,
+	std::function<void (om::net::StreamConnection*)> read_handler)
 	throw(std::logic_error, std::invalid_argument)
 	: om::net::IOInterface()
 {
-	this->attach(fd, remote_addr);
+	this->attach(fd, remote_addr, read_handler);
 }
 
 om::net::tp_addr om::net::StreamConnection::remote_addr()
@@ -33,7 +35,8 @@ om::net::tp_addr om::net::StreamConnection::remote_addr()
 	return _remote_addr;
 }
 
-void om::net::StreamConnection::attach(int fd)
+void om::net::StreamConnection::attach(int fd,
+	std::function<void (om::net::StreamConnection*)> read_handler)
 	throw(std::logic_error, std::invalid_argument)
 {
 	if(_fd != 0)
@@ -43,19 +46,24 @@ void om::net::StreamConnection::attach(int fd)
 		throw std::invalid_argument("Invalid file descriptor");
 
 	_fd = fd;
+	_read_handler = read_handler;
 }
 
-void om::net::StreamConnection::attach(int fd, om::net::tp_addr remote_addr)
+void om::net::StreamConnection::attach(int fd, om::net::tp_addr remote_addr,
+	std::function<void (om::net::StreamConnection*)> read_handler)
 	throw(std::logic_error, std::invalid_argument)
 {
 	_remote_addr = remote_addr;
-	this->attach(fd);
+	this->attach(fd, read_handler);
 }
 
 void om::net::StreamConnection::handle_read()
 	throw(std::runtime_error, std::logic_error)
 {
-
+	if(_read_handler)
+		_read_handler(this);
+	else
+		throw std::logic_error("StreamConenction: no read handler set");
 }
 
 int om::net::StreamConnection::send(const unsigned char* tx_buf,

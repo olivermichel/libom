@@ -10,9 +10,10 @@
 #ifndef OM_NET_STREAM_CONNECTION_H
 #define OM_NET_STREAM_CONNECTION_H
 
+#include <ostream>
+#include <functional>
 #include <om/net/net.h>
 #include <om/net/io_interface.h>
-#include <ostream>
 
 namespace om {
 	namespace net {
@@ -25,20 +26,25 @@ namespace om {
 			explicit StreamConnection();
 
 			// constructs a new StreamConnection object and attaches to fd
-			explicit StreamConnection(int fd)
+			explicit StreamConnection(int fd,
+				std::function<void (om::net::StreamConnection*)> read_handler)
 				throw(std::logic_error, std::invalid_argument);
 
-			explicit StreamConnection(int fd, om::net::tp_addr remote_addr)
+			// constructs a new StreamConnection object and attaches to fd
+			explicit StreamConnection(int fd, om::net::tp_addr remote_addr,
+				std::function<void (om::net::StreamConnection*)> read_handler)
 				throw(std::logic_error, std::invalid_argument);
 
 			// accessor for remote address
 			om::net::tp_addr remote_addr();
 
 			// attach object to an existing connection socket
-			void attach(int fd)
+			void attach(int fd,
+				std::function<void (om::net::StreamConnection*)> read_handler)
 				throw(std::logic_error, std::invalid_argument);
 
-			void attach(int fd, om::net::tp_addr remote_addr)
+			void attach(int fd, om::net::tp_addr remote_addr,
+				std::function<void (om::net::StreamConnection*)> read_handler)
 				throw(std::logic_error, std::invalid_argument);
 
 			// implement om::net::IOInterface
@@ -63,6 +69,7 @@ namespace om {
 		private:
 
 			om::net::tp_addr _remote_addr;
+			std::function<void (om::net::StreamConnection*)> _read_handler;
 
 			StreamConnection(const om::net::StreamConnection &copy_from);
 			StreamConnection& operator=(StreamConnection& copy_from);
