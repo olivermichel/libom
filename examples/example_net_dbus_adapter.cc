@@ -26,7 +26,11 @@ public:
 			}
 		);
 
-		dbus->match_signal("test.signal.Type");
+		dbus->match_signal("test.signal.Type",
+			[this](om::net::DBusAdapter* dbus, DBusMessage* msg) { 
+				this->receive_signal(dbus, msg); 
+			}
+		);
 
 		om::net::DBusSignal sig(
 			"/test/signal/Object", "test.signal.Type", "Test"

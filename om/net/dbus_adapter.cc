@@ -43,7 +43,8 @@ void om::net::DBusAdapter::set_default_signal_handler(
 	_default_signal_handler = dsh;
 }
 
-void om::net::DBusAdapter::match_signal(std::string iface)
+void om::net::DBusAdapter::match_signal(std::string iface,
+	std::function<void (om::net::DBusAdapter*, DBusMessage*)> handler)
 	throw(std::runtime_error)
 {
 	DBusError err;
@@ -52,11 +53,14 @@ void om::net::DBusAdapter::match_signal(std::string iface)
 	std::string match_string = "type='signal',interface='" + iface + "'";
 
 	dbus_bus_add_match(_conn, match_string.c_str(), &err);
-	dbus_connection_flush(_conn);
 
 	if(dbus_error_is_set(&err))
 		throw std::runtime_error("DBusAdapter: failed matching signal: "
 			+ std::string(err.message));
+	else
+		_signal_handlers[iface] = handler;
+
+	dbus_connection_flush(_conn);
 }
 
 void om::net::DBusAdapter::send_signal(om::net::DBusSignal& sig)
@@ -96,13 +100,6 @@ void om::net::DBusAdapter::handle_read()
 	}
 
 	dbus_message_unref(msg);
-/*	
-
-	if(_read_handler)
-		_read_handler(this);
-	else
-		throw std::logic_error("DBusAdapter: no read handler set");
-*/
 }
 
 std::string om::net::DBusAdapter::unique_name() const
@@ -185,8 +182,14 @@ void om::net::DBusAdapter::_handle_msg_method_return(DBusMessage* msg)
 
 void om::net::DBusAdapter::_handle_msg_signal(DBusMessage* msg)
 {
-	_default_signal_handler(this, msg);
+	std::string iface(dbus_message_get_interface(msg));	
 
+	auto i = _signal_handlers.find(iface);
+
+	if(i != _signal_handlers.end())
+		i->second(this, msg);
+	else
+		_default_signal_handler(this, msg);
 }
 
 void om::net::DBusAdapter::_handle_msg_error(DBusMessage* msg)

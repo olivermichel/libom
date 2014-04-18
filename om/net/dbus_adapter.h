@@ -12,6 +12,7 @@
 
 #include <dbus/dbus.h>
 #include <functional>
+#include <map>
 #include <stdexcept>
 #include <string>
 
@@ -46,7 +47,8 @@ namespace om {
 			void set_default_signal_handler(
 				std::function<void (om::net::DBusAdapter*, DBusMessage*)> dsh);
 
-			void match_signal(std::string iface)
+			void match_signal(std::string iface, 
+				std::function<void (om::net::DBusAdapter*, DBusMessage*)> handler)
 				throw(std::runtime_error);
 
 			void send_signal(DBusSignal& sig)
@@ -70,6 +72,9 @@ namespace om {
 
 			std::function<void (om::net::DBusAdapter*, DBusMessage*)>
 				_default_signal_handler;
+
+			std::map<std::string, std::function<void 
+				(om::net::DBusAdapter*, DBusMessage*)>> _signal_handlers;
 
 			void _open_connection(std::string addr)
 				throw(std::runtime_error);
