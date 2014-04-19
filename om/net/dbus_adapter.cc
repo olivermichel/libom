@@ -31,14 +31,14 @@ void om::net::DBusAdapter::connect(std::string addr, std::string req_name,
 	_request_name(req_name);
 
 	// query assigned unique name
-   assign_name = dbus_bus_get_unique_name(_conn);
+	assign_name = dbus_bus_get_unique_name(_conn);
 
-   if(assign_name != 0)
-   	_unique_name = std::string(assign_name);
-   else
-   	throw std::runtime_error("DBusAdapter: failed getting unique name");
+	if(assign_name != 0)
+		_unique_name = std::string(assign_name);
+	else
+		throw std::runtime_error("DBusAdapter: failed getting unique name");
 
-   _set_watch_functions();
+	_set_watch_functions();
 }
 
 void om::net::DBusAdapter::set_default_signal_handler(
@@ -112,7 +112,7 @@ void om::net::DBusAdapter::send_signal(om::net::DBusSignal& sig)
 {
 	DBusMessage* msg;
 
-	msg = dbus_message_new_signal(sig._addr.c_str(), sig._iface.c_str(),
+	msg = dbus_message_new_signal(sig._path.c_str(), sig._iface.c_str(),
 		sig._name.c_str());
 
 	if(msg == 0)
@@ -340,24 +340,59 @@ void om::net::DBusAdapter::_connected(int fd)
 }
 
 
-om::net::DBusSignal::DBusSignal(std::string addr, std::string iface,
+om::net::DBusSignal::DBusSignal()
+	: 	_path(),
+		_iface(),
+		_name() {}
+
+om::net::DBusSignal::DBusSignal(std::string path, std::string iface,
 	std::string name)
-	:	_addr(addr),
+	:	_path(path),
 		_iface(iface),
 		_name(name) {}
 
 om::net::DBusSignal::DBusSignal(const om::net::DBusSignal& copy_from)
-	:	_addr(copy_from._addr),
+	:	_path(copy_from._path),
 		_iface(copy_from._iface),
 		_name(copy_from._name) {}
 
 om::net::DBusSignal& om::net::DBusSignal::operator=(DBusSignal& copy_from)
 {
-	_addr = copy_from._addr;
+	_path = copy_from._path;
 	_iface = copy_from._iface;
 	_name = copy_from._name;
 
 	return *this;
+}
+
+void om::net::DBusSignal::set_path(std::string path)
+{
+	_path = path;
+}
+
+std::string om::net::DBusSignal::path()
+{
+	return _path;
+}
+
+void om::net::DBusSignal::set_iface(std::string iface)
+{
+	_iface = iface;
+}
+
+std::string om::net::DBusSignal::iface()
+{
+	return _iface;
+}
+
+void om::net::DBusSignal::set_name(std::string name)
+{
+	_name = name;
+}
+
+std::string om::net::DBusSignal::name()
+{
+	return _name;
 }
 
 

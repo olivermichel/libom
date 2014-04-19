@@ -22,13 +22,21 @@ namespace om {
 		class DBusSignal {
 
 		public:
-			explicit DBusSignal(std::string addr, std::string iface,
+			DBusSignal();
+			explicit DBusSignal(std::string path, std::string iface,
 					std::string name);
 			explicit DBusSignal(const om::net::DBusSignal& copy_from);  
 			DBusSignal& operator=(DBusSignal& copy_from);
 
+			void set_path(std::string path);
+			std::string path();
+			void set_iface(std::string iface);
+			std::string iface();
+			void set_name(std::string name);
+			std::string name();
+
 		private:
-			std::string _addr;
+			std::string _path;
 			std::string _iface;
 			std::string _name;
 		
