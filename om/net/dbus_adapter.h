@@ -22,7 +22,8 @@ namespace om {
 		class DBusSignal {
 
 		public:
-			explicit DBusSignal(std::string addr, std::string iface, std::string name);
+			explicit DBusSignal(std::string addr, std::string iface,
+					std::string name);
 			explicit DBusSignal(const om::net::DBusSignal& copy_from);  
 			DBusSignal& operator=(DBusSignal& copy_from);
 
@@ -30,6 +31,23 @@ namespace om {
 			std::string _addr;
 			std::string _iface;
 			std::string _name;
+		
+			friend class DBusAdapter;
+		};
+
+		class DBusMethodCall {
+
+		public:
+			explicit DBusMethodCall(std::string addr, std::string iface,
+				std::string obj_path, std::string method_name);
+			explicit DBusMethodCall(const om::net::DBusMethodCall& copy_from);  
+			DBusMethodCall& operator=(DBusMethodCall& copy_from);
+
+		private:
+			std::string _addr;
+			std::string _iface;
+			std::string _obj_path;
+			std::string _method_name;
 		
 			friend class DBusAdapter;
 		};
@@ -52,6 +70,9 @@ namespace om {
 				throw(std::runtime_error);
 
 			void send_signal(DBusSignal& sig)
+				throw(std::runtime_error);
+
+			void call_method(DBusMethodCall& call)
 				throw(std::runtime_error);
 
 			void handle_read()

@@ -240,10 +240,14 @@ void om::net::DBusAdapter::_connected(int fd)
 
 om::net::DBusSignal::DBusSignal(std::string addr, std::string iface,
 	std::string name)
-	: _addr(addr), _iface(iface), _name(name) {}
+	:	_addr(addr),
+		_iface(iface),
+		_name(name) {}
 
 om::net::DBusSignal::DBusSignal(const om::net::DBusSignal& copy_from)
-	: _addr(copy_from._addr), _iface(copy_from._iface), _name(copy_from._name) {}
+	:	_addr(copy_from._addr),
+		_iface(copy_from._iface),
+		_name(copy_from._name) {}
 
 om::net::DBusSignal& om::net::DBusSignal::operator=(DBusSignal& copy_from)
 {
@@ -253,3 +257,28 @@ om::net::DBusSignal& om::net::DBusSignal::operator=(DBusSignal& copy_from)
 
 	return *this;
 }
+
+
+om::net::DBusMethodCall::DBusMethodCall(std::string addr, std::string iface,
+	std::string obj_path, std::string method_name)
+	:	_addr(addr),
+		_iface(iface),
+		_obj_path(obj_path),
+		_method_name(method_name) {}
+
+om::net::DBusMethodCall::DBusMethodCall(const om::net::DBusMethodCall& copy_from)
+	:	_addr(copy_from._addr),
+		_iface(copy_from._iface),
+		_obj_path(copy_from._obj_path),
+		_method_name(copy_from._method_name) {}
+
+om::net::DBusMethodCall& om::net::DBusMethodCall::operator=(DBusMethodCall& copy_from)
+{
+	_addr = copy_from._addr;
+	_iface = copy_from._iface;
+	_obj_path = copy_from._obj_path;
+	_method_name = copy_from._method_name;
+
+	return *this;
+}
+
