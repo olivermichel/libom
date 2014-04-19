@@ -67,6 +67,7 @@ namespace om {
 
 			DBusConnection* _conn;
 			std::string _unique_name;
+			dbus_uint32_t _serial;
 			
 			std::function<void (om::net::DBusAdapter*)> _connected_callback;
 

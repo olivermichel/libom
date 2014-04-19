@@ -13,7 +13,8 @@
 om::net::DBusAdapter::DBusAdapter()
 	: 	om::net::IOInterface(), 
 		_conn(), 
-		_unique_name() {}
+		_unique_name(),
+		_serial(0) {}
 
 void om::net::DBusAdapter::connect(std::string addr, std::string req_name,
 	std::function<void (om::net::DBusAdapter*)> connected_callback)
@@ -66,7 +67,6 @@ void om::net::DBusAdapter::match_signal(std::string iface,
 void om::net::DBusAdapter::send_signal(om::net::DBusSignal& sig)
 	throw(std::runtime_error)
 {
-	dbus_uint32_t serial = 0;
 	DBusMessage* msg;
 
 	msg = dbus_message_new_signal(sig._addr.c_str(), sig._iface.c_str(),
@@ -75,7 +75,7 @@ void om::net::DBusAdapter::send_signal(om::net::DBusSignal& sig)
 	if(msg == 0)
 		throw std::runtime_error("DBusAdapter: failed creating signal");
 
-	if(!dbus_connection_send(_conn, msg, &serial))
+	if(!dbus_connection_send(_conn, msg, &(++_serial)))
 		throw std::runtime_error("DBusAdapter: failed sending signal");
 
 	dbus_connection_flush(_conn);
@@ -91,10 +91,19 @@ void om::net::DBusAdapter::handle_read()
 	msg = dbus_connection_pop_message(_conn);
 
 	switch(dbus_message_get_type(msg)) {
-		case DBUS_MESSAGE_TYPE_METHOD_CALL:   _handle_msg_method_call(msg); break;
-		case DBUS_MESSAGE_TYPE_METHOD_RETURN: _handle_msg_method_return(msg); break;
-		case DBUS_MESSAGE_TYPE_SIGNAL:        _handle_msg_signal(msg); break;
-		case DBUS_MESSAGE_TYPE_ERROR:         _handle_msg_error(msg); break;
+		
+		case DBUS_MESSAGE_TYPE_METHOD_CALL:
+			_handle_msg_method_call(msg);
+			break;
+		case DBUS_MESSAGE_TYPE_METHOD_RETURN:
+			_handle_msg_method_return(msg);
+			break;
+		case DBUS_MESSAGE_TYPE_SIGNAL:
+			_handle_msg_signal(msg);
+			break;
+		case DBUS_MESSAGE_TYPE_ERROR:
+			_handle_msg_error(msg);
+			break;
 
 		default: std::cout << "unknown message" << std::endl; break;
 	}
@@ -195,6 +204,8 @@ void om::net::DBusAdapter::_handle_msg_signal(DBusMessage* msg)
 void om::net::DBusAdapter::_handle_msg_error(DBusMessage* msg)
 {
 	std::cout << "_handle_msg_error()" << std::endl;
+
+	std::cout << "  error: " << dbus_message_get_error_name(msg) << std::endl;
 }
 
 unsigned om::net::DBusAdapter::_add_watch_static_callback(DBusWatch* w, void* d)

@@ -26,14 +26,16 @@ public:
 			}
 		);
 
-		dbus->match_signal("test.signal.Type",
+		dbus->match_signal("edu.colorado.cs.ngn.sdipc.test",
 			[this](om::net::DBusAdapter* dbus, DBusMessage* msg) { 
 				this->receive_signal(dbus, msg); 
 			}
 		);
 
 		om::net::DBusSignal sig(
-			"/test/signal/Object", "test.signal.Type", "Test"
+			"/edu/colorado/cs/ngn/sdipc/test",
+			"edu.colorado.cs.ngn.sdipc.test",
+			"Hello"
 		);
 
 		dbus->send_signal(sig);
@@ -41,14 +43,19 @@ public:
 
 	void receive_signal(om::net::DBusAdapter* dbus, DBusMessage* msg)
 	{
-		std::cout << "receive_signal()" << std::endl;
+		std::cout << "receive_signal():" << std::endl;
 
 
 		std::string iface(dbus_message_get_interface(msg));
+		std::string path(dbus_message_get_path(msg));
 		std::string sender(dbus_message_get_sender(msg));
+		std::string member(dbus_message_get_member(msg));
 
-		std::cout << "iface: " << iface << std::endl;
-		std::cout << "sender: " << iface << std::endl;
+
+		std::cout << "  iface:  " << iface << std::endl;
+		std::cout << "  path:   " << path << std::endl;
+		std::cout << "  sender: " << sender << std::endl;
+		std::cout << "  member: " << member << std::endl;
 
 	}
 
@@ -56,12 +63,19 @@ public:
 
 int main(int argc, char const *argv[]) {
 
+	if(argc < 2) {
+		std::cerr << "usage: example_net_dbus_adapter name" << std::endl;
+		std::exit(EXIT_FAILURE);
+	}
+
+	std::string name = argv[1];
+
 	ExampleDBusAdapterAgent a;
 
 	om::net::DBusAdapter* dbus = new om::net::DBusAdapter();
 
 	try {
-		dbus->connect("unix:path=/tmp/test_bus", "edu.colorado.cs.ngn.DBusTest",
+		dbus->connect("unix:path=/tmp/test_bus", name,
 			[&a](om::net::DBusAdapter* dbus) {
 				a.add_interface(dbus), a.connected(dbus);
 				a.run();
