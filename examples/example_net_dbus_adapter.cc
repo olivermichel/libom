@@ -56,32 +56,28 @@ public:
 
 	void receive_signal(om::net::DBusAdapter* dbus, DBusMessage* msg)
 	{
-		std::cout << "receive_signal():" << std::endl;
-
 		std::string iface(dbus_message_get_interface(msg));
 		std::string path(dbus_message_get_path(msg));
 		std::string sender(dbus_message_get_sender(msg));
+		std::string destination(dbus_message_get_destination(msg));
 		std::string member(dbus_message_get_member(msg));
 
-		std::cout << "  iface:  " << iface << std::endl;
-		std::cout << "  path:   " << path << std::endl;
-		std::cout << "  sender: " << sender << std::endl;
-		std::cout << "  member: " << member << std::endl;
+		std::cout << "SIG  " << sender << " -> " << destination << std::endl;
+		std::cout << "     " << path << " " << iface << "." << member << std::endl;
 	}
 
 	void receive_method_call(om::net::DBusAdapter* dbus, DBusMessage* msg)
 	{
-		std::cout << "receive_method_call():" << std::endl;
-
 		std::string iface(dbus_message_get_interface(msg));
 		std::string path(dbus_message_get_path(msg));
 		std::string sender(dbus_message_get_sender(msg));
+		std::string destination(dbus_message_get_destination(msg));
 		std::string member(dbus_message_get_member(msg));
 
-		std::cout << "  iface:  " << iface << std::endl;
-		std::cout << "  path:   " << path << std::endl;
-		std::cout << "  sender: " << sender << std::endl;
-		std::cout << "  member: " << member << std::endl;
+		std::cout << "MC   " << sender << " -> " << destination << std::endl;
+		std::cout << "     " << path << " " << iface << "." << member << std::endl;
+
+		dbus->reply_method_call(msg);
 	}
 
 };
