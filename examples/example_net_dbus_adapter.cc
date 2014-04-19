@@ -17,12 +17,18 @@ public:
 
 	void connected(om::net::DBusAdapter* dbus)
 	{
-		std::cout << "connected: " << dbus->unique_name() << std::endl;
-		std::cout << "fd: " << dbus->fd() << std::endl;
+		std::cout << "connected(): " << std::endl;
+		std::cout << "  unique name: " << dbus->unique_name() << std::endl;
 
 		dbus->set_default_signal_handler(
 			[this](om::net::DBusAdapter* dbus, DBusMessage* msg) { 
 				this->receive_signal(dbus, msg); 
+			}
+		);
+
+		dbus->set_default_method_call_handler(
+			[this](om::net::DBusAdapter* dbus, DBusMessage* msg) { 
+				this->receive_method_call(dbus, msg); 
 			}
 		);
 
@@ -32,31 +38,50 @@ public:
 			}
 		);
 
-		om::net::DBusSignal sig(
-			"/edu/colorado/cs/ngn/sdipc/test",
-			"edu.colorado.cs.ngn.sdipc.test",
-			"Hello"
+		dbus->match_method_call("edu.colorado.cs.ngn.sdipc.TestInterface",
+			[this](om::net::DBusAdapter* dbus, DBusMessage* msg) { 
+				 this->receive_method_call(dbus, msg);
+			}
 		);
 
-		dbus->send_signal(sig);
+		om::net::DBusMethodCall method(
+			"edu.colorado.cs.ngn.sdipc.client1",
+			"edu.colorado.cs.ngn.sdipc.TestInterface",
+			"/edu/colorado/cs/ngn/sdipc/TestObject",
+			"Hi"
+		);
+
+		dbus->call_method(method);
 	}
 
 	void receive_signal(om::net::DBusAdapter* dbus, DBusMessage* msg)
 	{
 		std::cout << "receive_signal():" << std::endl;
 
+		std::string iface(dbus_message_get_interface(msg));
+		std::string path(dbus_message_get_path(msg));
+		std::string sender(dbus_message_get_sender(msg));
+		std::string member(dbus_message_get_member(msg));
+
+		std::cout << "  iface:  " << iface << std::endl;
+		std::cout << "  path:   " << path << std::endl;
+		std::cout << "  sender: " << sender << std::endl;
+		std::cout << "  member: " << member << std::endl;
+	}
+
+	void receive_method_call(om::net::DBusAdapter* dbus, DBusMessage* msg)
+	{
+		std::cout << "receive_method_call():" << std::endl;
 
 		std::string iface(dbus_message_get_interface(msg));
 		std::string path(dbus_message_get_path(msg));
 		std::string sender(dbus_message_get_sender(msg));
 		std::string member(dbus_message_get_member(msg));
 
-
 		std::cout << "  iface:  " << iface << std::endl;
 		std::cout << "  path:   " << path << std::endl;
 		std::cout << "  sender: " << sender << std::endl;
 		std::cout << "  member: " << member << std::endl;
-
 	}
 
 };

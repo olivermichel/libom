@@ -14,7 +14,10 @@ om::net::DBusAdapter::DBusAdapter()
 	: 	om::net::IOInterface(), 
 		_conn(), 
 		_unique_name(),
-		_serial(0) {}
+		_serial(0),/*,
+		_vtable()*/ 
+		_signal_handlers(),
+		_method_call_handlers() {}
 
 void om::net::DBusAdapter::connect(std::string addr, std::string req_name,
 	std::function<void (om::net::DBusAdapter*)> connected_callback)
@@ -44,6 +47,12 @@ void om::net::DBusAdapter::set_default_signal_handler(
 	_default_signal_handler = dsh;
 }
 
+void om::net::DBusAdapter::set_default_method_call_handler(
+	std::function<void (om::net::DBusAdapter*, DBusMessage*)> dmch)
+{
+	_default_method_call_handler = dmch;
+}
+
 void om::net::DBusAdapter::match_signal(std::string iface,
 	std::function<void (om::net::DBusAdapter*, DBusMessage*)> handler)
 	throw(std::runtime_error)
@@ -64,6 +73,40 @@ void om::net::DBusAdapter::match_signal(std::string iface,
 	dbus_connection_flush(_conn);
 }
 
+void om::net::DBusAdapter::match_method_call(std::string iface,
+	std::function<void (om::net::DBusAdapter*, DBusMessage*)> handler)
+	throw(std::runtime_error)
+{
+	DBusError err;
+	dbus_error_init(&err);
+
+	std::string match_string = "type='method_call',interface='" + iface + "'";
+
+	dbus_bus_add_match(_conn, match_string.c_str(), &err);
+
+	if(dbus_error_is_set(&err))
+		throw std::runtime_error("DBusAdapter: failed matching signal: "
+			+ std::string(err.message));
+	else
+		_method_call_handlers[iface] = handler;
+
+	dbus_connection_flush(_conn);
+}
+/*
+void om::net::DBusAdapter::register_object_path(std::string path)
+	throw(std::runtime_error)
+{
+	dbus_bool_t res = false;
+	callback_context data(this);
+
+	res = dbus_connection_register_object_path(
+		_conn, path.c_str(), &_vtable, &data
+	);
+
+	if(!res)
+		throw std::runtime_error("DBusAdapter: failed setting object path");
+}
+*/
 void om::net::DBusAdapter::send_signal(om::net::DBusSignal& sig)
 	throw(std::runtime_error)
 {
@@ -80,6 +123,34 @@ void om::net::DBusAdapter::send_signal(om::net::DBusSignal& sig)
 
 	dbus_connection_flush(_conn);
 	dbus_message_unref(msg);
+}
+
+void om::net::DBusAdapter::call_method(DBusMethodCall& call)
+	throw(std::runtime_error)
+{
+	DBusMessage* msg;
+	DBusPendingCall* pending;
+
+	msg = dbus_message_new_method_call(call._addr.c_str(), call._obj_path.c_str(),
+		call._iface.c_str(), call._method_name.c_str());
+
+	if(msg == 0)
+		throw std::runtime_error("DBusAdapter: failed creating method call");
+
+	if(!dbus_connection_send_with_reply(_conn, msg, &pending, -1))
+		throw std::runtime_error("DBusAdapter: failed sending method call");
+
+	if(pending == 0)
+		throw std::runtime_error("DBusAdapter: received null pending call");
+
+	dbus_connection_flush(_conn);
+	dbus_message_unref(msg);
+
+	callback_context data(this);
+
+	dbus_pending_call_set_notify(
+		pending, _reply_notify_static_callback, &data, NULL
+	);
 }
 
 void om::net::DBusAdapter::handle_read()
@@ -181,7 +252,17 @@ void om::net::DBusAdapter::_set_watch_functions()
 
 void om::net::DBusAdapter::_handle_msg_method_call(DBusMessage* msg)
 {
-	std::cout << "_handle_msg_method_call()" << std::endl;
+	std::string iface(dbus_message_get_interface(msg));
+
+	auto i = _method_call_handlers.find(iface);
+
+	if(i != _signal_handlers.end())
+		i->second(this, msg);
+	else
+		if(_default_method_call_handler)
+			_default_method_call_handler(this, msg);
+		else
+			throw std::logic_error("DBusAdapater: no default method call handler set");
 }
 
 void om::net::DBusAdapter::_handle_msg_method_return(DBusMessage* msg)
@@ -198,7 +279,10 @@ void om::net::DBusAdapter::_handle_msg_signal(DBusMessage* msg)
 	if(i != _signal_handlers.end())
 		i->second(this, msg);
 	else
-		_default_signal_handler(this, msg);
+		if(_default_signal_handler)
+			_default_signal_handler(this, msg);
+		else
+			throw std::logic_error("DBusAdapater: no default signal handler set");
 }
 
 void om::net::DBusAdapter::_handle_msg_error(DBusMessage* msg)
@@ -224,6 +308,14 @@ void om::net::DBusAdapter::_toggle_watch_static_callback(DBusWatch* w, void* d)
 void om::net::DBusAdapter::_rm_watch_static_callback(DBusWatch* w, void* d)
 {
 	std::cout << "_rm_watch_static_callback()" << std::endl;
+}
+
+void om::net::DBusAdapter::_reply_notify_static_callback(DBusPendingCall* c,
+	void* d)
+{
+	//((callback_context*)d)->adapter_instance->
+
+	std::cout << "_reply_notify_static_callback()" << std::endl;
 }
 
 void om::net::DBusAdapter::_connected(int fd)
@@ -281,4 +373,3 @@ om::net::DBusMethodCall& om::net::DBusMethodCall::operator=(DBusMethodCall& copy
 
 	return *this;
 }
-

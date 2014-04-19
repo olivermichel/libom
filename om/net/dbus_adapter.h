@@ -65,10 +65,20 @@ namespace om {
 			void set_default_signal_handler(
 				std::function<void (om::net::DBusAdapter*, DBusMessage*)> dsh);
 
+			void set_default_method_call_handler(
+				std::function<void (om::net::DBusAdapter*, DBusMessage*)> dmch);
+
 			void match_signal(std::string iface, 
 				std::function<void (om::net::DBusAdapter*, DBusMessage*)> handler)
 				throw(std::runtime_error);
 
+			void match_method_call(std::string iface,
+				std::function<void (om::net::DBusAdapter*, DBusMessage*)> handler)
+				throw(std::runtime_error);
+/*
+			void register_object_path(std::string path)
+				throw(std::runtime_error);
+*/
 			void send_signal(DBusSignal& sig)
 				throw(std::runtime_error);
 
@@ -89,14 +99,21 @@ namespace om {
 			DBusConnection* _conn;
 			std::string _unique_name;
 			dbus_uint32_t _serial;
-			
+//			DBusObjectPathVTable _vtable;
+
 			std::function<void (om::net::DBusAdapter*)> _connected_callback;
 
 			std::function<void (om::net::DBusAdapter*, DBusMessage*)>
 				_default_signal_handler;
 
+			std::function<void (om::net::DBusAdapter*, DBusMessage*)>
+				_default_method_call_handler;
+
 			std::map<std::string, std::function<void 
 				(om::net::DBusAdapter*, DBusMessage*)>> _signal_handlers;
+
+			std::map<std::string, std::function<void
+				(om::net::DBusAdapter*, DBusMessage*)>> _method_call_handlers;
 
 			void _open_connection(std::string addr)
 				throw(std::runtime_error);
@@ -116,6 +133,8 @@ namespace om {
 			static unsigned _add_watch_static_callback(DBusWatch* w, void* d);
 			static void _toggle_watch_static_callback(DBusWatch* w, void* d);
 			static void _rm_watch_static_callback(DBusWatch* w, void* d);
+
+			static void _reply_notify_static_callback(DBusPendingCall* c, void* d);
 
 			// callbacks from static members
 			void _connected(int fd)
