@@ -85,6 +85,9 @@ namespace om {
 			void call_method(DBusMethodCall& call)
 				throw(std::runtime_error);
 
+			void reply_method_call(DBusMessage* msg)
+				throw(std::runtime_error);
+
 			void handle_read()
 				throw(std::logic_error);
 

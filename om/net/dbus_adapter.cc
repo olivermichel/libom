@@ -153,6 +153,16 @@ void om::net::DBusAdapter::call_method(DBusMethodCall& call)
 	);
 }
 
+void om::net::DBusAdapter::reply_method_call(DBusMessage* msg)
+	throw(std::runtime_error)
+{
+	DBusMessage* reply = dbus_message_new_method_return(msg);
+
+	if(!dbus_connection_send(_conn, reply, &(++_serial))) {
+		throw std::runtime_error("DBusAdapter: failed sending method reply");
+	}
+}
+
 void om::net::DBusAdapter::handle_read()
 	throw(std::logic_error)
 {
