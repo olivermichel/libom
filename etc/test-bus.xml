@@ -16,6 +16,9 @@
 		<!-- allow sending messages by all connections -->
 		<allow send_type="method_call"/>
 
+		<allow send_destination="*" eavesdrop="true"/>
+		<allow eavesdrop="true"/>
+
 		<!-- signals and reply messages (method returns, errors) are allowed -->
 		<allow send_type="signal"/>
 		<allow send_requested_reply="true" send_type="method_return"/>
