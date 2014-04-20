@@ -30,6 +30,7 @@ examples/example_tools_dir
 examples/example_net_dbus_adapter
 
 tools/dbus_send_sig/dbus_send_sig
+tools/dbus_call_meth/dbus_call_meth
 
 # OSX specific
 .DS_Store

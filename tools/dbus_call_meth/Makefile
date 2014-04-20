@@ -1,6 +1,6 @@
 #
 #  Olli's C++ Library [https://bitbucket.org/omichel/om-lib]
-#  tools/dbus_send_sig/Makefile
+#  tools/dbus_call_meth/Makefile
 #  (c) 2014 Oliver Michel <oliver dot michel at editum dot de>
 #  http://ngn.cs.colorado/~oliver
 #
@@ -11,7 +11,7 @@ LIB_STATIC_DIR = ../../
 CXXFLAGS = $(shell pkg-config --cflags dbus-1) -ldbus-1 -I$(INC_DIR) -L$(LIB_STATIC_DIR) -Wall -std=c++11
 CXXPOSTFIX = -lom-net -lom-tools
 
-BIN_NAME = dbus_send_sig
+BIN_NAME = dbus_call_meth
 
 all: $(BIN_NAME)
 
