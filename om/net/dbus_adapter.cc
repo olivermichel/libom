@@ -131,7 +131,7 @@ void om::net::DBusAdapter::call_method(DBusMethodCall& call)
 	DBusMessage* msg;
 	DBusPendingCall* pending;
 
-	msg = dbus_message_new_method_call(call._addr.c_str(), call._obj_path.c_str(),
+	msg = dbus_message_new_method_call(call._dest.c_str(), call._path.c_str(),
 		call._iface.c_str(), call._method_name.c_str());
 
 	if(msg == 0)
@@ -396,25 +396,71 @@ std::string om::net::DBusSignal::name()
 }
 
 
-om::net::DBusMethodCall::DBusMethodCall(std::string addr, std::string iface,
-	std::string obj_path, std::string method_name)
-	:	_addr(addr),
+om::net::DBusMethodCall::DBusMethodCall()
+	:	_dest(),
+		_path(),
+		_iface(),
+		_method_name() {}
+
+om::net::DBusMethodCall::DBusMethodCall(std::string addr, std::string path,
+	std::string iface, std::string method_name)
+	:	_dest(addr),
+		_path(path),
 		_iface(iface),
-		_obj_path(obj_path),
 		_method_name(method_name) {}
 
 om::net::DBusMethodCall::DBusMethodCall(const om::net::DBusMethodCall& copy_from)
-	:	_addr(copy_from._addr),
+	:	_dest(copy_from._dest),
+		_path(copy_from._path),
 		_iface(copy_from._iface),
-		_obj_path(copy_from._obj_path),
 		_method_name(copy_from._method_name) {}
 
 om::net::DBusMethodCall& om::net::DBusMethodCall::operator=(DBusMethodCall& copy_from)
 {
-	_addr = copy_from._addr;
+	_dest = copy_from._dest;
+	_path = copy_from._path;
 	_iface = copy_from._iface;
-	_obj_path = copy_from._obj_path;
 	_method_name = copy_from._method_name;
 
 	return *this;
+}
+
+void om::net::DBusMethodCall::set_dest(std::string dest)
+{
+	_dest = dest;
+}
+
+std::string om::net::DBusMethodCall::dest()
+{
+	return _dest;
+}
+
+void om::net::DBusMethodCall::set_path(std::string path)
+{
+	_path = path;
+}
+
+std::string om::net::DBusMethodCall::path()
+{
+	return _path;
+}
+
+void om::net::DBusMethodCall::set_iface(std::string iface)
+{
+	_iface = iface;
+}
+
+std::string om::net::DBusMethodCall::iface()
+{
+	return _iface;
+}
+
+void om::net::DBusMethodCall::set_method_name(std::string method_name)
+{
+	_method_name = method_name;
+}
+
+std::string om::net::DBusMethodCall::method_name()
+{
+	return _method_name;
 }

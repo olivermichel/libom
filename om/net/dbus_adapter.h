@@ -46,16 +46,26 @@ namespace om {
 		class DBusMethodCall {
 
 		public:
-			explicit DBusMethodCall(std::string addr, std::string iface,
-				std::string obj_path, std::string method_name);
+			DBusMethodCall();
+			explicit DBusMethodCall(std::string dest, std::string path,
+				std::string iface, std::string method_name);
 			explicit DBusMethodCall(const om::net::DBusMethodCall& copy_from);  
 			DBusMethodCall& operator=(DBusMethodCall& copy_from);
 
 		private:
-			std::string _addr;
+			std::string _dest;
+			std::string _path;
 			std::string _iface;
-			std::string _obj_path;
 			std::string _method_name;
+
+			void set_dest(std::string dest);
+			std::string dest();
+			void set_path(std::string path);
+			std::string path();
+			void set_iface(std::string iface);
+			std::string iface();
+			void set_method_name(std::string method_name);
+			std::string method_name();
 		
 			friend class DBusAdapter;
 		};
