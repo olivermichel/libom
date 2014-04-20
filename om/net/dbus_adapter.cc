@@ -125,32 +125,43 @@ void om::net::DBusAdapter::send_signal(om::net::DBusSignal& sig)
 	dbus_message_unref(msg);
 }
 
-void om::net::DBusAdapter::call_method(DBusMethodCall& call)
+void om::net::DBusAdapter::call_method(DBusMethodCall& call,
+	std::function<void (om::net::DBusAdapter*, DBusMessage*)> reply_handler)
 	throw(std::runtime_error)
 {
-	DBusMessage* msg;
-	DBusPendingCall* pending;
+	DBusMessage* msg = dbus_message_new_method_call(call._dest.c_str(),
+		call._path.c_str(), call._iface.c_str(), call._method_name.c_str());
 
-	msg = dbus_message_new_method_call(call._dest.c_str(), call._path.c_str(),
-		call._iface.c_str(), call._method_name.c_str());
-
-	if(msg == 0)
+	if(!msg)
 		throw std::runtime_error("DBusAdapter: failed creating method call");
 
-	if(!dbus_connection_send_with_reply(_conn, msg, &pending, -1))
-		throw std::runtime_error("DBusAdapter: failed sending method call");
+	if(reply_handler) {
 
-	if(pending == 0)
-		throw std::runtime_error("DBusAdapter: received null pending call");
+		std::cout << "call method with return" << std::endl;
+
+		DBusPendingCall* pending;
+		callback_context data(this);
+
+		if(!dbus_connection_send_with_reply(_conn, msg, &pending, -1))
+			throw std::runtime_error("DBusAdapter: failed sending method call");
+
+		if(!pending)
+			throw std::runtime_error("DBusAdapter: received null pending call");
+
+		dbus_pending_call_set_notify(
+			pending, _reply_notify_static_callback, &data, NULL
+		);
+
+	} else {
+
+		std::cout << "call method without return" << std::endl;
+
+		if(!dbus_connection_send(_conn, msg, &(++_serial)))
+			throw std::runtime_error("DBusAdapter: failed sending method call");
+	}
 
 	dbus_connection_flush(_conn);
 	dbus_message_unref(msg);
-
-	callback_context data(this);
-
-	dbus_pending_call_set_notify(
-		pending, _reply_notify_static_callback, &data, NULL
-	);
 }
 
 void om::net::DBusAdapter::reply_method_call(DBusMessage* msg)

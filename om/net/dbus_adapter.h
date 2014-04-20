@@ -100,7 +100,9 @@ namespace om {
 			void send_signal(DBusSignal& sig)
 				throw(std::runtime_error);
 
-			void call_method(DBusMethodCall& call)
+			void call_method(DBusMethodCall& call,
+				std::function<void (om::net::DBusAdapter*, DBusMessage*)>
+				reply_handler = 0)
 				throw(std::runtime_error);
 
 			void reply_method_call(DBusMessage* msg)
