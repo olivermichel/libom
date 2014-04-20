@@ -18,7 +18,7 @@ public:
 	void connected(om::net::DBusAdapter* dbus)
 	{
 		std::cout << "connected(): " << std::endl;
-		std::cout << "  unique name: " << dbus->unique_name() << std::endl;
+		std::cout << "     unique name: " << dbus->unique_name() << std::endl;
 
 		dbus->set_default_signal_handler(
 			[this](om::net::DBusAdapter* dbus, DBusMessage* msg) { 
@@ -38,20 +38,19 @@ public:
 			}
 		);
 
-		dbus->match_method_call("edu.colorado.cs.ngn.sdipc.TestInterface",
+		om::net::DBusMethodCall method(
+			"org.freedesktop.DBus",
+			"/org/freedesktop/DBus",
+			"org.freedesktop.DBus.Introspectable",
+			"Introspect"
+		);
+
+		dbus->call_method(method,
 			[this](om::net::DBusAdapter* dbus, DBusMessage* msg) { 
-				 this->receive_method_call(dbus, msg);
+				this->receive_method_response(dbus, msg);
 			}
 		);
-
-		om::net::DBusMethodCall method(
-			"edu.colorado.cs.ngn.sdipc.client1",
-			"edu.colorado.cs.ngn.sdipc.TestInterface",
-			"/edu/colorado/cs/ngn/sdipc/TestObject",
-			"Hi"
-		);
-
-		dbus->call_method(method);
+	
 	}
 
 	void receive_signal(om::net::DBusAdapter* dbus, DBusMessage* msg)
@@ -78,6 +77,14 @@ public:
 		std::cout << "     " << path << " " << iface << "." << member << std::endl;
 
 		dbus->reply_method_call(msg);
+	}
+
+	void receive_method_response(om::net::DBusAdapter* dbus, DBusMessage* msg)
+	{
+		std::string sender(dbus_message_get_sender(msg));
+		std::string destination(dbus_message_get_destination(msg));	
+	
+		std::cout << "MR   " << sender << " -> " << destination << std::endl;
 	}
 
 };

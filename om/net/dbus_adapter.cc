@@ -137,8 +137,6 @@ void om::net::DBusAdapter::call_method(DBusMethodCall& call,
 
 	if(reply_handler) {
 
-		std::cout << "call method with return" << std::endl;
-
 		DBusPendingCall* pending;
 		callback_context data(this);
 
@@ -148,13 +146,18 @@ void om::net::DBusAdapter::call_method(DBusMethodCall& call,
 		if(!pending)
 			throw std::runtime_error("DBusAdapter: received null pending call");
 
+		dbus_pending_call_block(pending);
+		msg = dbus_pending_call_steal_reply(pending);
+		if(!msg)
+			throw std::runtime_error("DBusAdapter: received null return");
+
+		reply_handler(this, msg);
+/*
 		dbus_pending_call_set_notify(
 			pending, _reply_notify_static_callback, &data, NULL
 		);
-
+*/
 	} else {
-
-		std::cout << "call method without return" << std::endl;
 
 		if(!dbus_connection_send(_conn, msg, &(++_serial)))
 			throw std::runtime_error("DBusAdapter: failed sending method call");
