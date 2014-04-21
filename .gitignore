@@ -29,5 +29,7 @@ examples/example_tunnel_device
 examples/example_tools_dir
 examples/example_net_dbus_adapter
 
+tools/dbus_send_sig/dbus_send_sig
+
 # OSX specific
 .DS_Store
