@@ -6,28 +6,21 @@
 //
 
 #include <cstring>
+#include <unistd.h>
 
 #include "stream_client.h"
-
 
 om::net::StreamClient::StreamClient()
 	: om::net::IOInterface() { }
 
-om::net::StreamClient::StreamClient(const om::net::tp_addr remote_addr) 
+om::net::StreamClient::StreamClient(const om::net::tp_addr remote_addr,
+	std::function<void (om::net::StreamClient*)> read_handler) 
 	throw(std::runtime_error, std::invalid_argument)
 	: om::net::IOInterface() {
 
+	_read_handler = read_handler;
+
 	this->open(remote_addr);
-}
-
-om::net::StreamClient::StreamClient(const om::net::StreamClient& copy_from)
-	: om::net::IOInterface(copy_from), _remote_addr(copy_from._remote_addr) {}
-
-om::net::StreamClient& om::net::StreamClient::operator=(StreamClient& copy_from) {
-
-	om::net::IOInterface::operator=(copy_from);
-	_remote_addr = copy_from._remote_addr;
-	return *this;
 }
 
 int om::net::StreamClient::open(const om::net::tp_addr remote_addr)
@@ -59,6 +52,14 @@ int om::net::StreamClient::open(const om::net::tp_addr remote_addr)
 	return fd;
 }
 
+void om::net::StreamClient::handle_read()
+	throw(std::runtime_error, std::logic_error)
+{
+	if(_read_handler)
+		_read_handler(this);
+	else
+		throw std::logic_error("StreamClient: no read handler set");
+}
 
 int om::net::StreamClient::send(const unsigned char* tx_buf, 
 	const size_t buf_len) {
@@ -86,3 +87,14 @@ void om::net::StreamClient::close()
 }
 			
 om::net::StreamClient::~StreamClient() { }
+
+namespace om {
+	namespace net {
+		std::ostream& operator<<(std::ostream& out, 
+			const om::net::StreamClient& sc)
+		{
+			out << "StreamClient(" << sc._remote_addr.to_string() << ")";
+			return out;
+		}
+	}
+}

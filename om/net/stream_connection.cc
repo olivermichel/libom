@@ -6,7 +6,6 @@
 //
 
 #include <cstring>
-#include <errno.h>
 #include <unistd.h>
 
 #include "stream_connection.h"

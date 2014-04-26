@@ -10,9 +10,8 @@
 #ifndef OM_NET_STREAM_CLIENT_H
 #define OM_NET_STREAM_CLIENT_H
 
-#include <errno.h>
-#include <unistd.h>
-
+#include <ostream>
+#include <functional>
 #include <om/net/net.h>
 #include <om/net/io_interface.h>
 
@@ -28,14 +27,9 @@ namespace om {
 
 			// constructs a new StreamClient object and immediately opens a
 			// connection to remote_addr
-			explicit StreamClient(const om::net::tp_addr remote_addr) 
+			explicit StreamClient(const om::net::tp_addr remote_addr,
+				std::function<void (om::net::StreamClient*)> read_handler) 
 				throw(std::runtime_error, std::invalid_argument);
-			
-			// copy constructor
-			StreamClient(const om::net::StreamClient &copy_from);			
-
-			// assignment copy constructor
-			StreamClient& operator=(StreamClient& copy_from);
 
 			// opens a new TCP connection to remote_addr, throws runtime_error if
 			// the connection establishment fails, logic_error if the connection has
@@ -43,6 +37,10 @@ namespace om {
 			// returns the file describtor of the new connection upon success
 			int open(const om::net::tp_addr remote_addr)
 				throw(std::runtime_error, std::logic_error, std::invalid_argument);
+
+			// implement om::net::IOInterface
+			void handle_read()
+				throw(std::runtime_error, std::logic_error);
 
 			// writes buf_len bytes out of tx_buf to the socket
 			int send(const unsigned char* tx_buf, const size_t buf_len);
@@ -57,9 +55,15 @@ namespace om {
 			// default destructor
 			~StreamClient();
 
+			friend std::ostream& operator<<(std::ostream&, const StreamClient&);
+
 		private:
 			
 			om::net::tp_addr _remote_addr;
+			std::function<void (om::net::StreamClient*)> _read_handler;
+		
+			StreamClient(const om::net::StreamClient& copy_from);			
+			StreamClient& operator=(StreamClient& copy_from);
 		};
 	}
 }

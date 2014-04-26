@@ -71,7 +71,7 @@ namespace om {
 			om::net::tp_addr _remote_addr;
 			std::function<void (om::net::StreamConnection*)> _read_handler;
 
-			StreamConnection(const om::net::StreamConnection &copy_from);
+			StreamConnection(const om::net::StreamConnection& copy_from);
 			StreamConnection& operator=(StreamConnection& copy_from);
 		};
 	}
