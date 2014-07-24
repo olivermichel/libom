@@ -5,41 +5,58 @@
 #  http://ngn.cs.colorado/~oliver
 #
 
+# shared target names
 LIB_NET   = libom-net.so
 LIB_TOOLS = libom-tools.so
+LIB_ASYNC = libom-async.so
+LIB_IPC   = libom_ipc.so
+
+# static target names
 AR_NET    = libom-net.a
 AR_TOOLS  = libom-tools.a
+AR_ASYNC  = libom-async.a
+AR_IPC    = libom-ipc.a
 
-NET_NAMES = net agent io_interface datagram_socket stream_client \
-	stream_listener stream_connection inotify_handler tunnel_device \
-	dbus_adapter
-	# raw_socket
-
+# dependency names
+NET_NAMES   = net agent io_interface datagram_socket stream_client \
+		stream_listener stream_connection inotify_handler tunnel_device \
+		dbus_adapter
 TOOLS_NAMES = tools logger time random string file dir
+ASYNC_NAMES = multiplex_interface epoll_wrapper
+IPC_NAMES   = dbus/connection
 
+# external libary flags
 DBUS_I = $(shell pkg-config --cflags-only-I dbus-1)
 DBUS_L = $(shell pkg-config --libs dbus-1)
 
-CXX = g++
-CXXFLAGS = $(DBUS_I) -Wall -g -I. -fPIC -std=c++11
+# compiler/linker flags
+AR       = ar
+CXX      = g++
+CXXFLAGS = -std=c++11 -Wall -g -I. -fPIC $(DBUS_I)
 LDFLAGS  = $(DBUS_L)
 
-AR = ar
-
-all: ar so
-
-ar: $(AR_NET) $(AR_TOOLS)
-
-so: $(LIB_NET) $(LIB_TOOLS)
-
-NET_OBJS = $(addprefix om/net/, $(addsuffix .o, $(NET_NAMES)))
+# object files
+NET_OBJS   = $(addprefix om/net/,   $(addsuffix .o, $(NET_NAMES)))
 TOOLS_OBJS = $(addprefix om/tools/, $(addsuffix .o, $(TOOLS_NAMES)))
+ASYNC_OBJS = $(addprefix om/async/, $(addsuffix .o, $(ASYNC_NAMES)))
+IPC_OBJS   = $(addprefix om/ipc/,   $(addsuffix .o, $(IPC_NAMES)))
 
-$(LIB_NET): $(NET_OBJS)
+# target rules
+all: so ar
+so: $(LIB_NET) $(LIB_TOOLS) $(LIB_ASYNC) $(LIB_IPC)
+ar: $(AR_NET) $(AR_TOOLS) $(AR_ASYNC) $(AR_IPC)
+
+# target dependencies
+$(LIB_NET):   $(NET_OBJS)
 $(LIB_TOOLS): $(TOOLS_OBJS)
-$(AR_NET): $(NET_OBJS)
-$(AR_TOOLS): $(TOOLS_OBJS)
+$(LIB_ASYNC): $(ASYNC_OBJS)
+$(LIB_IPC):   $(IPC_OBJS)
+$(AR_NET):    $(NET_OBJS)
+$(AR_TOOLS):  $(TOOLS_OBJS)
+$(AR_ASYNC):  $(ASYNC_OBJS)
+$(AR_IPC):    $(IPC_OBJS)
 
+# compile/link rules
 %.o: %.cc
 	$(CXX) $(CXXFLAGS) -c $< -o $@ 
 
@@ -53,15 +70,10 @@ examples:
 	$(MAKE) -C ./examples
 
 clean:
-	$(RM) $(NET_OBJS) $(TOOLS_OBJS) .deps
+	$(RM) $(NET_OBJS) $(TOOLS_OBJS) $(ASYNC_OBJS) $(IPC_OBJS)
 
 spotless: clean
-	$(RM) $(LIB_NET) $(LIB_TOOLS) $(AR_NET) $(AR_TOOLS)
+	$(RM) $(LIB_NET) $(LIB_TOOLS) $(LIB_ASYNC) $(LIB_IPC)
+	$(RM) $(AR_NET) $(AR_TOOLS) $(AR_ASYNC) $(AR_IPC)
 
 .PHONY: all ar so examples clean spotless
-
--include .deps
-.deps: $(NET_OBJS:.o=.cc) $(TOOLS_OBJS:.o=.cc)
-	for src in $^; do \
-		$(CXX) $(CXXFLAGS) -MM -MT $${src/.cc/.o} $$src; \
-	done > $@ 2> /dev/null
