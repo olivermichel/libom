@@ -1,7 +1,7 @@
 #
 #  Olli's C++ Library [https://bitbucket.org/omichel/om-lib]
 #  Makefile
-#  (c) 2013 Oliver Michel <oliver dot michel at editum dot de>
+#  (c) 2014 Oliver Michel <oliver dot michel at editum dot de>
 #  http://ngn.cs.colorado/~oliver
 #
 
@@ -17,8 +17,13 @@ NET_NAMES = net agent io_interface datagram_socket stream_client \
 
 TOOLS_NAMES = tools logger time random string file dir
 
+DBUS_I = $(shell pkg-config --cflags-only-I dbus-1)
+DBUS_L = $(shell pkg-config --libs dbus-1)
+
 CXX = g++
-CXXFLAGS = $(shell pkg-config --cflags dbus-1) -ldbus-1 -Wall -g -I. -fPIC -std=c++11
+CXXFLAGS = $(DBUS_I) -Wall -g -I. -fPIC -std=c++11
+LDFLAGS  = $(DBUS_L)
+
 AR = ar
 
 all: ar so
@@ -36,10 +41,10 @@ $(AR_NET): $(NET_OBJS)
 $(AR_TOOLS): $(TOOLS_OBJS)
 
 %.o: %.cc
-	$(CXX) $(CXXFLAGS) -c $< -o $@
+	$(CXX) $(CXXFLAGS) -c $< -o $@ 
 
 %.so:
-	$(CXX) $(CXXFLAGS) -shared -o $@ $^
+	$(CXX) -shared -o $@ $^ $(LDFLAGS)
 
 %.a:
 	$(AR) -cvr $@ $^
