@@ -9,7 +9,7 @@ INC_DIR = ../
 LIB_STATIC_DIR = ../
 
 CXXFLAGS = $(shell pkg-config --cflags dbus-1) -ldbus-1 -I$(INC_DIR) -L$(LIB_STATIC_DIR) -Wall -std=c++11
-CXXPOSTFIX = -lom-net -lom-tools
+CXXPOSTFIX = -lom-net -lom-tools -lom-async -lom-ipc
 
 EXAMPLES_NAMES = example_net_addresses \
 	example_net_dbus_adapter \
@@ -17,7 +17,8 @@ EXAMPLES_NAMES = example_net_addresses \
 	example_net_stream_listener \
 	example_tools_dir \
 	example_tools_file \
-	example_tools_random
+	example_tools_random \
+	example_async_epoll_wrapper
 
 # example_raw_socket
 # example_net_inotify_handler

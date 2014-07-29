@@ -1,21 +1,22 @@
 //
 //  Olli's C++ Library [https://bitbucket.org/omichel/om-lib]
 //  net/datagram_socket.cc
-//  (c) 2013 Oliver Michel <oliver dot michel at editum dot de>
+//  (c) 2014 Oliver Michel <oliver dot michel at editum dot de>
 //  http://ngn.cs.colorado/~oliver
 //
 
+#include <errno.h>
 #include <cstring>
 #include <unistd.h>
 #include "datagram_socket.h"
 
 om::net::DatagramSocket::DatagramSocket()
-	: om::net::IOInterface() {}
+	: om::async::MultiplexInterface() {}
 
 om::net::DatagramSocket::DatagramSocket(const om::net::tp_addr addr,
 	std::function<void (om::net::DatagramSocket*)> read_handler) 
 	throw(std::runtime_error, std::invalid_argument)
-	: om::net::IOInterface()
+	: om::async::MultiplexInterface()
 {
 	this->open(addr, read_handler);
 }
@@ -24,7 +25,7 @@ int om::net::DatagramSocket::open(const om::net::tp_addr addr,
 	std::function<void (om::net::DatagramSocket*)> read_handler) 
 	throw(std::runtime_error, std::logic_error, std::invalid_argument)
 {
-	if(_fd != 0) 
+	if(MultiplexInterface::fd() != 0) 
 		throw std::logic_error("Socket already opened");
 	
 	if(addr.proto != om::net::tp_proto_udp)
@@ -48,14 +49,15 @@ int om::net::DatagramSocket::open(const om::net::tp_addr addr,
 	if(bind(fd, (struct sockaddr*)&addr_struct, sizeof(addr_struct)) == -1)
 		throw std::runtime_error("bind(): " + std::string(strerror(errno)));
 
-	_fd = fd;
+	MultiplexInterface::set_fd(fd);
+
 	_addr = addr;
 	_read_handler = read_handler;
 
 	return fd;
 }
 
-void om::net::DatagramSocket::handle_read()
+void om::net::DatagramSocket::ready(MultiplexInterface* iface)
 	throw(std::runtime_error, std::logic_error)
 {
 	if(_read_handler)
@@ -70,7 +72,7 @@ int om::net::DatagramSocket::send(const om::net::tp_addr remote_addr,
 	struct sockaddr_in remote_addr_struct;
 	om::net::sockaddr_from_tp_addr(remote_addr, &remote_addr_struct);
 	
-	int tx_bytes = sendto(_fd, tx_data, data_len, 0, 
+	int tx_bytes = sendto(MultiplexInterface::fd(), tx_data, data_len, 0, 
 		(struct sockaddr *)&remote_addr_struct, sizeof(remote_addr_struct));
 
 	return tx_bytes;
@@ -82,8 +84,8 @@ int om::net::DatagramSocket::receive(om::net::tp_addr* from,
 	struct sockaddr_in rx_addr;
 	socklen_t addr_len = sizeof(rx_addr);
 
-	int rx_bytes = recvfrom(_fd, rx_buf, buf_len, 0, (struct sockaddr *)&rx_addr,
-		&addr_len);
+	int rx_bytes = recvfrom(MultiplexInterface::fd(), rx_buf, buf_len, 0,
+		(struct sockaddr *)&rx_addr, &addr_len);
 
 	if(rx_bytes == -1)
 		throw std::runtime_error("recvfrom(): " + std::string(strerror(errno)));
@@ -98,17 +100,17 @@ int om::net::DatagramSocket::receive(om::net::tp_addr* from,
 void om::net::DatagramSocket::close() 
 	throw(std::logic_error)
 {
-	if(_fd == 0)
+	if(MultiplexInterface::fd() == 0)
 		throw std::logic_error("Socket was not yet opened");
 
-	::close(_fd);
+	::close(MultiplexInterface::fd());
 }
 
 om::net::DatagramSocket::~DatagramSocket()
 {
-	if(_fd != 0) {
-		if(::close(_fd) == 0)
-			_fd = 0;
+	if(MultiplexInterface::fd() != 0) {
+		if(::close(MultiplexInterface::fd()) == 0)
+			MultiplexInterface::set_fd(0);
 		else
 			throw std::runtime_error("::close(): " + std::string(strerror(errno)));   
 	}

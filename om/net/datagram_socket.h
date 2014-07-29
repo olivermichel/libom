@@ -1,26 +1,25 @@
 //
 //  Olli's C++ Library [https://bitbucket.org/omichel/om-lib]
 //  net/datagram_socket.h
-//  (c) 2013 Oliver Michel <oliver dot michel at editum dot de>
+//  (c) 2014 Oliver Michel <oliver dot michel at editum dot de>
 //  http://ngn.cs.colorado/~oliver
 //
 //  implements a UDP socket
 //
 
-
 #ifndef OM_NET_DATAGRAM_SOCKET_H
 #define OM_NET_DATAGRAM_SOCKET_H
 
-#include <errno.h>
 #include <functional>
 #include <stdexcept>
 
-#include <om/net/io_interface.h>
+#include <om/net/net.h>
+#include <om/async/multiplex_interface.h>
 
 namespace om {
 	namespace net {
 
-		class DatagramSocket : public om::net::IOInterface {
+		class DatagramSocket : public om::async::MultiplexInterface {
 
 		public:
 			
@@ -34,8 +33,8 @@ namespace om {
 				std::function<void (om::net::DatagramSocket*)> read_handler)
 				throw(std::runtime_error, std::logic_error, std::invalid_argument);
 
-			// implement om::net::IOInterface
-			void handle_read()
+			// to be invoked by multiplexer
+			void ready(MultiplexInterface* iface)
 				throw(std::runtime_error, std::logic_error);
 
 			int send(const om::net::tp_addr remote_addr, 

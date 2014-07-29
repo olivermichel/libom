@@ -17,8 +17,7 @@ namespace om {
 
 			typedef std::function<void (int)> timeout_callback;
 			
-			typedef std::function<void (MultiplexInterface*)>
-				event_handler;
+			typedef std::function<void (MultiplexInterface*)> event_handler;
 
 			typedef std::function<int ()> timeout_generator;
 
