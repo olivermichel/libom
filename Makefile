@@ -23,7 +23,7 @@ NET_NAMES   = net agent io_interface datagram_socket stream_client \
 		dbus_adapter
 TOOLS_NAMES = tools logger time random string file dir
 ASYNC_NAMES = multiplex_interface multiplexer epoll_wrapper
-IPC_NAMES   = dbus/connection
+IPC_NAMES   = dbus/dbus dbus/connection
 
 # external libary flags
 DBUS_I = $(shell pkg-config --cflags-only-I dbus-1)
@@ -32,8 +32,8 @@ DBUS_L = $(shell pkg-config --libs dbus-1)
 # compiler/linker flags
 AR       = ar
 CXX      = g++
-CXXFLAGS = -std=c++11 -Wall -g -I. -fPIC $(DBUS_I)
-LDFLAGS  = $(DBUS_L)
+CXXFLAGS = -std=c++11 -Wall -I. -fPIC
+LDFLAGS  = 
 
 # object files
 NET_OBJS   = $(addprefix om/net/,   $(addsuffix .o, $(NET_NAMES)))
@@ -47,24 +47,46 @@ so: $(LIB_NET) $(LIB_TOOLS) $(LIB_ASYNC) $(LIB_IPC)
 ar: $(AR_NET) $(AR_TOOLS) $(AR_ASYNC) $(AR_IPC)
 
 # target dependencies
-$(LIB_NET):   $(NET_OBJS)
-$(LIB_TOOLS): $(TOOLS_OBJS)
-$(LIB_ASYNC): $(ASYNC_OBJS)
-$(LIB_IPC):   $(IPC_OBJS)
 $(AR_NET):    $(NET_OBJS)
 $(AR_TOOLS):  $(TOOLS_OBJS)
 $(AR_ASYNC):  $(ASYNC_OBJS)
 $(AR_IPC):    $(IPC_OBJS)
 
-# compile/link rules
-%.o: %.cc
-	$(CXX) $(CXXFLAGS) -c $< -o $@ 
+# per library compile/link rules
 
-%.so:
+# remove DBUS_I from net compile rule when dbus_adapter obsolete
+om/net/%.o: om/net/%.cc
+	$(CXX) $(CXXFLAGS) $(DBUS_I) -c $< -o $@
+
+om/tools/%.o: om/tools/%.cc
+	$(CXX) $(CXXFLAGS) -c $< -o $@
+
+om/async/%.o: om/async/%.cc
+	$(CXX) $(CXXFLAGS) -c $< -o $@
+
+om/ipc/%.o: om/ipc/%.cc
+	$(CXX) $(CXXFLAGS) -c $< -o $@
+
+om/ipc/dbus/%.o: om/ipc/dbus/%.cc
+	$(CXX) $(CXXFLAGS) $(DBUS_I) -c $< -o $@
+
+
+$(LIB_NET): $(NET_OBJS)
+	$(CXX) -shared -o $@ $^ $(LDFLAGS) $(DBUS_L)
+
+$(LIB_TOOLS): $(TOOLS_OBJS)
 	$(CXX) -shared -o $@ $^ $(LDFLAGS)
+
+$(LIB_ASYNC): $(ASYNC_OBJS)
+	$(CXX) -shared -o $@ $^ $(LDFLAGS)
+
+$(LIB_IPC): $(IPC_OBJS)
+	$(CXX) -shared -o $@ $^ $(LDFLAGS) $(DBUS_L)
+
 
 %.a:
 	$(AR) -cvr $@ $^
+
 
 examples:
 	$(MAKE) -C ./examples
