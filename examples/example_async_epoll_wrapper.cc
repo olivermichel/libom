@@ -26,6 +26,13 @@ public:
 		std::cout << "timeout triggered: " << t << std::endl;
 	}
 
+	void read_stdin(int fd)
+	{
+		std::string buf;
+		std::cin >> buf;
+		std::cout << "read stdin: " << buf <<  std::endl;
+	}
+
 	void read_from_socket(om::net::DatagramSocket* sock)
 	{
 		om::net::tp_addr remote_addr;
@@ -52,12 +59,7 @@ int main(int argc, char const *argv[])
 	om::async::EPollWrapper epoll;
 	AsyncHandler handler;
 
-	om::net::tp_addr listen_addr("0.0.0.0", om::net::tp_proto_udp, 42742);
-
-	udp_sock.open(listen_addr,
-		std::bind(&AsyncHandler::read_from_socket, &handler, _1)
-	);
-
+	// setup timout mechanism
 	epoll.set_timeout_generator(
 		std::bind(&AsyncHandler::timeout_generator, &handler)
 	);
@@ -66,8 +68,23 @@ int main(int argc, char const *argv[])
 		std::bind(&AsyncHandler::timeout_triggered, &handler, _1)
 	);
 
+	// setup udp socket and bind incoming data handler
+	om::net::tp_addr listen_addr("0.0.0.0", om::net::tp_proto_udp, 42742);
+
+	udp_sock.open(listen_addr,
+		std::bind(&AsyncHandler::read_from_socket, &handler, _1)
+	);
+
 	epoll.add_interface(&udp_sock, EPOLLIN);
 
+	// use lambda expression to process standard input
+	epoll.add_descriptor(STDIN_FILENO, 
+		[](int fd){
+			std::string buf;
+			std::cin >> buf;
+			std::cout << "read stdin: " << buf <<  std::endl;
+		}, EPOLLIN
+	);
 
 	epoll.dispatch();
 
