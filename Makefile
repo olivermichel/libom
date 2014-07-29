@@ -19,8 +19,7 @@ AR_IPC    = libom-ipc.a
 
 # dependency names
 NET_NAMES   = net agent io_interface datagram_socket stream_client \
-		stream_listener stream_connection inotify_handler tunnel_device \
-		dbus_adapter
+		stream_listener stream_connection inotify_handler tunnel_device
 TOOLS_NAMES = tools logger time random string file dir
 ASYNC_NAMES = multiplex_interface multiplexer epoll_wrapper
 IPC_NAMES   = dbus/dbus dbus/connection
@@ -54,9 +53,8 @@ $(AR_IPC):    $(IPC_OBJS)
 
 # per library compile/link rules
 
-# remove DBUS_I from net compile rule when dbus_adapter obsolete
 om/net/%.o: om/net/%.cc
-	$(CXX) $(CXXFLAGS) $(DBUS_I) -c $< -o $@
+	$(CXX) $(CXXFLAGS) -c $< -o $@
 
 om/tools/%.o: om/tools/%.cc
 	$(CXX) $(CXXFLAGS) -c $< -o $@
