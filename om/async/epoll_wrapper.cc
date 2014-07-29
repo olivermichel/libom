@@ -88,7 +88,7 @@ void om::async::EPollWrapper::dispatch()
 
 			for(int i = 0; i < nfds; i++) { // iterate over fds and invoke callback
 				callback_context* cb = &(_fds[events[i].data.fd]);
-				cb->handler(cb->interface);
+				cb->handler(events[i].data.fd, cb->interface);
 			}
 		}
 	}

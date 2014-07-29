@@ -34,7 +34,7 @@ namespace om {
 				throw(std::runtime_error, std::logic_error, std::invalid_argument);
 
 			// to be invoked by multiplexer
-			void ready(MultiplexInterface* iface)
+			void ready(int fd, MultiplexInterface* iface)
 				throw(std::runtime_error, std::logic_error);
 
 			int send(const om::net::tp_addr remote_addr, 

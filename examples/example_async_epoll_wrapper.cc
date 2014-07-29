@@ -68,7 +68,7 @@ int main(int argc, char const *argv[])
 
 	epoll.add_interface(
 		&udp_sock, 
-		std::bind(&om::net::DatagramSocket::ready, &udp_sock, _1),
+		std::bind(&om::net::DatagramSocket::ready, &udp_sock, _1, _2),
 		EPOLLIN
 	);
 

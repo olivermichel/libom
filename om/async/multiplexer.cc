@@ -31,7 +31,7 @@ void om::async::Multiplexer::add_interface(om::async::MultiplexInterface* iface,
 	int fd = iface->fd();
 
 	if(fd < 0)
-		throw std::logic_error("Multiplexer: add_interface: not initialized");
+		throw std::logic_error("Multiplexer: add_interface: fd not initialized");
 
 	if(_fds.find(fd) == _fds.end())
 		_fds.emplace(fd, callback_context(handler, iface));
@@ -48,6 +48,29 @@ void om::async::Multiplexer::remove_interface(om::async::MultiplexInterface* ifa
 		_fds.erase(i);
 	else
 		throw std::logic_error("Multiplexer: remove_interface: does not exist");
+}
+
+void om::async::Multiplexer::add_descriptor(int fd, event_handler handler)
+	throw(std::logic_error)
+{
+	if(fd < 0)
+		throw std::logic_error("Multiplexer: add_descriptor: fd not initialized");
+
+	if(_fds.find(fd) == _fds.end())
+		_fds.emplace(fd, callback_context(handler, 0));
+	else
+		throw std::logic_error("Multiplexer: add_descriptor: exists");
+}
+
+void om::async::Multiplexer::remove_descriptor(int fd)
+	throw(std::logic_error)
+{
+	auto i = _fds.find(fd);
+
+	if(i != _fds.end())
+		_fds.erase(i);
+	else
+		throw std::logic_error("Multiplexer: remove_descriptor: does not exist");
 }
 
 om::async::Multiplexer::~Multiplexer() {}

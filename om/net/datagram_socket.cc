@@ -57,7 +57,7 @@ int om::net::DatagramSocket::open(const om::net::tp_addr addr,
 	return fd;
 }
 
-void om::net::DatagramSocket::ready(MultiplexInterface* iface)
+void om::net::DatagramSocket::ready(int fd, MultiplexInterface* iface)
 	throw(std::runtime_error, std::logic_error)
 {
 	if(_read_handler)
