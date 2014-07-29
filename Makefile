@@ -22,7 +22,7 @@ NET_NAMES   = net agent io_interface datagram_socket stream_client \
 		stream_listener stream_connection inotify_handler tunnel_device \
 		dbus_adapter
 TOOLS_NAMES = tools logger time random string file dir
-ASYNC_NAMES = multiplex_interface epoll_wrapper
+ASYNC_NAMES = multiplex_interface multiplexer epoll_wrapper
 IPC_NAMES   = dbus/connection
 
 # external libary flags
