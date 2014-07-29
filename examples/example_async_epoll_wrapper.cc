@@ -14,7 +14,7 @@ class AsyncHandler {
 
 public:
 
-	AsyncHandler() : _random_engine(), _dist(500) {}
+	AsyncHandler() : _random_engine(), _dist(2500) {}
 
 	int timeout_generator()
 	{

@@ -2,7 +2,7 @@
 #include "multiplex_interface.h"
 
 om::async::MultiplexInterface::MultiplexInterface()
-	: _fd(0) {}
+	: _fd(-1) {}
 
 om::async::MultiplexInterface::MultiplexInterface(int fd)
 	: _fd(fd) {}

@@ -25,7 +25,7 @@ int om::net::DatagramSocket::open(const om::net::tp_addr addr,
 	std::function<void (om::net::DatagramSocket*)> read_handler) 
 	throw(std::runtime_error, std::logic_error, std::invalid_argument)
 {
-	if(MultiplexInterface::fd() != 0) 
+	if(MultiplexInterface::fd() >= 0) 
 		throw std::logic_error("Socket already opened");
 	
 	if(addr.proto != om::net::tp_proto_udp)
