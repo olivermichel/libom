@@ -60,7 +60,8 @@ void om::async::EPollWrapper::remove_interface(
 }
 
 
-void om::async::EPollWrapper::add_descriptor(int fd, event_handler handler, uint32_t events)
+void om::async::EPollWrapper::add_descriptor(int fd, uint32_t events,
+	event_handler handler)
 	throw(std::runtime_error, std::logic_error)
 {
 	Multiplexer::add_descriptor(fd, handler);

@@ -78,13 +78,12 @@ int main(int argc, char const *argv[])
 	epoll.add_interface(&udp_sock, EPOLLIN);
 
 	// use lambda expression to process standard input
-	epoll.add_descriptor(STDIN_FILENO, 
+	epoll.add_descriptor(STDIN_FILENO, EPOLLIN,
 		[](int fd){
 			std::string buf;
 			std::cin >> buf;
 			std::cout << "read stdin: " << buf <<  std::endl;
-		}, EPOLLIN
-	);
+		});
 
 	epoll.dispatch();
 

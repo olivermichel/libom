@@ -24,7 +24,7 @@ namespace om {
 			void remove_interface(om::async::MultiplexInterface* iface)
 				throw(std::runtime_error, std::logic_error);
 
-			void add_descriptor(int fd, event_handler handler, uint32_t events)
+			void add_descriptor(int fd, uint32_t events, event_handler handler)
 				throw(std::runtime_error, std::logic_error);
 
 			void remove_descriptor(int fd)
