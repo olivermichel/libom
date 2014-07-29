@@ -15,7 +15,8 @@ namespace om {
 			MultiplexInterface& operator=(MultiplexInterface& copy_from) = delete;
 
 			int fd();
-
+			virtual void ready() = 0;
+			
 			virtual ~MultiplexInterface();
 
 		protected:

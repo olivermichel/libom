@@ -16,10 +16,10 @@ om::async::EPollWrapper::EPollWrapper(size_t size_hint)
 }
 
 void om::async::EPollWrapper::add_interface(
-	om::async::MultiplexInterface* iface, event_handler handler, uint32_t events)
+	om::async::MultiplexInterface* iface, uint32_t events)
 	throw(std::runtime_error, std::logic_error)
 {
-	Multiplexer::add_interface(iface, handler);
+	Multiplexer::add_interface(iface);
 	
 	struct epoll_event ev { .events = events, .data = { .fd = iface->fd() } };
 
@@ -59,6 +59,49 @@ void om::async::EPollWrapper::remove_interface(
 	}
 }
 
+
+void om::async::EPollWrapper::add_descriptor(int fd, event_handler handler, uint32_t events)
+	throw(std::runtime_error, std::logic_error)
+{
+	Multiplexer::add_descriptor(fd, handler);
+
+	struct epoll_event ev { .events = events, .data = { .fd = fd } };
+
+	if(epoll_ctl(_epfd, EPOLL_CTL_ADD, fd, &ev) < 0) {
+
+		if(errno == EEXIST || errno == ENOENT)
+			throw std::logic_error("EPollWrapper: add_interface: "
+				+ std::string("epoll_ctl: ")
+				+ std::string(strerror(errno))
+			);
+		else
+			throw std::runtime_error("EPollWrapper: add_interface: "
+				+ std::string("epoll_ctl: ")
+				+ std::string(strerror(errno))
+			);
+	}
+}
+
+void om::async::EPollWrapper::remove_descriptor(int fd)
+	throw(std::runtime_error, std::logic_error)
+{
+	Multiplexer::remove_descriptor(fd);
+
+	if(epoll_ctl(_epfd, EPOLL_CTL_DEL, fd, 0) < 0) {
+
+		if(errno == ENOENT)
+			throw std::logic_error("EPollWrapper: remove_descriptor: "
+				+ std::string("epoll_ctl: ")
+				+ std::string(strerror(errno))
+			);
+		else
+			throw std::runtime_error("EPollWrapper: remove_descriptor: "
+				+ std::string("epoll_ctl: ")
+				+ std::string(strerror(errno))
+			);;
+	}
+}
+
 void om::async::EPollWrapper::dispatch()
 {
 	int timeout = -1, nfds = 0;
@@ -87,8 +130,16 @@ void om::async::EPollWrapper::dispatch()
 		} else { // handle regular epoll return
 
 			for(int i = 0; i < nfds; i++) { // iterate over fds and invoke callback
+				
 				callback_context* cb = &(_fds[events[i].data.fd]);
-				cb->handler(events[i].data.fd, cb->interface);
+
+				if(cb->interface != 0) {
+					// if target is derived from om::async::MultiplexInterface
+					cb->interface->ready();
+				} else {
+					// if target is generic file descriptor
+					cb->handler(events[i].data.fd);
+				}
 			}
 		}
 	}

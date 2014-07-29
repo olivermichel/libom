@@ -18,10 +18,16 @@ namespace om {
 				throw(std::runtime_error);
 
 			void add_interface(om::async::MultiplexInterface* iface,
-				event_handler handler,  uint32_t events)
+				uint32_t events)
 				throw(std::runtime_error, std::logic_error);
 
 			void remove_interface(om::async::MultiplexInterface* iface)
+				throw(std::runtime_error, std::logic_error);
+
+			void add_descriptor(int fd, event_handler handler, uint32_t events)
+				throw(std::runtime_error, std::logic_error);
+
+			void remove_descriptor(int fd)
 				throw(std::runtime_error, std::logic_error);
 
 			void dispatch();

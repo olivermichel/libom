@@ -17,7 +17,7 @@ namespace om {
 
 			typedef std::function<void (int)> timeout_callback;
 			
-			typedef std::function<void (int, MultiplexInterface*)> event_handler;
+			typedef std::function<void (int)> event_handler;
 
 			typedef std::function<int ()> timeout_generator;
 
@@ -28,18 +28,17 @@ namespace om {
 			void set_timeout_generator(timeout_generator tg);
 			void set_timeout_callback(timeout_callback cb);
 
-			virtual void add_interface(
-				om::async::MultiplexInterface* iface, event_handler handler)
-				throw(std::logic_error);
+			virtual void add_interface(om::async::MultiplexInterface* iface)
+				throw(std::runtime_error, std::logic_error);
 
 			virtual void remove_interface(om::async::MultiplexInterface* iface)
 				throw(std::runtime_error, std::logic_error);
 
 			virtual void add_descriptor(int fd, event_handler handler)
-				throw(std::logic_error);
+				throw(std::runtime_error, std::logic_error);
 
 			virtual void remove_descriptor(int fd)
-				throw(std::logic_error);
+				throw(std::runtime_error, std::logic_error);
 
 			virtual void dispatch() = 0;
 

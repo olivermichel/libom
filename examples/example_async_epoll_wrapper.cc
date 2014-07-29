@@ -66,11 +66,7 @@ int main(int argc, char const *argv[])
 		std::bind(&AsyncHandler::timeout_triggered, &handler, _1)
 	);
 
-	epoll.add_interface(
-		&udp_sock, 
-		std::bind(&om::net::DatagramSocket::ready, &udp_sock, _1, _2),
-		EPOLLIN
-	);
+	epoll.add_interface(&udp_sock, EPOLLIN);
 
 
 	epoll.dispatch();
