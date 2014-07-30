@@ -25,7 +25,7 @@ NET_NAMES       = net agent io_interface datagram_socket stream_client \
 		            tunnel_device
 TOOLS_NAMES     = tools logger time random string file dir
 ASYNC_NAMES     = multiplex_interface multiplexer epoll_wrapper
-IPC_NAMES       = dbus/dbus dbus/connection
+IPC_NAMES       = dbus/dbus dbus/connection dbus/message
 CONTAINER_NAMES = ring_buffer
 
 # external libary flags
