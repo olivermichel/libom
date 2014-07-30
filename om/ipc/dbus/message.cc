@@ -9,19 +9,33 @@
 
 om::ipc::dbus::Message::Message(int type)
 	throw(std::runtime_error)
-	: 	_message(0), 
-		_type(type)
+	:	_message(0), 
+		_type(type),
+		_arguments()
 {
 	if(!(_message = dbus_message_new(_type)))
 		throw std::runtime_error("Message: not enough memory");
 }
 
+om::ipc::dbus::Message::Message(int type, std::string destination,
+	std::string interface, std::string member)
+	throw(std::runtime_error)
+	:	_message(0), 
+		_type(type),
+		_arguments()
+{
+	if(!(_message = dbus_message_new(_type)))
+		throw std::runtime_error("Message: not enough memory");
+
+	set_destination(destination);
+	set_interface(interface);
+	set_member(member);
+}
+
 om::ipc::dbus::Message::Message(Message& copy_from)
 	: 	_message(dbus_message_copy(copy_from._message)),
-		_type(copy_from._type)
-{
-
-}
+		_type(copy_from._type),
+		_arguments(copy_from._arguments) {}
 
 om::ipc::dbus::Message& om::ipc::dbus::Message::operator=(Message& copy_from)
 {
@@ -93,6 +107,11 @@ void om::ipc::dbus::Message::set_path(std::string path)
 bool om::ipc::dbus::Message::has_path()
 {
 	return dbus_message_get_path(_message) ? true : false;
+}
+
+size_t om::ipc::dbus::Message::num_args()
+{
+	return _arguments.size();
 }
 
 om::ipc::dbus::Message::~Message()

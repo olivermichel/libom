@@ -11,6 +11,7 @@
 #include <dbus/dbus.h>
 #include <stdexcept>
 #include <string>
+#include <vector>
 #include <om/ipc/dbus/connection.h>
 
 namespace om {
@@ -23,6 +24,9 @@ namespace om {
 	
 				Message() = delete;
 				Message(int type) throw (std::runtime_error);
+				Message(int type, std::string destination, std::string interface,
+					std::string member) throw (std::runtime_error);
+				
 				Message(Message& copy_from);
 
 				Message& operator=(Message& copy_from);
@@ -40,11 +44,33 @@ namespace om {
 				void set_path(std::string path);
 				bool has_path();
 
+				size_t num_args();
+
+				template<typename T>
+				void append_argument(T arg) {}
+				void append_argument(std::string arg) {}
+				void append_argument(int arg) {}
+
 				~Message();
 
 			private:
 				DBusMessage* _message;
 				int _type;
+
+				enum arg_type {
+					type_string = 0,
+					type_int
+				};
+
+				struct argument {
+					arg_type type;
+					union data {
+						std::string string_data;
+						int int_data;
+					};
+				};
+
+				std::vector<argument> _arguments;
 
 				friend class Connection;
 			};
