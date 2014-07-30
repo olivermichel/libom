@@ -1,3 +1,9 @@
+//
+//  Olli's C++ Library [https://bitbucket.org/omichel/om-lib]
+//  async/epoll_wrapper.cc
+//  (c) 2014 Oliver Michel <oliver dot michel at editum dot de>
+//  http://ngn.cs.colorado/~oliver
+//
 
 #include "epoll_wrapper.h"
 

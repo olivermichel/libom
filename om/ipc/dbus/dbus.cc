@@ -1,3 +1,9 @@
+//
+//  Olli's C++ Library [https://bitbucket.org/omichel/om-lib]
+//  ipc/dbus/dbus.cc
+//  (c) 2014 Oliver Michel <oliver dot michel at editum dot de>
+//  http://ngn.cs.colorado/~oliver
+//
 
 #include "dbus.h"
 

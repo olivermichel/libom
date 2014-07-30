@@ -1,3 +1,10 @@
+//
+//  Olli's C++ Library [https://bitbucket.org/omichel/om-lib]
+//  async/multiplex_interface.cc
+//  (c) 2014 Oliver Michel <oliver dot michel at editum dot de>
+//  http://ngn.cs.colorado/~oliver
+//
+
 
 #include "multiplex_interface.h"
 

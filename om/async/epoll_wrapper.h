@@ -1,3 +1,9 @@
+//
+//  Olli's C++ Library [https://bitbucket.org/omichel/om-lib]
+//  async/epoll_wrapper.h
+//  (c) 2014 Oliver Michel <oliver dot michel at editum dot de>
+//  http://ngn.cs.colorado/~oliver
+//
 
 #ifndef OM_ASYNC_EPOLL_WRAPPER
 #define OM_ASYNC_EPOLL_WRAPPER

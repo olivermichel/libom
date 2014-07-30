@@ -1,3 +1,9 @@
+//
+//  Olli's C++ Library [https://bitbucket.org/omichel/om-lib]
+//  container/ring_buffer.h
+//  (c) 2014 Oliver Michel <oliver dot michel at editum dot de>
+//  http://ngn.cs.colorado/~oliver
+//
 
 #ifndef OM_CONTAINER_RING_BUFFER_H
 #define OM_CONTAINER_RING_BUFFER_H
