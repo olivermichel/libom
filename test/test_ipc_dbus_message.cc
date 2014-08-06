@@ -43,6 +43,9 @@ int main()
 	test::expect_true<bool>(msg.has_path(), 
 		"has_path() responds correcly on true");
 
+	msg.append_argument<std::string>("hello");
+	msg.append_argument<float>(3.21);
+
 	return 0;
 
 }

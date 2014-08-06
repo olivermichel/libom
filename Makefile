@@ -59,22 +59,22 @@ $(AR_CONTAINER): $(CONTAINER_OBJS)
 
 # per library compile/link rules
 
-om/net/%.o: om/net/%.cc
+om/net/%.o: om/net/%.cc om/net/%.h
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
-om/tools/%.o: om/tools/%.cc
+om/tools/%.o: om/tools/%.cc om/tools/%.h
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
-om/async/%.o: om/async/%.cc
+om/async/%.o: om/async/%.cc om/async/%.h
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
-om/ipc/%.o: om/ipc/%.cc
+om/ipc/%.o: om/ipc/%.cc om/ipc/%.h
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
-om/ipc/dbus/%.o: om/ipc/dbus/%.cc
+om/ipc/dbus/%.o: om/ipc/dbus/%.cc om/ipc/dbus/%.h 
 	$(CXX) $(CXXFLAGS) $(DBUS_I) -c $< -o $@
 
-om/container/%.o: om/container/%.cc
+om/container/%.o: om/container/%.cc om/container/%.h
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
 $(LIB_NET): $(NET_OBJS)
@@ -96,6 +96,8 @@ $(LIB_CONTAINER): $(CONTAINER_OBJS)
 %.a:
 	$(AR) -cvr $@ $^
 
+test:
+	$(MAKE) -C ./test
 
 examples:
 	$(MAKE) -C ./examples
@@ -107,4 +109,4 @@ spotless: clean
 	$(RM) $(LIB_NET) $(LIB_TOOLS) $(LIB_ASYNC) $(LIB_IPC) $(LIB_CONTAINER)
 	$(RM) $(AR_NET) $(AR_TOOLS) $(AR_ASYNC) $(AR_IPC) $(AR_CONTAINER)
 
-.PHONY: all ar so examples clean spotless
+.PHONY: all ar so examples clean spotless test

@@ -13,6 +13,7 @@
 #include <string>
 #include <vector>
 #include <om/ipc/dbus/connection.h>
+#include <typeinfo>
 
 namespace om {
 	namespace ipc {
@@ -47,9 +48,26 @@ namespace om {
 				size_t num_args();
 
 				template<typename T>
-				void append_argument(T arg) {}
-				void append_argument(std::string arg) {}
-				void append_argument(int arg) {}
+				void append_argument(T arg) {
+
+					if(typeid(arg) == typeid(int))
+						;
+					else if(typeid(arg) == typeid(std::string))
+						;
+					else
+						throw;
+
+
+					//append_argument<T>(arg);
+					//append_argument<T>::append_argument(this, arg);
+//					std::cout << "append generic" << std::endl;
+				}
+
+
+
+				// void append_argument(int arg) {
+				// 	std::cout << "append int" << std::endl;
+				// }
 
 				~Message();
 
@@ -74,6 +92,21 @@ namespace om {
 
 				friend class Connection;
 			};
+
+			// template<> void Message::append_argument(std::string arg);
+			// template<> void Message::append_argument(int arg);
+
+			// template<>
+			// void Message::append_argument(std::string arg) {
+			// 	std::cout << "append string" << std::endl;
+			// }
+
+
+			// template<>
+			// void Message::append_argument(int arg) {
+			// 	std::cout << "append int" << std::endl;
+			// }
+
 		}
 	}
 }
