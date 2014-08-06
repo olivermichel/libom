@@ -33,5 +33,7 @@ examples/example_async_epoll_wrapper
 tools/dbus_send_sig/dbus_send_sig
 tools/dbus_call_meth/dbus_call_meth
 
+test/test_ipc_dbus_message
+
 # OSX specific
 .DS_Store
