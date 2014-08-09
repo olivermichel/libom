@@ -170,7 +170,23 @@ std::string om::ipc::dbus::Message::get_string(size_t pos)
 	return std::string(val);
 }
 
-std::string om::ipc::dbus::Message::description()
+std::vector<int> om::ipc::dbus::Message::arguments() const
+{
+	std::vector<int> v;
+
+	DBusMessageIter iter;
+	
+	// catch logic error when message has no arguments and return empty vector
+	try { _init_iter(&iter); } catch(std::logic_error) { return v; }
+
+	do {
+		v.push_back(dbus_message_iter_get_arg_type(&iter));
+	} while (dbus_message_iter_next(&iter));
+
+	return v;
+}
+
+std::string om::ipc::dbus::Message::description() const
 {
 	std::stringstream ss;
 
@@ -226,7 +242,21 @@ std::string om::ipc::dbus::Message::description()
 		ss << "     " << error_name;
 	}
 
+	for(int t : arguments())
+		ss << std::endl << "     " << arg_type_description(t);
+
+	ss << std::endl;
+
 	return ss.str();
+}
+
+std::string om::ipc::dbus::Message::arg_type_description(int arg_type)
+{
+	switch(arg_type) {
+		case DBUS_TYPE_INT32:    return "DBUS_TYPE_INT32";
+		case DBUS_TYPE_STRING:   return "DBUS_TYPE_STRING";
+		default:                 return "DBUS_TYPE_UNKNOWN";
+	}
 }
 
 om::ipc::dbus::Message::~Message()
@@ -235,14 +265,14 @@ om::ipc::dbus::Message::~Message()
 		dbus_message_unref(_message);
 }
 
-void om::ipc::dbus::Message::_init_iter(DBusMessageIter* iter)
+void om::ipc::dbus::Message::_init_iter(DBusMessageIter* iter) const
 	throw(std::logic_error)
 {
 	if(!dbus_message_iter_init(_message, iter))
 		throw std::logic_error("Message::_init_iter(): message has no arguments");
 }
 
-void om::ipc::dbus::Message::_advance_iter(DBusMessageIter* iter, size_t k)
+void om::ipc::dbus::Message::_advance_iter(DBusMessageIter* iter, size_t k) const
 	throw(std::out_of_range)
 {
 	for(size_t i = 0; i < k; i++) {

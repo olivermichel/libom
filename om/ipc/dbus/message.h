@@ -13,6 +13,7 @@
 #include <string>
 #include <typeinfo>
 #include <vector>
+#include <iostream>
 
 #include <om/ipc/dbus/connection.h>
 
@@ -56,7 +57,11 @@ namespace om {
 				std::string get_string(size_t pos)
 					throw(std::logic_error, std::invalid_argument, std::out_of_range);
 
-				std::string description();
+				std::vector<int> arguments() const;
+
+				std::string description() const;
+
+				static std::string arg_type_description(int arg_type);
 
 				~Message();
 
@@ -65,14 +70,19 @@ namespace om {
 				DBusMessage* _message;
 				int _type;
 
-				void _init_iter(DBusMessageIter* iter)
+				void _init_iter(DBusMessageIter* iter) const
 					throw(std::logic_error);
 
-				void _advance_iter(DBusMessageIter* iter, size_t k)
+				void _advance_iter(DBusMessageIter* iter, size_t k) const
 					throw(std::out_of_range);
 
 				friend class Connection;
-//				friend std::ostream& operator<<(std::ostream& os, const om::ipc::dbus::Message& msg);
+
+				friend std::ostream& operator<<(std::ostream& os, const Message& msg)
+				{
+					return (os << msg.description());
+				}
+
 			};
 
 		}

@@ -87,6 +87,10 @@ int main()
 	test::expect_equal<size_t>(msg.num_args(), 2,
 		"num_args() returns the number of arguments of a message");
 
+	std::cout << "message summary: " << std::endl;
+	std::cout << msg << std::endl;
+
+
 	return 0;
 
 }
