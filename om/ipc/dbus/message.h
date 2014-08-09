@@ -11,10 +11,10 @@
 #include <dbus/dbus.h>
 #include <stdexcept>
 #include <string>
-#include <vector>
-#include <om/ipc/dbus/connection.h>
 #include <typeinfo>
-#include <iostream>
+#include <vector>
+
+#include <om/ipc/dbus/connection.h>
 
 namespace om {
 	namespace ipc {
@@ -56,30 +56,6 @@ namespace om {
 				std::string get_string(size_t pos)
 					throw(std::logic_error, std::invalid_argument, std::out_of_range);
 
-/*
-				template<typename T>
-				void append_argument(T arg) throw(std::invalid_argument) {
-					if(typeid(arg) == typeid(int))
-						_append_int(&arg);
-					else if(typeid(arg) == typeid(std::string))
-						_append_string(&arg);
-					else
-						throw std::invalid_argument("om::ipc::dbus::Message: " +
-							std::string("argument type not supported"));
-				}
-
-				template<typename T>
-				void get_argument(size_t pos, T* dst) throw(std::logic_error)
-				{
-					if(typeid(T) == typeid(int))
-						_get_int(pos, (int*) dst);
-					else if(typeid(T) == typeid(std::string))
-						_get_string(pos, (std::string*) dst);
-					else
-						throw std::invalid_argument("om::ipc::dbus::Message: " +
-							std::string("argument type not supported"));
-				}
-*/
 				std::string description();
 
 				~Message();
@@ -88,29 +64,6 @@ namespace om {
 
 				DBusMessage* _message;
 				int _type;
-/*
-				enum arg_type {
-					type_string = 0,
-					type_int
-				};
-
-				struct argument {
-					arg_type type;
-					union data {
-						std::string string_data;
-						int int_data;
-					};
-				};
-
-				std::vector<argument> _arguments;
-*/
-/*
-				void _append_string(void* arg);
-				void _append_int(void* arg);
-
-				void _get_string(size_t pos, std::string* dst);
-				void _get_int(size_t pos, int* dst);
-*/
 
 				void _init_iter(DBusMessageIter* iter)
 					throw(std::logic_error);
