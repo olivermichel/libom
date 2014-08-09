@@ -1,6 +1,7 @@
 
 #include <iostream>
 #include <iomanip>
+#include <functional>
 
 namespace test {
 
@@ -8,7 +9,7 @@ namespace test {
 
 	static const std::string pass = " \x1b[32m[PASS]\x1b[0m";
 	static const std::string fail = " \x1b[31m[FAIL]\x1b[0m";
-	static const size_t desc_width = 80;
+	static const size_t desc_width = 100;
 
 	void set_name(std::string name)
 	{
@@ -61,6 +62,12 @@ namespace test {
 	}
 
 	template<typename T>
+	bool expect(T a, std::string desc)
+	{
+		return expect_true<T>(a, desc);
+	}
+
+	template<typename T>
 	bool expect_false(T a, std::string desc)
 	{
 		std::cout << std::setw(desc_width) << std::left 
@@ -72,6 +79,37 @@ namespace test {
 		} else {
 			std::cout << fail << std::endl;
 			return false;
+		}
+	}
+
+	bool expect_nothrow(std::function<void ()> code, std::string desc)
+	{
+		std::cout << std::setw(desc_width) << std::left 
+			<< (current_test_name + ": " + desc + " (nothrow)");
+
+		try {
+			code();
+			std::cout << pass << std::endl;
+			return true;
+		} catch (...) {
+			std::cout << fail << std::endl;
+			return false;
+		}
+	}
+
+
+	bool expect_throw(std::function<void ()> code, std::string desc)
+	{
+		std::cout << std::setw(desc_width) << std::left 
+			<< (current_test_name + ": " + desc + " (throw)");
+
+		try {
+			code();
+			std::cout << fail << std::endl;
+			return false;
+		} catch (...) {
+			std::cout << pass << std::endl;
+			return true;
 		}
 	}
 
