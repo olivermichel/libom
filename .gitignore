@@ -29,6 +29,7 @@ examples/example_tunnel_device
 examples/example_tools_dir
 examples/example_net_dbus_adapter
 examples/example_async_epoll_wrapper
+examples/example_ipc_dbus
 
 tools/dbus_send_sig/dbus_send_sig
 tools/dbus_call_meth/dbus_call_meth

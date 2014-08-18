@@ -7,19 +7,19 @@
 
 INC_DIR = ../
 LIB_STATIC_DIR = ../
-
-CXXFLAGS = $(shell pkg-config --cflags dbus-1) -ldbus-1 -I$(INC_DIR) -L$(LIB_STATIC_DIR) -Wall -std=c++11
-CXXPOSTFIX = -lom-net -lom-tools -lom-async -lom-ipc
+CXXFLAGS = $(shell pkg-config --cflags dbus-1) -ldbus-1 -I$(INC_DIR) \
+	-L$(LIB_STATIC_DIR) -Wall -std=c++11
 
 EXAMPLES_NAMES = example_net_addresses \
-	example_net_dbus_adapter \
 	example_net_packing \
 	example_net_stream_listener \
 	example_tools_dir \
 	example_tools_file \
 	example_tools_random \
-	example_async_epoll_wrapper
+	example_async_epoll_wrapper \
+	example_ipc_dbus
 
+# example_net_dbus_adapter
 # example_raw_socket
 # example_net_inotify_handler
 # example_net_datagram_socket
@@ -29,8 +29,9 @@ EXAMPLES_NAMES = example_net_addresses \
 
 all: $(EXAMPLES_NAMES)
 
-%: %.cc
-	$(CXX) $(CXXFLAGS) -o $@ $< $(CXXPOSTFIX)
+%: %.cc ../libom-net.a ../libom-tools.a ../libom-async.a ../libom-ipc.a \
+	../libom-container.a 
+	$(CXX) $(CXXFLAGS) $? -o $@ 
 
 spotless:
 	$(RM) $(EXAMPLES_NAMES)
