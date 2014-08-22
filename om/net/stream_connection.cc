@@ -11,12 +11,12 @@
 #include "stream_connection.h"
 
 om::net::StreamConnection::StreamConnection()
-	: om::net::IOInterface() {}
+	: om::async::MultiplexInterface() {}
 
 om::net::StreamConnection::StreamConnection(int fd,
 	std::function<void (om::net::StreamConnection*)> read_handler)
 	throw(std::logic_error, std::invalid_argument)
-	: om::net::IOInterface()
+	: om::async::MultiplexInterface()
 {
 	this->attach(fd, read_handler);
 }
@@ -24,7 +24,7 @@ om::net::StreamConnection::StreamConnection(int fd,
 om::net::StreamConnection::StreamConnection(int fd, om::net::tp_addr remote_addr,
 	std::function<void (om::net::StreamConnection*)> read_handler)
 	throw(std::logic_error, std::invalid_argument)
-	: om::net::IOInterface()
+	: om::async::MultiplexInterface()
 {
 	this->attach(fd, remote_addr, read_handler);
 }
@@ -38,13 +38,13 @@ void om::net::StreamConnection::attach(int fd,
 	std::function<void (om::net::StreamConnection*)> read_handler)
 	throw(std::logic_error, std::invalid_argument)
 {
-	if(_fd != 0)
+	if(MultiplexInterface::fd() != 0)
 		throw std::logic_error("StreamConnection is already attached to a socket");
 
 	if(fd < 0)
 		throw std::invalid_argument("Invalid file descriptor");
 
-	_fd = fd;
+	MultiplexInterface::set_fd(fd);
 	_read_handler = read_handler;
 }
 
@@ -56,7 +56,7 @@ void om::net::StreamConnection::attach(int fd, om::net::tp_addr remote_addr,
 	this->attach(fd, read_handler);
 }
 
-void om::net::StreamConnection::handle_read()
+void om::net::StreamConnection::ready()
 	throw(std::runtime_error, std::logic_error)
 {
 	if(_read_handler)
@@ -68,37 +68,33 @@ void om::net::StreamConnection::handle_read()
 int om::net::StreamConnection::send(const unsigned char* tx_buf,
 	const size_t buf_len)
 {
-	int tx_bytes = ::send(_fd, tx_buf, buf_len, 0);
+	int tx_bytes = ::send(MultiplexInterface::fd(), tx_buf, buf_len, 0);
 	return tx_bytes;
 }
 
 int om::net::StreamConnection::receive(unsigned char* rx_buf,
 	const size_t buf_len)
 {
-	int rx_bytes = ::recv(_fd, rx_buf, buf_len, 0);
+	int rx_bytes = ::recv(MultiplexInterface::fd(), rx_buf, buf_len, 0);
 	return rx_bytes;
 }
 
 void om::net::StreamConnection::close()
 	throw(std::logic_error, std::runtime_error)
 {
-	if(_fd == 0)
-		throw std::logic_error("Socket was already closed or never opened");
+	if(MultiplexInterface::fd() == 0)
+		throw std::logic_error("Socket was already ::closed or never opened");
 
-	if(::close(_fd) == 0)
-		_fd = 0;
+	if(::close(MultiplexInterface::fd()) == 0)
+		MultiplexInterface::set_fd(0);
 	else
-		throw std::runtime_error("close(): " + std::string(strerror(errno)));
+		throw std::runtime_error("::close(): " + std::string(strerror(errno)));
 }
 
 om::net::StreamConnection::~StreamConnection()
 {
-	if(_fd != 0) {
-		if(::close(_fd) == 0)
-			_fd = 0;
-		else
-			throw std::runtime_error("::close(): " + std::string(strerror(errno)));		
-	}
+	if(MultiplexInterface::fd() != 0)
+		::close(MultiplexInterface::fd());
 }
 
 namespace om {

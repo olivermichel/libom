@@ -13,12 +13,12 @@
 #include <ostream>
 #include <functional>
 #include <om/net/net.h>
-#include <om/net/io_interface.h>
+#include <om/async/multiplex_interface.h>
 
 namespace om {
 	namespace net {
 
-		class StreamConnection : public om::net::IOInterface {
+		class StreamConnection : public om::async::MultiplexInterface {
 		
 		public:
 
@@ -47,8 +47,8 @@ namespace om {
 				std::function<void (om::net::StreamConnection*)> read_handler)
 				throw(std::logic_error, std::invalid_argument);
 
-			// implement om::net::IOInterface
-			void handle_read()
+			// implement om::async::MultiplexInterface
+			void ready()
 				throw(std::runtime_error, std::logic_error);
 
 			// writes buf_len bytes out of tx_buf to the socket
