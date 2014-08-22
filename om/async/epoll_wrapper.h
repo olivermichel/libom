@@ -36,7 +36,8 @@ namespace om {
 			void remove_descriptor(int fd)
 				throw(std::runtime_error, std::logic_error);
 
-			void dispatch();
+			void dispatch()
+				throw(std::runtime_error);
 
 		private:
 

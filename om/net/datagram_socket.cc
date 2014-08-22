@@ -98,20 +98,21 @@ int om::net::DatagramSocket::receive(om::net::tp_addr* from,
 }
 
 void om::net::DatagramSocket::close() 
-	throw(std::logic_error)
+	throw(std::logic_error, std::runtime_error)
 {
 	if(MultiplexInterface::fd() == 0)
 		throw std::logic_error("Socket was not yet opened");
+
+	if(::close(MultiplexInterface::fd()) == 0)
+		MultiplexInterface::set_fd(0);
+	else
+		throw std::runtime_error("::close(): " + std::string(strerror(errno)));
 
 	::close(MultiplexInterface::fd());
 }
 
 om::net::DatagramSocket::~DatagramSocket()
 {
-	if(MultiplexInterface::fd() != 0) {
-		if(::close(MultiplexInterface::fd()) == 0)
-			MultiplexInterface::set_fd(0);
-		else
-			throw std::runtime_error("::close(): " + std::string(strerror(errno)));   
-	}
+	if(MultiplexInterface::fd() != 0)
+		::close(MultiplexInterface::fd());
 }

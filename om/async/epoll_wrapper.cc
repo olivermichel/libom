@@ -110,6 +110,7 @@ void om::async::EPollWrapper::remove_descriptor(int fd)
 }
 
 void om::async::EPollWrapper::dispatch()
+	throw(std::runtime_error)
 {
 	int timeout = -1, nfds = 0;
 	static struct epoll_event events[_qlen];

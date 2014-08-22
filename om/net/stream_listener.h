@@ -1,7 +1,7 @@
 //
 //  Olli's C++ Library [https://bitbucket.org/omichel/om-lib]
 //  net/stream_listener.h
-//  (c) 2013 Oliver Michel <oliver dot michel at editum dot de>
+//  (c) 2014 Oliver Michel <oliver dot michel at editum dot de>
 //  http://ngn.cs.colorado/~oliver
 //
 //  implements a listening TCP socket
@@ -12,13 +12,15 @@
 
 #include <functional>
 #include <ostream>
+#include <stdexcept>
 
-#include <om/net/io_interface.h>
+#include <om/net/net.h>
+#include <om/async/multiplex_interface.h>
 
 namespace om {
 	namespace net {
 
-		class StreamListener : public om::net::IOInterface {
+		class StreamListener : public om::async::MultiplexInterface {
 		
 		public:
 			
@@ -40,9 +42,9 @@ namespace om {
 				std::function<void (om::net::StreamListener*)> new_conn_handler)
 				throw(std::runtime_error, std::logic_error, std::invalid_argument);
 
-			// implement om::net::IOInterface
-			void handle_read()
-				throw(std::logic_error);
+			// to be invoked by multiplexer
+			void ready()
+				throw(std::runtime_error, std::logic_error);
 
 			// accepts a new incoming connection and returns a new fd for this
 			// connection, the peer address is written into remote_addr

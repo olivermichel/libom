@@ -44,7 +44,7 @@ namespace om {
 				const size_t buf_len);
 
 			void close()
-				throw(std::logic_error);
+				throw(std::logic_error, std::runtime_error);
 			
 			~DatagramSocket();
 
