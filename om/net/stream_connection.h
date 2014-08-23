@@ -35,6 +35,10 @@ namespace om {
 				std::function<void (om::net::StreamConnection*)> read_handler)
 				throw(std::logic_error, std::invalid_argument);
 
+			StreamConnection(const om::net::StreamConnection& copy_from) = delete;
+
+			StreamConnection& operator=(StreamConnection& copy_from) = delete;
+
 			// accessor for remote address
 			om::net::tp_addr remote_addr();
 
@@ -71,8 +75,7 @@ namespace om {
 			om::net::tp_addr _remote_addr;
 			std::function<void (om::net::StreamConnection*)> _read_handler;
 
-			StreamConnection(const om::net::StreamConnection& copy_from);
-			StreamConnection& operator=(StreamConnection& copy_from);
+
 		};
 	}
 }
