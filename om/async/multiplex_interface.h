@@ -17,8 +17,12 @@ namespace om {
 
 			MultiplexInterface();
 			MultiplexInterface(int fd);
-			MultiplexInterface(MultiplexInterface& copy_from) = delete;
-			MultiplexInterface& operator=(MultiplexInterface& copy_from) = delete;
+
+			MultiplexInterface(MultiplexInterface&) = delete;
+			MultiplexInterface& operator=(MultiplexInterface&) = delete;
+
+			MultiplexInterface(MultiplexInterface&&) = default;
+			MultiplexInterface& operator=(MultiplexInterface&&) = default;
 
 			int fd();
 			virtual void ready() = 0;
