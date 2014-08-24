@@ -38,7 +38,7 @@ void om::net::StreamConnection::attach(int fd,
 	std::function<void (om::net::StreamConnection*)> read_handler)
 	throw(std::logic_error, std::invalid_argument)
 {
-	if(MultiplexInterface::fd() != 0)
+	if(MultiplexInterface::fd() != -1)
 		throw std::logic_error("StreamConnection is already attached to a socket");
 
 	if(fd < 0)
