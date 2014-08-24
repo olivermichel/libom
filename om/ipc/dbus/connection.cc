@@ -152,7 +152,7 @@ void om::ipc::dbus::Connection::send_message(DBusMessage* msg)
 		throw std::runtime_error("Connection: send_message: failed sending");
 }
 
-void om::ipc::dbus::Connection::ready(uint32_t events)
+void om::ipc::dbus::Connection::ready()
 {
 	dbus_watch_handle(_watch, _epoll_to_dbus_watch_event(events));
 

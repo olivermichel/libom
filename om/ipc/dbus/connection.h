@@ -56,7 +56,7 @@ namespace om {
 
 			protected:
 
-				void ready(uint32_t events);
+				void ready();
 
 			private:
 
