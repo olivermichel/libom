@@ -78,4 +78,10 @@ void om::async::Multiplexer::remove_descriptor(int fd)
 		throw std::logic_error("Multiplexer: remove_descriptor: does not exist");
 }
 
+
+bool om::async::Multiplexer::monitors_fd(int fd)
+{
+	return _fds.find(fd) != _fds.end();
+}
+
 om::async::Multiplexer::~Multiplexer() {}

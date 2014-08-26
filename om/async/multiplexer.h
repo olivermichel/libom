@@ -48,6 +48,8 @@ namespace om {
 
 			virtual void dispatch() = 0;
 
+			bool monitors_fd(int fd);
+
 			virtual ~Multiplexer();
 
 		protected:
