@@ -178,6 +178,10 @@ void om::ipc::dbus::Connection::ready()
 
 void om::ipc::dbus::Connection::_add_watch(DBusWatch* w)
 {
+	std::cout << "Connection::_add_watch()" << std::endl;
+	
+	_watch = w;
+
 	int fd = dbus_watch_get_unix_fd(w);
 
 	if(MultiplexInterface::fd() != dbus_watch_get_unix_fd(w)) {
@@ -190,13 +194,21 @@ void om::ipc::dbus::Connection::_add_watch(DBusWatch* w)
 void om::ipc::dbus::Connection::_remove_watch(DBusWatch* w)
 {
 	// remove and toggle behavior needs to be implemented here
-	// std::cout << "Connection::_remove_watch()" << std::endl;
+	std::cout << "Connection::_remove_watch()" << std::endl;
 }
 
 void om::ipc::dbus::Connection::_toggle_watch(DBusWatch* w)
 {
 	// remove and toggle behavior needs to be implemented here
-	// std::cout << "Connection::_toggle_watch()" << std::endl;
+	int fd = dbus_watch_get_unix_fd(w);
+
+	std::cout << "Connection::_toggle_watch()" << std::endl;
+
+	if(dbus_watch_get_enabled(w))
+		std::cout << " - enabled " << fd << std::endl;
+	else
+		std::cout << " - disabled " << fd << std::endl;
+
 }
 
 void om::ipc::dbus::Connection::_connected(DBusWatch* w)
