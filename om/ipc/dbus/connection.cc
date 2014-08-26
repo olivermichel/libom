@@ -17,9 +17,8 @@ om::ipc::dbus::Connection::callback_context::callback_context()
 om::ipc::dbus::Connection::callback_context::callback_context(Connection* c)
 	: connection(c) {};
 
-
 om::ipc::dbus::Connection::Connection()
-	: _conn(0), _watch(0), _context({0}), _method_handlers()
+	: _conn(0), _watch(0), _context({0}), _serial(0), _method_handlers()
 {
 	_context.connection = this;
 }
@@ -115,6 +114,13 @@ void om::ipc::dbus::Connection::set_method_call_handler(std::string iface,
 		_method_handlers.emplace(method_call_signature(iface, method), cb);
 }
 
+
+void om::ipc::dbus::Connection::set_signal_handler(std::string iface,
+	std::string member, msg_handler cb)
+{
+	
+}
+
 DBusMessage* om::ipc::dbus::Connection::call_method_blocking(DBusMessage* msg)
 	throw(std::runtime_error, std::logic_error)
 {
@@ -144,17 +150,24 @@ void om::ipc::dbus::Connection::send_message(DBusMessage* msg)
 	throw(std::runtime_error, std::logic_error)
 {
 	if(!msg)
-		throw std::logic_error("Connection: call_method_blocking: got null msg");
+		throw std::logic_error("Connection: send_message: got null msg");
 
-	dbus_uint32_t serial = 2312; 
-
-	if(!dbus_connection_send(_conn, msg, &serial))
+	if(!dbus_connection_send(_conn, msg, &(++_serial)))
 		throw std::runtime_error("Connection: send_message: failed sending");
 }
 
+void om::ipc::dbus::Connection::send(Message& msg)
+	throw(std::runtime_error)
+{
+	if(!dbus_connection_send(_conn, msg._message, &(++_serial)))
+		throw std::runtime_error("Connection: send: failed sending");
+}
+
+om::ipc::dbus::Connection::~Connection() {}
+
 void om::ipc::dbus::Connection::ready()
 {
-	dbus_watch_handle(_watch, _epoll_to_dbus_watch_event(events));
+	dbus_watch_handle(_watch, _epoll_to_dbus_watch_event(EPOLLIN | EPOLLERR));
 
 	while(dbus_connection_get_dispatch_status(_conn)
 		== DBUS_DISPATCH_DATA_REMAINS) {
@@ -163,19 +176,36 @@ void om::ipc::dbus::Connection::ready()
 	}
 }
 
+void om::ipc::dbus::Connection::_add_watch(DBusWatch* w)
+{
+	int fd = dbus_watch_get_unix_fd(w);
+
+	if(MultiplexInterface::fd() != dbus_watch_get_unix_fd(w)) {
+		MultiplexInterface::set_fd(fd);
+
+		_connected(w);
+	}
+}
+
+void om::ipc::dbus::Connection::_remove_watch(DBusWatch* w)
+{
+	// remove and toggle behavior needs to be implemented here
+	// std::cout << "Connection::_remove_watch()" << std::endl;
+}
+
+void om::ipc::dbus::Connection::_toggle_watch(DBusWatch* w)
+{
+	// remove and toggle behavior needs to be implemented here
+	// std::cout << "Connection::_toggle_watch()" << std::endl;
+}
+
 void om::ipc::dbus::Connection::_connected(DBusWatch* w)
 	throw(std::logic_error)
 {
-	_watch = w;
-
-	if(MultiplexInterface::fd() != dbus_watch_get_unix_fd(w)) {
-		MultiplexInterface::set_fd(dbus_watch_get_unix_fd(w));
-		
-		if(_connected_cb)
-			_connected_cb(this);
-		else
-			throw std::logic_error("Connection: no connected handler set");
-	}
+	if(_connected_cb)
+		_connected_cb(this);
+	else
+		throw std::logic_error("Connection: no connected handler set");
 }
 
 DBusHandlerResult om::ipc::dbus::Connection::_route_message(DBusMessage* msg)
@@ -207,16 +237,26 @@ DBusHandlerResult om::ipc::dbus::Connection::_message_filter(
 
 unsigned om::ipc::dbus::Connection::_add_watch_static_callback(
 	DBusWatch* w, void* d)
-{
-	((callback_context*)d)->connection->_connected(w);
+{	
+	// do not handle new watch if watch is not enabled
+	if(!dbus_watch_get_enabled(w))
+		return 1;
+
+	((callback_context*)d)->connection->_add_watch(w);
 	return 1;
 }
 
-void om::ipc::dbus::Connection::_toggle_watch_static_callback(
-	DBusWatch* w, void* d) {}
-
 void om::ipc::dbus::Connection::_rm_watch_static_callback(
-	DBusWatch* w, void* d) {}
+	DBusWatch* w, void* d) 
+{
+	((callback_context*)d)->connection->_remove_watch(w);
+}
+
+void om::ipc::dbus::Connection::_toggle_watch_static_callback(
+	DBusWatch* w, void* d)
+{
+	((callback_context*)d)->connection->_toggle_watch(w);
+}
 
 DBusWatchFlags om::ipc::dbus::Connection::_epoll_to_dbus_watch_event(
 	uint32_t epoll_events)

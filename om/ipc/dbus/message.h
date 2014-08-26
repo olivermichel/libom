@@ -15,8 +15,6 @@
 #include <vector>
 #include <iostream>
 
-#include <om/ipc/dbus/connection.h>
-
 namespace om {
 	namespace ipc {
 		namespace dbus {
@@ -24,8 +22,15 @@ namespace om {
 			class Message {
 
 			public:
+
+				enum mechanism
+				{ 
+					mechanism_created = 0,
+					mechanism_casted  = 1
+				};
 	
 				Message() = delete;
+				Message(DBusMessage* msg);
 				Message(int type) throw (std::runtime_error);
 				Message(int type, std::string destination, std::string interface,
 					std::string member) throw (std::runtime_error);
@@ -69,6 +74,8 @@ namespace om {
 
 				DBusMessage* _message;
 				int _type;
+
+				mechanism _creation_mechanism;
 
 				void _init_iter(DBusMessageIter* iter) const
 					throw(std::logic_error);

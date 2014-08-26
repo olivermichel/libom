@@ -10,6 +10,7 @@
 
 #include <om/async/multiplex_interface.h>
 #include <om/ipc/dbus/dbus.h>
+#include <om/ipc/dbus/message.h>
 
 #include <stdexcept>
 #include <functional>
@@ -36,6 +37,12 @@ namespace om {
 
 				Connection();
 
+				Connection(const Connection&) = delete;
+				Connection& operator=(const Connection&) = delete;
+
+				Connection(Connection&&) = default;
+				Connection& operator=(Connection&&) = default;
+
 				void open(std::string addr, std::string req_name,
 					std::function<void (om::ipc::dbus::Connection*)> connected_cb)
 					throw(std::runtime_error, std::logic_error);
@@ -48,11 +55,24 @@ namespace om {
 				void set_method_call_handler(std::string iface, std::string method,
 					msg_handler cb);
 
+				void set_signal_handler(std::string iface, std::string member,
+					msg_handler cb);
+
+				// will be deprecated
 				DBusMessage* call_method_blocking(DBusMessage* msg)
 					throw(std::runtime_error, std::logic_error);
 
+				// will be deprecated
 				void send_message(DBusMessage* msg)
 					throw(std::runtime_error, std::logic_error);
+
+				void send(Message& msg)
+					throw(std::runtime_error);
+
+				// Message call(Message& msg);
+
+
+				~Connection();
 
 			protected:
 
@@ -64,6 +84,8 @@ namespace om {
 				DBusWatch* _watch;
 				callback_context _context;
 
+				dbus_uint32_t _serial;
+
 				std::map<method_call_signature, msg_handler> _method_handlers;
 
 				std::function<void (om::ipc::dbus::Connection*)> _connected_cb;
@@ -72,6 +94,10 @@ namespace om {
 				msg_handler _default_method_call_handler;
 				msg_handler _default_method_return_handler;
 				msg_handler _default_error_handler;
+
+				void _add_watch(DBusWatch* w);
+				void _remove_watch(DBusWatch* w);
+				void _toggle_watch(DBusWatch* w);
 
 				void _connected(DBusWatch* w)
 					throw(std::logic_error);
@@ -82,8 +108,8 @@ namespace om {
 					DBusMessage* msg, void* d);
 
 				static unsigned _add_watch_static_callback(DBusWatch* w, void* d);
-				static void _toggle_watch_static_callback(DBusWatch* w, void* d);
 				static void _rm_watch_static_callback(DBusWatch* w, void* d);
+				static void _toggle_watch_static_callback(DBusWatch* w, void* d);
 
 				static DBusWatchFlags _epoll_to_dbus_watch_event(
 					uint32_t epoll_events);

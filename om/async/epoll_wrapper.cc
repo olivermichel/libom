@@ -11,6 +11,7 @@
 #include <string>
 #include <cstring>
 #include <iostream>
+#include <sstream>
 
 om::async::EPollWrapper::EPollWrapper(size_t size_hint)
 	throw(std::runtime_error)
@@ -108,6 +109,19 @@ void om::async::EPollWrapper::remove_descriptor(int fd)
 			);;
 	}
 }
+
+std::string om::async::EPollWrapper::description()
+{
+	std::stringstream ss;
+
+	ss << "Multiplexer: " << std::endl;
+
+	for(std::pair<int, callback_context> f : _fds)
+		std::cout << f.first << std::endl;
+
+	return ss.str();
+}
+
 
 void om::async::EPollWrapper::dispatch()
 	throw(std::runtime_error)

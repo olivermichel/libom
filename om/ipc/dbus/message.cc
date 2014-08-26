@@ -10,10 +10,16 @@
 #include <iostream>
 #include <sstream>
 
+om::ipc::dbus::Message::Message(DBusMessage* msg)
+	:	_message(msg),
+		_type(dbus_message_get_type(msg)),
+		_creation_mechanism(mechanism_casted) {}
+
 om::ipc::dbus::Message::Message(int type)
 	throw(std::runtime_error)
 	:	_message(0), 
-		_type(type)
+		_type(type),
+		_creation_mechanism(mechanism_created)
 {
 	if(!(_message = dbus_message_new(_type)))
 		throw std::runtime_error("Message: not enough memory");
@@ -23,7 +29,8 @@ om::ipc::dbus::Message::Message(int type, std::string destination,
 	std::string interface, std::string member)
 	throw(std::runtime_error)
 	:	_message(0), 
-		_type(type)
+		_type(type),
+		_creation_mechanism(mechanism_casted)
 {
 	if(!(_message = dbus_message_new(_type)))
 		throw std::runtime_error("Message: not enough memory");
@@ -35,12 +42,14 @@ om::ipc::dbus::Message::Message(int type, std::string destination,
 
 om::ipc::dbus::Message::Message(Message& copy_from)
 	: 	_message(dbus_message_copy(copy_from._message)),
-		_type(copy_from._type) {}
+		_type(copy_from._type),
+		_creation_mechanism(copy_from._creation_mechanism) {}
 
 om::ipc::dbus::Message& om::ipc::dbus::Message::operator=(Message& copy_from)
 {
 	_message = dbus_message_copy(copy_from._message);
 	_type = copy_from._type;
+	_creation_mechanism = copy_from._creation_mechanism;
 
 	return *this;
 }
@@ -261,7 +270,7 @@ std::string om::ipc::dbus::Message::arg_type_description(int arg_type)
 
 om::ipc::dbus::Message::~Message()
 {
-	if(_message != 0)
+	if(_message != 0 && _creation_mechanism == mechanism_created)
 		dbus_message_unref(_message);
 }
 

@@ -11,6 +11,8 @@
 #include "multiplex_interface.h"
 #include "multiplexer.h"
 
+#include <string>
+
 #include <stdexcept>
 
 namespace om {
@@ -35,6 +37,8 @@ namespace om {
 
 			void remove_descriptor(int fd)
 				throw(std::runtime_error, std::logic_error);
+
+			std::string description();
 
 			void dispatch()
 				throw(std::runtime_error);
