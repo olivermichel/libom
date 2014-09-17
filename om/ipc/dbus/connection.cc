@@ -60,8 +60,33 @@ void om::ipc::dbus::Connection::open_session_bus(std::string req_name,
 	std::function<void (om::ipc::dbus::Connection*)> connected_cb)
 	throw(std::runtime_error, std::logic_error)
 {
+	DBusError err;
+	dbus_error_init(&err);
 
+	_connected_cb = connected_cb;
 
+	if(_conn)
+		throw std::logic_error("Connection: open: already opened");
+
+	_require_callbacks();
+
+	_conn = dbus_bus_get(DBUS_BUS_SESSION, &err);
+
+	if(dbus_error_is_set(&err)) {
+		throw std::runtime_error("Connection: connection error: "
+			+ std::string(err.message));
+		dbus_error_free(&err);
+	}
+
+	if(!_conn)
+		throw std::runtime_error("Connection: connection error");
+
+	dbus_bus_register(_conn, &err);
+
+	_request_bus_name(req_name);
+	_set_watch_functions();
+
+	dbus_connection_add_filter(_conn, _message_filter, &_context, NULL);
 }
 
 void om::ipc::dbus::Connection::set_default_handler(msg_handler cb)
@@ -145,6 +170,7 @@ void om::ipc::dbus::Connection::send_message(DBusMessage* msg)
 		throw std::runtime_error("Connection: send_message: failed sending");
 }
 
+<<<<<<< HEAD
 void om::ipc::dbus::Connection::send(Message& msg)
 	throw(std::runtime_error)
 {
@@ -157,6 +183,11 @@ om::ipc::dbus::Connection::~Connection() {}
 void om::ipc::dbus::Connection::ready()
 {
 	dbus_watch_handle(_watch, _epoll_to_dbus_watch_event(EPOLLIN | EPOLLERR));
+=======
+void om::ipc::dbus::Connection::ready()
+{
+	dbus_watch_handle(_watch, _epoll_to_dbus_watch_event(EPOLLIN));
+>>>>>>> ipc/dbus/connetion: connect to session bus
 
 	while(dbus_connection_get_dispatch_status(_conn)
 		== DBUS_DISPATCH_DATA_REMAINS) {
