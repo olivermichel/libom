@@ -27,23 +27,15 @@ void om::ipc::dbus::Connection::open(std::string addr, std::string req_name,
 	std::function<void (om::ipc::dbus::Connection*)> connected_cb)
 	throw(std::runtime_error, std::logic_error)
 {
+	DBusError err;
+	dbus_error_init(&err);
+
+	_connected_cb = connected_cb;
+
 	if(_conn)
 		throw std::logic_error("Connection: open: already opened");
 
-	if(!_default_signal_handler)
-		throw std::logic_error("Connection: no default signal handler set");
-
-	if(!_default_method_call_handler)
-		throw std::logic_error("Connection: no default method call handler set");
-
-	if(!_default_method_return_handler)
-		throw std::logic_error("Connection: no default method return handler set");
-
-	if(!_default_error_handler)
-		throw std::logic_error("Connection: no default error handler set");
-
-	DBusError err;
-	dbus_error_init(&err);
+	_require_callbacks();
 
 	_conn = dbus_connection_open(addr.c_str(), &err);
 
@@ -58,29 +50,26 @@ void om::ipc::dbus::Connection::open(std::string addr, std::string req_name,
 
 	dbus_bus_register(_conn, &err);
 
-	int name_res = dbus_bus_request_name(_conn, req_name.c_str(), 0, &err);
-
-	if(dbus_error_is_set(&err)) {
-		throw std::runtime_error("Connection: request name error: "
-			+ std::string(err.message));
-		dbus_error_free(&err);
-	}
-
-	if(DBUS_REQUEST_NAME_REPLY_PRIMARY_OWNER != name_res)
-		throw std::runtime_error("Connection: request name error");
-
-	_connected_cb = connected_cb;
+	_request_bus_name(req_name);
+	_set_watch_functions();
 
 	dbus_connection_add_filter(_conn, _message_filter, &_context, NULL);
+}
 
-	dbus_connection_set_watch_functions(
-		_conn,
-		_add_watch_static_callback,
-		_toggle_watch_static_callback,
-		_rm_watch_static_callback,
-		&_context,
-		NULL
-	);
+void om::ipc::dbus::Connection::open_session_bus(std::string req_name,
+	std::function<void (om::ipc::dbus::Connection*)> connected_cb)
+	throw(std::runtime_error, std::logic_error)
+{
+
+
+}
+
+void om::ipc::dbus::Connection::set_default_handler(msg_handler cb)
+{
+	_default_signal_handler = cb;
+	_default_method_call_handler = cb;
+	_default_method_return_handler = cb;
+	_default_error_handler = cb;
 }
 
 void om::ipc::dbus::Connection::set_default_signal_handler(msg_handler cb)
@@ -174,6 +163,52 @@ void om::ipc::dbus::Connection::ready()
 		
 		dbus_connection_dispatch(_conn);
 	}
+}
+
+void om::ipc::dbus::Connection::_require_callbacks()
+	throw(std::logic_error)
+{
+	if(!_default_signal_handler)
+		throw std::logic_error("Connection: no default signal handler set");
+
+	if(!_default_method_call_handler)
+		throw std::logic_error("Connection: no default method call handler set");
+
+	if(!_default_method_return_handler)
+		throw std::logic_error("Connection: no default method return handler set");
+
+	if(!_default_error_handler)
+		throw std::logic_error("Connection: no default error handler set");
+}
+
+void om::ipc::dbus::Connection::_request_bus_name(std::string name)
+	throw(std::runtime_error)
+{	
+	DBusError err;
+	dbus_error_init(&err);
+
+	int name_res = dbus_bus_request_name(_conn, name.c_str(), 0, &err);
+
+	if(dbus_error_is_set(&err)) {
+		throw std::runtime_error("Connection: request name error: "
+			+ std::string(err.message));
+		dbus_error_free(&err);
+	}
+
+	if(DBUS_REQUEST_NAME_REPLY_PRIMARY_OWNER != name_res)
+		throw std::runtime_error("Connection: request name error");
+}
+
+void om::ipc::dbus::Connection::_set_watch_functions()
+{
+	dbus_connection_set_watch_functions(
+		_conn,
+		_add_watch_static_callback,
+		_toggle_watch_static_callback,
+		_rm_watch_static_callback,
+		&_context,
+		NULL
+	);
 }
 
 void om::ipc::dbus::Connection::_add_watch(DBusWatch* w)

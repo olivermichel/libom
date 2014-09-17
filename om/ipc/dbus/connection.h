@@ -47,6 +47,11 @@ namespace om {
 					std::function<void (om::ipc::dbus::Connection*)> connected_cb)
 					throw(std::runtime_error, std::logic_error);
 
+				void open_session_bus(std::string req_name,
+					std::function<void (om::ipc::dbus::Connection*)> connected_cb)
+					throw(std::runtime_error, std::logic_error);
+
+				void set_default_handler(msg_handler cb);
 				void set_default_signal_handler(msg_handler cb);
 				void set_default_method_call_handler(msg_handler cb);
 				void set_default_method_return_handler(msg_handler cb);
@@ -98,6 +103,13 @@ namespace om {
 				void _add_watch(DBusWatch* w);
 				void _remove_watch(DBusWatch* w);
 				void _toggle_watch(DBusWatch* w);
+				void _require_callbacks()
+					throw(std::logic_error);
+
+				void _request_bus_name(std::string name)
+					throw(std::runtime_error);
+
+				void _set_watch_functions();
 
 				void _connected(DBusWatch* w)
 					throw(std::logic_error);
