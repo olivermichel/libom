@@ -23,6 +23,8 @@ om::ipc::dbus::Connection::Connection()
 	_context.connection = this;
 }
 
+om::ipc::dbus::Connection::~Connection() {}
+
 void om::ipc::dbus::Connection::open(std::string addr, std::string req_name,
 	std::function<void (om::ipc::dbus::Connection*)> connected_cb)
 	throw(std::runtime_error, std::logic_error)
@@ -128,11 +130,29 @@ void om::ipc::dbus::Connection::set_method_call_handler(std::string iface,
 		_method_handlers.emplace(method_call_signature(iface, method), cb);
 }
 
-
 void om::ipc::dbus::Connection::set_signal_handler(std::string iface,
 	std::string member, msg_handler cb)
 {
-	
+	method_call_signature s(iface, member);
+
+	if(_signal_handlers.find(s) != _signal_handlers.end()) {
+		throw std::logic_error("Connection: set_signal_handler: "
+			+ std::string("signal already registered"));
+	} else {
+
+		DBusError err;
+		dbus_error_init(&err);
+
+		dbus_bus_add_match(_conn, s.match_string("signal").c_str(), &err);
+		
+		if(dbus_error_is_set(&err)) { 
+			throw std::runtime_error("Connection: set_signal_handler: failed: "
+				+ std::string(err.message));
+			dbus_error_free(&err); 
+		}
+
+		_signal_handlers.emplace(s, cb);
+	}
 }
 
 DBusMessage* om::ipc::dbus::Connection::call_method_blocking(DBusMessage* msg)
@@ -176,8 +196,6 @@ void om::ipc::dbus::Connection::send(Message& msg)
 	if(!dbus_connection_send(_conn, msg._message, &(++_serial)))
 		throw std::runtime_error("Connection: send: failed sending");
 }
-
-om::ipc::dbus::Connection::~Connection() {}
 
 void om::ipc::dbus::Connection::ready()
 {
@@ -238,8 +256,6 @@ void om::ipc::dbus::Connection::_set_watch_functions()
 
 void om::ipc::dbus::Connection::_add_watch(DBusWatch* w)
 {
-	std::cout << "Connection::_add_watch()" << std::endl;
-	
 	_watch = w;
 
 	int fd = dbus_watch_get_unix_fd(w);
@@ -254,7 +270,7 @@ void om::ipc::dbus::Connection::_add_watch(DBusWatch* w)
 void om::ipc::dbus::Connection::_remove_watch(DBusWatch* w)
 {
 	// remove and toggle behavior needs to be implemented here
-	std::cout << "Connection::_remove_watch()" << std::endl;
+	// std::cout << "Connection::_remove_watch()" << std::endl;
 }
 
 void om::ipc::dbus::Connection::_toggle_watch(DBusWatch* w)
@@ -262,7 +278,7 @@ void om::ipc::dbus::Connection::_toggle_watch(DBusWatch* w)
 	// remove and toggle behavior needs to be implemented here
 	int fd = dbus_watch_get_unix_fd(w);
 
-	std::cout << "Connection::_toggle_watch()" << std::endl;
+	// std::cout << "Connection::_toggle_watch()" << std::endl;
 
 	if(dbus_watch_get_enabled(w))
 		std::cout << " - enabled " << fd << std::endl;
@@ -291,12 +307,22 @@ DBusHandlerResult om::ipc::dbus::Connection::_route_message(DBusMessage* msg)
 
 		return _default_method_call_handler(this, msg);
 
-	} else if(dbus_message_get_type(msg) == DBUS_MESSAGE_TYPE_METHOD_RETURN)
-		return _default_method_return_handler(this, msg);
-	else if(dbus_message_get_type(msg) == DBUS_MESSAGE_TYPE_SIGNAL)
+	} else if(dbus_message_get_type(msg) == DBUS_MESSAGE_TYPE_SIGNAL) {
+
+		auto i = _signal_handlers.find(method_call_signature(msg));
+
+		if(i != _signal_handlers.end())
+			return i->second(this, msg);
+
 		return _default_signal_handler(this, msg);
+	} 
+
 	else if(dbus_message_get_type(msg) == DBUS_MESSAGE_TYPE_ERROR)
 		return _default_error_handler(this, msg);
+
+	else if(dbus_message_get_type(msg) == DBUS_MESSAGE_TYPE_METHOD_RETURN)
+		return _default_method_return_handler(this, msg);
+	
 	else
 		return DBUS_HANDLER_RESULT_HANDLED;
 }

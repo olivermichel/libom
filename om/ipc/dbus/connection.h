@@ -43,6 +43,8 @@ namespace om {
 				Connection(Connection&&) = default;
 				Connection& operator=(Connection&&) = default;
 
+				~Connection();
+
 				void open(std::string addr, std::string req_name,
 					std::function<void (om::ipc::dbus::Connection*)> connected_cb)
 					throw(std::runtime_error, std::logic_error);
@@ -63,11 +65,11 @@ namespace om {
 				void set_signal_handler(std::string iface, std::string member,
 					msg_handler cb);
 
-				// will be deprecated
+				// to be deprecated
 				DBusMessage* call_method_blocking(DBusMessage* msg)
 					throw(std::runtime_error, std::logic_error);
 
-				// will be deprecated
+				// to be deprecated
 				void send_message(DBusMessage* msg)
 					throw(std::runtime_error, std::logic_error);
 
@@ -76,11 +78,9 @@ namespace om {
 
 				// Message call(Message& msg);
 
-
-				~Connection();
-
 			protected:
 
+				// implement async::MultiplexInterface
 				void ready();
 
 			private:
@@ -92,6 +92,7 @@ namespace om {
 				dbus_uint32_t _serial;
 
 				std::map<method_call_signature, msg_handler> _method_handlers;
+				std::map<method_call_signature, msg_handler> _signal_handlers;
 
 				std::function<void (om::ipc::dbus::Connection*)> _connected_cb;
 

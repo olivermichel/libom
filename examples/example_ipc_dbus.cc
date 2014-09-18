@@ -29,17 +29,29 @@ public:
 	void dbus_connected(om::ipc::dbus::Connection* c)
 	{
 		std::cout << "DBusHandler: connected()" << std::endl;
-
 	}
 
 	DBusHandlerResult default_handler(om::ipc::dbus::Connection* c, DBusMessage* m)
 	{
 		std::cout << "DBusHandler: default_handler()" << std::endl;
 
+		om::ipc::dbus::Message p(m);
+		std::cout << p.description() << std::endl;
+
+
+		return DBUS_HANDLER_RESULT_HANDLED;
+	}
+
+	DBusHandlerResult test_handler(om::ipc::dbus::Connection* c, DBusMessage* m)
+	{
+		std::cout << "DBusHandler: test_handler()" << std::endl;
+
+		om::ipc::dbus::Message p(m);
+		std::cout << p.description() << std::endl;
+
 		return DBUS_HANDLER_RESULT_HANDLED;
 	}
 };
-
 
 int main(int argc, char const *argv[])
 {
@@ -54,9 +66,12 @@ int main(int argc, char const *argv[])
 		std::bind(&DBusHandler::default_handler, &handler, _1, _2)
 	);
 
-	c.open_session_bus(
-		"de.editum.omlib.examples.DBus",
+	c.open("unix:path=/tmp/test_bus", "de.editum.omlib.examples.DBus",
 		std::bind(&DBusHandler::dbus_connected, &handler, _1)
+	);
+
+	c.set_signal_handler("de.editum.omlib", "Test",
+		std::bind(&DBusHandler::test_handler, &handler, _1, _2)
 	);
 
 	epoll.add_interface(&c, EPOLLIN | EPOLLERR);
