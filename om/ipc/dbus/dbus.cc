@@ -100,6 +100,17 @@ om::ipc::dbus::method_call_signature::method_call_signature(DBusMessage* msg)
 	: 	iface(dbus_message_get_interface(msg)),
 		method(dbus_message_get_member(msg)) {}
 
+std::string om::ipc::dbus::method_call_signature::match_string(std::string type)
+{
+	std::stringstream ss;
+
+	ss << "type='" << type << "',"
+		<< "interface='" << iface << "',"
+		<< "member='" << method << "'";
+
+	return ss.str();
+}
+
 bool om::ipc::dbus::method_call_signature::operator==(
 	const method_call_signature& other) const
 {

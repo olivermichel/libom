@@ -32,6 +32,8 @@ namespace om {
 				method_call_signature(std::string i, std::string m);
 				method_call_signature(DBusMessage* msg);
 
+				std::string match_string(std::string type);
+
 				bool operator==(const method_call_signature& other) const;
 				bool operator<(const method_call_signature& other) const;
 

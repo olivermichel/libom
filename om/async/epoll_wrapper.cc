@@ -122,7 +122,6 @@ std::string om::async::EPollWrapper::description()
 	return ss.str();
 }
 
-
 void om::async::EPollWrapper::dispatch()
 	throw(std::runtime_error)
 {
