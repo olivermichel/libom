@@ -170,7 +170,6 @@ void om::ipc::dbus::Connection::send_message(DBusMessage* msg)
 		throw std::runtime_error("Connection: send_message: failed sending");
 }
 
-<<<<<<< HEAD
 void om::ipc::dbus::Connection::send(Message& msg)
 	throw(std::runtime_error)
 {
@@ -182,12 +181,7 @@ om::ipc::dbus::Connection::~Connection() {}
 
 void om::ipc::dbus::Connection::ready()
 {
-	dbus_watch_handle(_watch, _epoll_to_dbus_watch_event(EPOLLIN | EPOLLERR));
-=======
-void om::ipc::dbus::Connection::ready()
-{
 	dbus_watch_handle(_watch, _epoll_to_dbus_watch_event(EPOLLIN));
->>>>>>> ipc/dbus/connetion: connect to session bus
 
 	while(dbus_connection_get_dispatch_status(_conn)
 		== DBUS_DISPATCH_DATA_REMAINS) {

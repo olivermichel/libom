@@ -26,6 +26,18 @@ public:
 		std::cout << "read stdin: " << buf <<  std::endl;
 	}
 
+	void dbus_connected(om::ipc::dbus::Connection* c)
+	{
+		std::cout << "DBusHandler: connected()" << std::endl;
+
+	}
+
+	DBusHandlerResult default_handler(om::ipc::dbus::Connection* c, DBusMessage* m)
+	{
+		std::cout << "DBusHandler: default_handler()" << std::endl;
+
+		return DBUS_HANDLER_RESULT_HANDLED;
+	}
 };
 
 
@@ -33,8 +45,21 @@ int main(int argc, char const *argv[])
 {
 	using namespace std::placeholders;
 
-	om::async::EPollWrapper epoll;
 	DBusHandler handler;
+	om::async::EPollWrapper epoll;
+
+	om::ipc::dbus::Connection c;
+
+	c.set_default_handler(
+		std::bind(&DBusHandler::default_handler, &handler, _1, _2)
+	);
+
+	c.open_session_bus(
+		"de.editum.omlib.examples.DBus",
+		std::bind(&DBusHandler::dbus_connected, &handler, _1)
+	);
+
+	epoll.add_interface(&c, EPOLLIN | EPOLLERR);
 
 	epoll.dispatch();
 
