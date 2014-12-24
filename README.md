@@ -6,16 +6,16 @@ Olli's C++ Library
 
 A general purpose C++ library with a focus on systems and networking tasks.
 
-[https://bitbucket.org/omichel/om-lib](https://bitbucket.org/omichel/om-lib)
+[https://github.com/olivermichel/libom](https://github.com/olivermichel/libom)
 
 
 2 Contributors
 --------------
 
-* [Oliver Michel](http://ngn.cs.colorado/~oliver)
+* [Oliver Michel](http://ngn.cs.colorado.edu/~oliver)
  <oliver dot michel at editum dot de>
 
-* [Matthew Monaco](http://ngn.cs.colorado/~matt)
+* [Matthew Monaco](http://ngn.cs.colorado.edu/~matt)
  <matt at 0x01b dot net>
 
 3 Usage
@@ -28,14 +28,14 @@ A general purpose C++ library with a focus on systems and networking tasks.
 ```
 #!Makefile
 $(OM_LIBS):
-        $(MAKE) -C lib/om-lib # or whereever the library is located
+        $(MAKE) -C lib/libom # or whereever the library is located
 ```
 ### Use Static Library
 
 * Choose which sub-libraries you require
 ```
 #!Makefile
-OM_LIBS  = lib/om-lib/libom-net.a lib/om-lib/libom-tools.a
+OM_LIBS  = lib/libom/libom-net.a lib/libom/libom-tools.a
 ```
 * Add the static libraries as dependencies to your main executable
 ```
