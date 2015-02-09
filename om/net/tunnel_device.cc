@@ -15,14 +15,12 @@
 #include "tunnel_device.h"
 
 om::net::TunnelDevice::TunnelDevice()
-	: om::net::IOInterface(),
-		_flags(IFF_TUN | IFF_NO_PI) {}
+	: om::async::MultiplexInterface(), _flags(IFF_TUN | IFF_NO_PI) {}
 
 om::net::TunnelDevice::TunnelDevice(std::string name,
 	std::function<void (om::net::TunnelDevice*)> read_handler) 
 	throw(std::runtime_error) 
-	: om::net::IOInterface(), _name(name),
-		_flags(IFF_TUN | IFF_NO_PI)
+	: om::async::MultiplexInterface(), _name(name), _flags(IFF_TUN | IFF_NO_PI)
 {  
 	this->open(read_handler);
 }
@@ -41,7 +39,7 @@ int om::net::TunnelDevice::open(
 	std::function<void (om::net::TunnelDevice*)> read_handler) 
 	throw(std::runtime_error, std::logic_error)
 {
-	if(_fd != 0) throw std::logic_error("Device already opened");
+	if(MultiplexInterface::fd() != 0) throw std::logic_error("Device already opened");
 
 	struct ifreq ifr;
 	int fd = -1;
@@ -65,13 +63,13 @@ int om::net::TunnelDevice::open(
 			+ std::string(strerror(errno)));
 	}
 
-	_fd = fd;
+	MultiplexInterface::set_fd(fd);
 	_read_handler = read_handler;
 	
 	return fd;
 }
 
-void om::net::TunnelDevice::handle_read()
+void om::net::TunnelDevice::ready()
 	throw(std::runtime_error, std::logic_error)
 {
 	if(_read_handler)
@@ -83,29 +81,25 @@ void om::net::TunnelDevice::handle_read()
 int om::net::TunnelDevice::write(const unsigned char *tx_data, 
 	const size_t data_len)
 {
-	return ::write(_fd, tx_data, data_len);
+	return ::write(MultiplexInterface::fd(), tx_data, data_len);
 }
 			
 int om::net::TunnelDevice::read(unsigned char *rx_buf, const size_t buf_len)
 {
-	return ::read(_fd, rx_buf, buf_len);
+	return ::read(MultiplexInterface::fd(), rx_buf, buf_len);
 }
 
 void om::net::TunnelDevice::close() 
 	throw(std::logic_error)
 {
-	if(_fd == 0)
+	if(MultiplexInterface::fd() == 0)
 		throw std::logic_error("Device was not yet opened");
 
-	::close(_fd);
+	::close(MultiplexInterface::fd());
 }
 
 om::net::TunnelDevice::~TunnelDevice()
 {
-	if(_fd != 0) {
-		if(::close(_fd) == 0)
-			_fd = 0;
-		else
-			throw std::runtime_error("::close(): " + std::string(strerror(errno)));   
-	}
+	if(MultiplexInterface::fd() != 0)
+		::close(MultiplexInterface::fd());
 }

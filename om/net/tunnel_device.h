@@ -11,12 +11,13 @@
 #include <functional>
 #include <stdexcept>
 #include <string>
-#include <om/net/io_interface.h>
+#include <om/async/multiplex_interface.h>
 
 namespace om {
 	namespace net {
 
-		class TunnelDevice : public om::net::IOInterface {
+		class TunnelDevice : public om::async::MultiplexInterface
+		{
 
 		public:
 			
@@ -26,6 +27,12 @@ namespace om {
 				std::function<void (om::net::TunnelDevice*)> read_handler)
 				throw(std::runtime_error);
 
+			TunnelDevice(const om::net::TunnelDevice&) = delete;
+			TunnelDevice& operator=(TunnelDevice&) = delete;
+
+			TunnelDevice(om::net::TunnelDevice&&) = default;
+			TunnelDevice& operator=(TunnelDevice&&) = default;
+			
 			short int flags();
 			
 			void set_flags(short int flags);
@@ -33,8 +40,8 @@ namespace om {
 			int open(std::function<void (om::net::TunnelDevice*)> read_handler)
 				throw(std::runtime_error, std::logic_error);
 
-			// implement om::net::IOInterface
-			void handle_read()
+			// implement om::async::MultiplexInterface
+			void ready()
 				throw(std::runtime_error, std::logic_error);
 
 			int write(const unsigned char *tx_data, const size_t data_len);
@@ -52,9 +59,6 @@ namespace om {
 			short int _flags;
 
 			std::function<void (om::net::TunnelDevice*)> _read_handler;
-
-			TunnelDevice(const om::net::TunnelDevice &copy_from);
-			TunnelDevice& operator=(TunnelDevice& copy_from);
 		};
 	}
 }
