@@ -20,7 +20,6 @@ EXAMPLES_NAMES = example_net_addresses \
 	example_ipc_dbus
 
 # example_net_dbus_adapter
-# example_raw_socket
 # example_net_inotify_handler
 # example_net_datagram_socket
 # example_tunnel_device
