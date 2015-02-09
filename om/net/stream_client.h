@@ -13,12 +13,13 @@
 #include <ostream>
 #include <functional>
 #include <om/net/net.h>
-#include <om/net/io_interface.h>
+#include <om/async/multiplex_interface.h>
 
 namespace om {
 	namespace net {
 
-		class StreamClient : public om::net::IOInterface {
+		class StreamClient : public om::async::MultiplexInterface
+		{
 
 		public:
 
@@ -31,6 +32,12 @@ namespace om {
 				std::function<void (om::net::StreamClient*)> read_handler) 
 				throw(std::runtime_error, std::invalid_argument);
 
+			StreamClient(const om::net::StreamClient&) = delete;
+			StreamClient& operator=(StreamClient&) = delete;
+
+			StreamClient(om::net::StreamClient&&) = default;
+			StreamClient& operator=(StreamClient&&) = default;
+
 			// opens a new TCP connection to remote_addr, throws runtime_error if
 			// the connection establishment fails, logic_error if the connection has
 			// been opened already or invalid_argument if remote_address is corrupt,
@@ -38,8 +45,8 @@ namespace om {
 			int open(const om::net::tp_addr remote_addr)
 				throw(std::runtime_error, std::logic_error, std::invalid_argument);
 
-			// implement om::net::IOInterface
-			void handle_read()
+			// implement om::async::MultiplexInterface
+			void ready()
 				throw(std::runtime_error, std::logic_error);
 
 			// writes buf_len bytes out of tx_buf to the socket
@@ -61,9 +68,6 @@ namespace om {
 			
 			om::net::tp_addr _remote_addr;
 			std::function<void (om::net::StreamClient*)> _read_handler;
-		
-			StreamClient(const om::net::StreamClient& copy_from);			
-			StreamClient& operator=(StreamClient& copy_from);
 		};
 	}
 }
