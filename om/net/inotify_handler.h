@@ -11,20 +11,26 @@
 #ifndef OM_NET_INOTIFY_HANDLER_H
 #define OM_NET_INOTIFY_HANDLER_H
 
-#include <om/net/io_interface.h>
+#include <om/async/multiplex_interface.h>
 #include <map>
 #include <functional>
 
 namespace om {
 	namespace net {
 
-		class INotifyHandler : public om::net::IOInterface {
+		class INotifyHandler : public om::async::MultiplexInterface
+		{
 
 		public:
 
-			explicit INotifyHandler() throw(std::runtime_error);
-			explicit INotifyHandler(const om::net::INotifyHandler& copy_from);  
-			INotifyHandler& operator=(INotifyHandler& copy_from);
+			explicit INotifyHandler()
+				throw(std::runtime_error);
+
+			INotifyHandler(const om::net::INotifyHandler&) = delete;
+			INotifyHandler& operator=(INotifyHandler&) = delete;
+
+			INotifyHandler(om::net::INotifyHandler&&) = default;
+			INotifyHandler& operator=(INotifyHandler&&) = default;
 
 			int add_watch(std::string pathname, uint32_t mask,
 				std::function<void (struct inotify_event*)> handler)
@@ -33,9 +39,9 @@ namespace om {
 			void remove_watch(int wd)
 				throw(std::runtime_error, std::logic_error);
 
-			// from om::net::IOInterface
-			void handle_read()
-				throw(std::runtime_error);
+			// implement om::async::MultiplexInterface
+			void ready()
+				throw(std::runtime_error, std::logic_error);
 
 			virtual ~INotifyHandler();
 

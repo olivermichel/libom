@@ -20,9 +20,9 @@ AR_IPC       = libom-ipc.a
 AR_CONTAINER = libom-container.a
 
 # dependency names
-NET_NAMES       = net agent io_interface datagram_socket stream_client \
-		            stream_listener stream_connection inotify_handler \
-		            tunnel_device
+NET_NAMES       = net datagram_socket stream_client stream_listener \
+                  stream_connection inotify_handler \
+                  tunnel_device
 TOOLS_NAMES     = tools logger time random string file dir
 ASYNC_NAMES     = multiplex_interface multiplexer epoll_wrapper
 IPC_NAMES       = dbus/dbus dbus/connection dbus/message

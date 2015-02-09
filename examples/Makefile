@@ -12,19 +12,18 @@ CXXFLAGS = $(shell pkg-config --cflags dbus-1) -ldbus-1 -I$(INC_DIR) \
 
 EXAMPLES_NAMES = example_net_addresses \
 	example_net_packing \
-	example_net_stream_listener \
 	example_tools_dir \
 	example_tools_file \
 	example_tools_random \
 	example_async_epoll_wrapper \
 	example_ipc_dbus
 
+# example_net_stream_listener
 # example_net_dbus_adapter
 # example_net_inotify_handler
 # example_net_datagram_socket
 # example_tunnel_device
 # example_net_stream_client
-# example_net_agent
 
 all: $(EXAMPLES_NAMES)
 

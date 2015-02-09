@@ -8,33 +8,22 @@
 #include <cstring>
 #include <sys/inotify.h>
 #include <unistd.h>
+#include <iostream>
 
 #include <om/net/net.h>
 #include <om/net/inotify_handler.h>
 
-#include <iostream>
-
 om::net::INotifyHandler::INotifyHandler()
 	throw(std::runtime_error)
-	:	om::net::IOInterface(),
+	:	om::async::MultiplexInterface(),
 		_watches(new std::map<int, std::function<void (struct inotify_event*)> >()) 
 {
-
+	int fd = 0;
 	// create new inotify instance
-	if((_fd = inotify_init()) < 0)
+	if((fd = inotify_init()) < 0)
 		throw std::runtime_error("inotify_init(): " + std::string(strerror(errno)));
-}
 
-om::net::INotifyHandler::INotifyHandler(const om::net::INotifyHandler& copy_from)
-	: om::net::IOInterface(copy_from), _watches(copy_from._watches) {}
-
-om::net::INotifyHandler& om::net::INotifyHandler
-	::operator=(INotifyHandler& copy_from) {
-
-	om::net::IOInterface::operator=(copy_from);
-	_watches = copy_from._watches;
-
-	return *this;
+	MultiplexInterface::set_fd(fd);
 }
 
 int om::net::INotifyHandler::add_watch(std::string pathname, uint32_t mask,
@@ -43,7 +32,7 @@ int om::net::INotifyHandler::add_watch(std::string pathname, uint32_t mask,
 {
 	int wd = -1;
 
-	if((wd = inotify_add_watch(_fd, pathname.c_str(), mask)) < 0) {
+	if((wd = inotify_add_watch(MultiplexInterface::fd(), pathname.c_str(), mask)) < 0) {
 
 		if(errno == ENOMEM || errno == ENOSPC)
 			throw std::runtime_error("inotify_add_watch(): " 
@@ -57,7 +46,6 @@ int om::net::INotifyHandler::add_watch(std::string pathname, uint32_t mask,
 	return wd;
 }
 
-
 void om::net::INotifyHandler::remove_watch(int wd)
 	throw(std::runtime_error, std::logic_error)
 {
@@ -65,7 +53,7 @@ void om::net::INotifyHandler::remove_watch(int wd)
 
 	if((i = _watches->find(wd)) != _watches->end()) {
 
-		if(inotify_rm_watch(_fd, wd) < 0)
+		if(inotify_rm_watch(MultiplexInterface::fd(), wd) < 0)
   			throw std::runtime_error("inotify_rm_watch(): "
   				+ std::string(strerror(errno)));
 		
@@ -76,8 +64,8 @@ void om::net::INotifyHandler::remove_watch(int wd)
 	}
 }
 
-void om::net::INotifyHandler::handle_read()
-	throw(std::runtime_error)
+void om::net::INotifyHandler::ready()
+	throw(std::runtime_error, std::logic_error)
 {
 	ssize_t read_len = 0, parsed_len = 0;
 	char buf[32 * (sizeof(struct inotify_event) + 256)];
@@ -102,14 +90,14 @@ ssize_t om::net::INotifyHandler::_read_event(char* buf, size_t len)
 {
 	ssize_t read_len = -1;
 
-	if((read_len = read(_fd, buf, len)) < 0)
+	if((read_len = read(MultiplexInterface::fd(), buf, len)) < 0)
 		throw std::runtime_error("read(): " + std::string(strerror(errno)));
 
 	return read_len;
 }
 
-om::net::INotifyHandler::~INotifyHandler() {
-
+om::net::INotifyHandler::~INotifyHandler()
+{
 	for(auto watch = _watches->begin(); watch != _watches->end(); watch++) {
 
 		this->remove_watch(watch->first);
